@@ -5,6 +5,7 @@ import com.project.alarcha.enums.UserStatus;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -37,5 +38,13 @@ public class User extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private UserStatus userStatus;
+
+    @OneToMany(mappedBy = "user",
+    cascade = CascadeType.ALL)
+    private List<HotelHallsOrders> hotelHallsOrders;
+
+    @OneToMany(mappedBy = "user",
+    cascade = CascadeType.ALL)
+    private List<RoomOrders> roomOrders;
 
 }
