@@ -39,6 +39,7 @@ public class User extends BaseEntity{
     @Column(name = "status", nullable = false)
     private UserStatus userStatus;
 
+
     @OneToMany(mappedBy = "user",
     cascade = CascadeType.ALL)
     private List<HotelHallsOrders> hotelHallsOrders;
@@ -47,4 +48,6 @@ public class User extends BaseEntity{
     cascade = CascadeType.ALL)
     private List<RoomOrders> roomOrders;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<ObjectOrders> objectOrders;
 }
