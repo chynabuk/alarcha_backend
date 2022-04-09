@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "hotelHallsType")
+@Table(name = "hotel_halls_type")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,6 +26,6 @@ public class HotelHallsType extends BaseEntity{
 
     @OneToMany(mappedBy = "hotelHallsType",
     cascade = CascadeType.ALL)
-    private List<HotelHallsOrders>  hotelHallsOrders;
+    private List<HotelHallsOrder>  hotelHallsOrders;
 
 }

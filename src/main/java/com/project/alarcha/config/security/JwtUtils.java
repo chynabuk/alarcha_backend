@@ -1,6 +1,6 @@
 package com.project.alarcha.config.security;
 
-import com.project.alarcha.models.UserSecurityModel;
+import com.project.alarcha.models.SecurityModel.UserSecurityModel;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

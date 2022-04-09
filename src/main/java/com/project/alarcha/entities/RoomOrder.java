@@ -6,13 +6,13 @@ import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
-@Table(name = "roomOrders")
+@Table(name = "room_orders")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RoomOrders extends BaseEntity{
+public class RoomOrder extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -20,7 +20,7 @@ public class RoomOrders extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "room_id")
-    private Rooms rooms;
+    private Room room;
 
 
 

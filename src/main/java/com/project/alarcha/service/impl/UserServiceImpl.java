@@ -6,7 +6,12 @@ import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.UserRole;
 import com.project.alarcha.enums.UserStatus;
 import com.project.alarcha.exception.ApiFailException;
-import com.project.alarcha.models.*;
+import com.project.alarcha.models.SecurityModel.UserSecurityModel;
+import com.project.alarcha.models.TokenModel.UserTokenModel;
+import com.project.alarcha.models.UserModel.UserAuthModel;
+import com.project.alarcha.models.UserModel.UserRegistrationModel;
+import com.project.alarcha.models.UserModel.UserToSendModel;
+import com.project.alarcha.models.UserModel.UserUpdateModel;
 import com.project.alarcha.repositories.UserRepository;
 import com.project.alarcha.service.RefreshTokenService;
 import com.project.alarcha.service.UserService;
@@ -72,13 +77,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getByUsername(String username) {
-        return null;
-    }
-
-    @Override
     public User getByEmail(String email) {
-        return null;
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     @Override

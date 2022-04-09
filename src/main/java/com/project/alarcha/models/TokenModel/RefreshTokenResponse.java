@@ -1,4 +1,4 @@
-package com.project.alarcha.models;
+package com.project.alarcha.models.TokenModel;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

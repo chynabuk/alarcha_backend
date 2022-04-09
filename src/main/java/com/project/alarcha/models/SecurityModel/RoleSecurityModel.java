@@ -1,4 +1,4 @@
-package com.project.alarcha.models;
+package com.project.alarcha.models.SecurityModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

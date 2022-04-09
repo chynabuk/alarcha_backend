@@ -2,8 +2,8 @@ package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.User;
 import com.project.alarcha.exception.ApiFailException;
-import com.project.alarcha.models.RoleSecurityModel;
-import com.project.alarcha.models.UserSecurityModel;
+import com.project.alarcha.models.SecurityModel.RoleSecurityModel;
+import com.project.alarcha.models.SecurityModel.UserSecurityModel;
 import com.project.alarcha.repositories.UserRepository;
 import com.project.alarcha.service.UserSecurityService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,13 +36,11 @@ public class UserSecurityServiceImpl implements UserSecurityService {
         userSecurityModel.setPassword(user.getPassword());
         userSecurityModel.setPhone(user.getPhone());
 
-        Set<RoleSecurityModel> roleSecurityModels  = new HashSet<>();
-
         RoleSecurityModel roleSecurityModel = new RoleSecurityModel();
         roleSecurityModel.setUserSecurityModel(userSecurityModel);
         roleSecurityModel.setRoleName(user.getUserRole().name());
 
-        roleSecurityModels.add(roleSecurityModel);
+        userSecurityModel.setUserRole(roleSecurityModel);
 
         return userSecurityModel;
     }

@@ -13,7 +13,7 @@ import java.sql.Time;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ObjectOrders extends BaseEntity {
+public class ObjectOrder extends BaseEntity {
     @Column(name = "registration_date", nullable = false)
     private Date registrationDate;
 
@@ -28,6 +28,6 @@ public class ObjectOrders extends BaseEntity {
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "objects_id", referencedColumnName = "id")
-    private Objects objects;
+    @JoinColumn(name = "object_id", referencedColumnName = "id")
+    private Object object;
 }

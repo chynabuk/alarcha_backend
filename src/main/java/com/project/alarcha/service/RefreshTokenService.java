@@ -1,7 +1,7 @@
 package com.project.alarcha.service;
 
 import com.project.alarcha.entities.RefreshToken;
-import com.project.alarcha.models.RefreshTokenRequest;
+import com.project.alarcha.models.TokenModel.RefreshTokenRequest;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;

@@ -18,7 +18,6 @@ public class User extends BaseEntity{
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
@@ -39,15 +38,14 @@ public class User extends BaseEntity{
     @Column(name = "status", nullable = false)
     private UserStatus userStatus;
 
+    @OneToMany(mappedBy = "user",
+    cascade = CascadeType.ALL)
+    private List<HotelHallsOrder> hotelHallsOrders;
 
     @OneToMany(mappedBy = "user",
     cascade = CascadeType.ALL)
-    private List<HotelHallsOrders> hotelHallsOrders;
-
-    @OneToMany(mappedBy = "user",
-    cascade = CascadeType.ALL)
-    private List<RoomOrders> roomOrders;
+    private List<RoomOrder> roomOrders;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<ObjectOrders> objectOrders;
+    private List<ObjectOrder> objectOrders;
 }

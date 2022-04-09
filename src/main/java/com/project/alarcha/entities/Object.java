@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Objects extends BaseEntity {
+public class Object extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -20,6 +20,10 @@ public class Objects extends BaseEntity {
     @JoinColumn(name = "object_type_id", referencedColumnName = "id")
     private ObjectType objectType;
 
-    @OneToMany(mappedBy = "objects", cascade = CascadeType.ALL)
-    private List<ObjectOrders> objectOrders;
+    @OneToMany(mappedBy = "object", cascade = CascadeType.ALL)
+    private List<ObjectOrder> objectOrders;
+
+    @ManyToOne
+    @JoinColumn(name = "area_id", referencedColumnName = "id")
+    private Area area;
 }

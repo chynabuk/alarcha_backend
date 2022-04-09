@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "object_type")
+@Table(name = "object_types")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,5 +23,5 @@ public class ObjectType extends BaseEntity {
     private List<Menu> menus;
 
     @OneToMany(mappedBy = "objectType", cascade = CascadeType.ALL)
-    private List<Objects> objects;
+    private List<Object> objects;
 }

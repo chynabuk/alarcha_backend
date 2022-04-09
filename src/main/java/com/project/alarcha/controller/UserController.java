@@ -1,6 +1,10 @@
 package com.project.alarcha.controller;
 
-import com.project.alarcha.models.*;
+import com.project.alarcha.models.TokenModel.RefreshTokenRequest;
+import com.project.alarcha.models.TokenModel.UserTokenModel;
+import com.project.alarcha.models.UserModel.UserAuthModel;
+import com.project.alarcha.models.UserModel.UserRegistrationModel;
+import com.project.alarcha.models.UserModel.UserToSendModel;
 import com.project.alarcha.service.RefreshTokenService;
 import com.project.alarcha.service.UserService;
 import com.project.alarcha.util.ResponseMessage;
@@ -14,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;

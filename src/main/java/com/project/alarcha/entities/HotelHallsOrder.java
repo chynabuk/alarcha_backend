@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class HotelHallsOrders extends BaseEntity{
+public class HotelHallsOrder extends BaseEntity{
 
     @Column(name = "registration_date", nullable = false)
     private Date registration_date;

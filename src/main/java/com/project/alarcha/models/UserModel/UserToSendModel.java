@@ -1,4 +1,4 @@
-package com.project.alarcha.models;
+package com.project.alarcha.models.UserModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

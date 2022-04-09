@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Rooms extends BaseEntity{
+public class Room extends BaseEntity{
 
     @Column(name = "room_number", nullable = false)
     private int room_number;
@@ -38,7 +38,7 @@ public class Rooms extends BaseEntity{
     private Hotel hotel;
 
 
-    @OneToMany(mappedBy = "rooms",
+    @OneToMany(mappedBy = "room",
     cascade = CascadeType.ALL)
-    private List<RoomOrders> roomOrders;
+    private List<RoomOrder> roomOrders;
 }

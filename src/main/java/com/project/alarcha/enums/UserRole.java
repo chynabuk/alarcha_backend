@@ -2,8 +2,8 @@ package com.project.alarcha.enums;
 
 public enum UserRole {
     CLIENT,
-    MANAGER,
-    ADMIN;
+    ADMIN,
+    SUPER_ADMIN;
 
     UserRole(){}
 

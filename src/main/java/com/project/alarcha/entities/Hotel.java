@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "hotel")
+@Table(name = "hotels")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,12 +17,16 @@ public class Hotel extends BaseEntity{
 
     @OneToMany(mappedBy = "hotel",
     cascade = CascadeType.ALL)
-    private List<Rooms> rooms;
+    private List<Room> rooms;
 
     @OneToMany(mappedBy = "hotel",
     cascade = CascadeType.ALL)
     private List<HotelHallsType> hotelHalls;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "hotel_name", nullable = false)
+    private String hotelName;
+
+    @ManyToOne
+    @JoinColumn(name = "area_id", referencedColumnName = "id")
+    private Area area;
 }

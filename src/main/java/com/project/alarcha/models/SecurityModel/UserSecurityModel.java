@@ -1,13 +1,15 @@
-package com.project.alarcha.models;
+package com.project.alarcha.models.SecurityModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 @Getter
@@ -21,11 +23,11 @@ public class UserSecurityModel implements UserDetails {
     private String email;
     private String password;
     private String phone;
-    private Set<RoleSecurityModel> userRole;
+    private RoleSecurityModel userRole;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userRole;
+        return Collections.singletonList(new SimpleGrantedAuthority(userRole.getAuthority()));
     }
 
     @Override

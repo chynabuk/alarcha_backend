@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "menu_section")
+@Table(name = "menu_sections")
 @Getter
 @Setter
 @NoArgsConstructor

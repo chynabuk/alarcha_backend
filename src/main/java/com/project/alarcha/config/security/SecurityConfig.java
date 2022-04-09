@@ -43,9 +43,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable().cors().and()
                 .authorizeRequests()
-                .antMatchers("/api/user/sign-in").permitAll()
-                .antMatchers("/api/user/refreshtoken").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/user/sign-up").permitAll()
+                .antMatchers("/user/sign-in").permitAll()
+                .antMatchers("/user/refreshtoken").permitAll()
+                .antMatchers( "/user/sign-up").permitAll()
+                .antMatchers("/area/create").hasAuthority("SUPER_ADMIN")
                 .anyRequest().permitAll();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
