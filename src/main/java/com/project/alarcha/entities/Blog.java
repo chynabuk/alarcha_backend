@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Blogs extends BaseEntity {
+public class Blog extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 

@@ -1,7 +1,9 @@
 package com.project.alarcha.service;
 
-import com.project.alarcha.models.AreaModel.AreaCreateModel;
+import com.project.alarcha.entities.Area;
+import com.project.alarcha.models.AreaModel.AreaModel;
 
 public interface AreaService{
-    AreaCreateModel createArea(AreaCreateModel areaCreateModel);
+    AreaModel createArea(AreaModel areaCreateModel);
+    Area getById(Long areaId);
 }

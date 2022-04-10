@@ -72,6 +72,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void createSuperAdmin() {
+        User user = new User();
+        user.setFirstName("Kuba");
+        user.setLastName("Kushtarbekov");
+        user.setEmail("kuba@gmail.com");
+        user.setPassword(encoder.encode("kuba12345"));
+        user.setPhone("+996 777777777");
+        user.setUserStatus(UserStatus.ACTIVE);
+        user.setUserRole(UserRole.SUPER_ADMIN);
+        userRepository.save(user);
+    }
+
+    @Override
     public List<UserToSendModel> getAllUsersToSendDTO(Integer numberPage, Integer sizePage) {
         return null;
     }

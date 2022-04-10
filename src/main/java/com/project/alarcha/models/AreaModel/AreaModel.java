@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AreaCreateModel {
+public class AreaModel {
     private String areaName;
     private String email;
     private List<Object> objects;

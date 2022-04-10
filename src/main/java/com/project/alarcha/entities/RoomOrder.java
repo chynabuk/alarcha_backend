@@ -13,7 +13,6 @@ import java.sql.Date;
 @AllArgsConstructor
 @ToString
 public class RoomOrder extends BaseEntity{
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -22,9 +21,9 @@ public class RoomOrder extends BaseEntity{
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @Column(name = "start_date", nullable = false)
+    private Date startDate;
 
-
-    @Column(name = "registration_date", nullable = false)
-    private Date registration_date;
-
+    @Column(name = "end_date", nullable = false)
+    private Date endDate;
 }

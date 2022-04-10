@@ -21,7 +21,7 @@ public class Hotel extends BaseEntity{
 
     @OneToMany(mappedBy = "hotel",
     cascade = CascadeType.ALL)
-    private List<HotelHallsType> hotelHalls;
+    private List<HotelHall> hotelHalls;
 
     @Column(name = "hotel_name", nullable = false)
     private String hotelName;

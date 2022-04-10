@@ -1,7 +1,7 @@
 package com.project.alarcha.controller;
 
-import com.project.alarcha.models.AreaModel.AreaModel;
-import com.project.alarcha.service.AreaService;
+import com.project.alarcha.models.HotelModel.HotelModel;
+import com.project.alarcha.service.HotelService;
 import com.project.alarcha.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/area")
-public class AreaController {
+@RequestMapping("/hotel")
+public class HotelController {
     @Autowired
-    private AreaService areaService;
+    private HotelService hotelService;
 
     @PostMapping("/create")
-    public ResponseMessage<AreaModel> createArea(@RequestBody AreaModel areaCreateModel){
-        return new ResponseMessage<AreaModel>().prepareSuccessMessage(areaService.createArea(areaCreateModel));
+    public ResponseMessage<HotelModel> createArea(@RequestBody HotelModel hotelModel){
+        return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.createHotel(hotelModel));
     }
+
 }

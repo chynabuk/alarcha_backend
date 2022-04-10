@@ -6,19 +6,19 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "hotel_halls_type")
+@Table(name = "hotel_halls")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class HotelHallsType extends BaseEntity{
+public class HotelHall extends BaseEntity{
 
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "price", nullable = false)
-    private float price;
+    private Float price;
 
     @ManyToOne
     @JoinColumn(name = "hotel_id")
@@ -26,6 +26,6 @@ public class HotelHallsType extends BaseEntity{
 
     @OneToMany(mappedBy = "hotelHallsType",
     cascade = CascadeType.ALL)
-    private List<HotelHallsOrder>  hotelHallsOrders;
+    private List<HotelHallOrder> hotelHallOrders;
 
 }

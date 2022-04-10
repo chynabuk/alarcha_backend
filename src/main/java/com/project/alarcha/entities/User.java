@@ -40,7 +40,7 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "user",
     cascade = CascadeType.ALL)
-    private List<HotelHallsOrder> hotelHallsOrders;
+    private List<HotelHallOrder> hotelHallOrders;
 
     @OneToMany(mappedBy = "user",
     cascade = CascadeType.ALL)

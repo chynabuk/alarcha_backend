@@ -6,20 +6,20 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "hotelHallsOrders")
+@Table(name = "hotel_hall_orders")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class HotelHallsOrder extends BaseEntity{
+public class HotelHallOrder extends BaseEntity{
 
     @Column(name = "registration_date", nullable = false)
     private Date registration_date;
 
     @ManyToOne
     @JoinColumn(name = "service_id")
-    private HotelHallsType hotelHallsType;
+    private HotelHall hotelHall;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

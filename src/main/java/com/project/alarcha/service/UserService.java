@@ -18,4 +18,6 @@ public interface UserService {
     User getById(Long id);
     UserToSendModel deleteUser(Long userId);
     UserToSendModel updateUser(UserUpdateModel userUpdateModel);
+
+    void createSuperAdmin();
 }
