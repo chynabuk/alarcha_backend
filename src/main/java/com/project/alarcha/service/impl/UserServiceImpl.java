@@ -24,7 +24,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -73,20 +75,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createSuperAdmin() {
-        User user = new User();
-        user.setFirstName("Kuba");
-        user.setLastName("Kushtarbekov");
-        user.setEmail("kuba@gmail.com");
-        user.setPassword(encoder.encode("kuba12345"));
-        user.setPhone("+996 777777777");
-        user.setUserStatus(UserStatus.ACTIVE);
-        user.setUserRole(UserRole.SUPER_ADMIN);
-        userRepository.save(user);
+//        User user = new User();
+//        user.setFirstName("Kuba");
+//        user.setLastName("Kushtarbekov");
+//        user.setEmail("kuba@gmail.com");
+//        user.setPassword(encoder.encode("kuba12345"));
+//        user.setPhone("+996 777777777");
+//        user.setUserStatus(UserStatus.ACTIVE);
+//        user.setUserRole(UserRole.SUPER_ADMIN);
+//        userRepository.save(user);
     }
 
     @Override
-    public List<UserToSendModel> getAllUsersToSendDTO(Integer numberPage, Integer sizePage) {
-        return null;
+    public List<UserToSendModel> getAllUsersToSendModel() {
+        List<User> users = userRepository.findAll()
+                .stream()
+                .filter(user -> !user.getIsDeleted())
+                .collect(Collectors.toList());
+
+        List<UserToSendModel> userToSendModels = new ArrayList<>();
+
+        for (User user : users){
+            userToSendModels.add(initUserToSendModel(user));
+        }
+
+        return userToSendModels;
     }
 
     @Override
@@ -101,23 +114,66 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(Long id) {
-        return null;
+        return userRepository.getById(id);
     }
 
     @Override
     public UserToSendModel deleteUser(Long userId) {
-        return null;
+        User user = getById(userId);
+
+        if (user.getIsDeleted()){
+            throw new ApiFailException("User is already deleted");
+        }
+
+        user.setIsDeleted(true);
+
+        userRepository.save(user);
+
+        return initUserToSendModel(user);
     }
 
     @Override
     public UserToSendModel updateUser(UserUpdateModel userUpdateModel) {
-        return null;
+        User user = getById(userUpdateModel.getId());
+
+        setValuesOnUpdate(user, userUpdateModel);
+
+        userRepository.save(user);
+
+        return initUserToSendModel(user);
     }
 
     private void checkEmailForUnique(String email) {
         User dataUserByEmail = getByEmail(email);
         if (dataUserByEmail != null)
             throw new ApiFailException(email + " is already existed");
+    }
+
+    private void setValuesOnUpdate(User user, UserUpdateModel userUpdateModel){
+        String fName = userUpdateModel.getFirstName();
+        String lName = userUpdateModel.getLastName();
+        String email = userUpdateModel.getEmail();
+        String password = userUpdateModel.getPassword();
+        String phone = userUpdateModel.getPhone();
+
+        if (fName != null){
+            user.setFirstName(fName);
+        }
+        if (lName != null){
+            user.setLastName(lName);
+        }
+        if (email != null){
+            checkEmailForUnique(email);
+
+            user.setEmail(email);
+        }
+        if (password != null){
+            user.setPassword(encoder.encode(password));
+        }
+        if (phone != null){
+            user.setPhone(phone);
+        }
+
     }
 
     private User initAndSaveUser(UserRegistrationModel userRegistrationModel) {
