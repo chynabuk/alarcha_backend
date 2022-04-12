@@ -24,7 +24,7 @@ public class HotelHall extends BaseEntity{
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
-    @OneToMany(mappedBy = "hotelHallsType",
+    @OneToMany(mappedBy = "hotelHall",
     cascade = CascadeType.ALL)
     private List<HotelHallOrder> hotelHallOrders;
 
