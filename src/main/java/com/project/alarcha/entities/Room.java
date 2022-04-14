@@ -1,11 +1,9 @@
 package com.project.alarcha.entities;
 
 import com.project.alarcha.enums.RoomStatus;
-import com.project.alarcha.enums.RoomType;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -25,8 +23,11 @@ public class Room extends BaseEntity{
     private RoomStatus roomStatus;
 
     @ManyToOne
-    @JoinColumn(name = "hotel_id")
-    private Hotel hotel;
+    @JoinColumn(name = "room_type_id", nullable = false)
+    private RoomType roomType;
+
+    @Column(name = "hotel_name")
+    private String hotelName;
 
     @OneToMany(mappedBy = "room",
     cascade = CascadeType.ALL)
@@ -34,10 +35,4 @@ public class Room extends BaseEntity{
 
     @Column(name = "bed_number", nullable = false)
     private Integer bedNumber;
-
-    @Column(name = "type", nullable = false)
-    private RoomType roomType;
-
-    @Column(name = "price", nullable = false)
-    private float price;
 }

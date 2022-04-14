@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface RoomService {
     RoomModel createRoom(RoomModel roomModel);
-    List<RoomModel> createRooms(List<RoomModel> roomModels);
+    List<Room> createRooms(List<RoomModel> roomModels);
     List<Room> convertToRoom(List<RoomModel> roomModels);
+    RoomModel getById(Long roomId);
+    List<RoomModel> getAll();
+    RoomModel updateRoom(RoomModel roomModel);
+    RoomModel deleteRoom(Long roomId);
 }

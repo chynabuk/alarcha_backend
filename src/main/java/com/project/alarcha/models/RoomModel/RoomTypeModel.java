@@ -1,6 +1,5 @@
-package com.project.alarcha.models.HotelModel;
+package com.project.alarcha.models.RoomModel;
 
-import com.project.alarcha.entities.HotelHallOrder;
 import com.project.alarcha.models.BaseModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,10 +10,9 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class HotelHallModel extends BaseModel {
-    private String name;
+public class RoomTypeModel extends BaseModel {
+    private String type;
     private Float price;
     private String hotelName;
-    private List<HotelHallOrder> hotelHallOrders;
-
+    private List<RoomModel> roomModels;
 }

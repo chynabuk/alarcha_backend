@@ -1,6 +1,9 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Area;
+import com.project.alarcha.entities.User;
+import com.project.alarcha.enums.UserRole;
+import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.AreaModel.AreaModel;
 import com.project.alarcha.repositories.AreaRepository;
 import com.project.alarcha.service.AreaService;
@@ -28,16 +31,72 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
+    public AreaModel updateArea(AreaModel areaModel) {
+        Area area = getById(areaModel.getId());
+        if (area != null){
+            if (!area.getIsDeleted()){
+                setValuesOnUpdateArea(area, areaModel);
+            }
+        }
+        areaRepository.save(area);
+
+        return areaModel;
+    }
+
+    @Override
+    public AreaModel deleteArea(Long areaId) {
+        Area area = getById(areaId);
+
+        if (area != null){
+            if (area.getIsDeleted()){
+                throw new ApiFailException("Area is already deleted");
+            }
+            area.setIsDeleted(true);
+        }
+        areaRepository.save(area);
+
+        return toModel(area);
+    }
+
+    @Override
     public Area getById(Long areaId) {
         return areaRepository.getById(areaId);
     }
 
-    public Area initAndGet(Area area, AreaModel areaCreateModel){
+    private Area initAndGet(Area area, AreaModel areaCreateModel){
         area.setAreaName(areaCreateModel.getAreaName());
-        area.setObjects(areaCreateModel.getObjects());
-        area.setHotels(areaCreateModel.getHotels());
-        area.setUser(userService.getByEmail(areaCreateModel.getEmail()));
+//        area.setObjects(areaCreateModel.getObjects());
+//        area.setHotels(areaCreateModel.getHotels());
+        area.setIsDeleted(false);
+        User user = userService.getByEmail(areaCreateModel.getEmail());
+
+        area.setUser(user);
 
         return area;
+    }
+
+    private void setValuesOnUpdateArea(Area area, AreaModel areaModel){
+        String areaName = areaModel.getAreaName();
+        User user = userService.getByEmail(areaModel.getEmail());
+//        List<Hotel> hotels = areaModel.getHotels();
+//        List<Object> objects = areaModel.getObjects();
+
+        if (areaName != null){
+            area.setAreaName(areaName);
+        }
+
+        if (user != null){
+            if (!user.getIsDeleted() && user.getUserRole() == UserRole.ADMIN){
+                area.setUser(user);
+            }
+        }
+    }
+
+    private AreaModel toModel(Area area){
+        AreaModel areaModel = new AreaModel();
+        areaModel.setAreaName(area.getAreaName());
+        areaModel.setEmail(areaModel.getEmail());
+
+        return areaModel;
     }
 }

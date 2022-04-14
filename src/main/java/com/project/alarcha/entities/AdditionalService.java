@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "additional_service")
+@Table(name = "additional_services")
 @Getter
 @Setter
 @NoArgsConstructor
