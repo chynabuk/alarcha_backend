@@ -2,6 +2,7 @@ package com.project.alarcha.models.AreaModel;
 
 import com.project.alarcha.entities.Hotel;
 import com.project.alarcha.entities.Object;
+import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.models.BaseModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,6 @@ import java.util.List;
 public class AreaModel extends BaseModel {
     private String areaName;
     private String email;
-    private List<Object> objects;
+    private List<ObjectType> objectTypes;
     private List<Hotel> hotels;
 }

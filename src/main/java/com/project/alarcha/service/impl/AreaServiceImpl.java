@@ -34,7 +34,7 @@ public class AreaServiceImpl implements AreaService {
 
     public Area initAndGet(Area area, AreaModel areaCreateModel){
         area.setAreaName(areaCreateModel.getAreaName());
-        area.setObjects(areaCreateModel.getObjects());
+        area.setObjectTypes(areaCreateModel.getObjectTypes());
         area.setHotels(areaCreateModel.getHotels());
         area.setUser(userService.getByEmail(areaCreateModel.getEmail()));
 

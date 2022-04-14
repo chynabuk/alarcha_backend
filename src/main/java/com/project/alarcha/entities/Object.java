@@ -22,8 +22,4 @@ public class Object extends BaseEntity {
 
     @OneToMany(mappedBy = "object", cascade = CascadeType.ALL)
     private List<ObjectOrder> objectOrders;
-
-    @ManyToOne
-    @JoinColumn(name = "area_id", referencedColumnName = "id")
-    private Area area;
 }

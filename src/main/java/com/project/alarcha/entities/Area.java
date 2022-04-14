@@ -23,7 +23,7 @@ public class Area extends BaseEntity{
     private User user;
 
     @OneToMany(mappedBy = "area", cascade = CascadeType.ALL)
-    private List<Object> objects;
+    private List<ObjectType> objectTypes;
 
     @OneToMany(mappedBy = "area", cascade = CascadeType.ALL)
     private List<Hotel> hotels;

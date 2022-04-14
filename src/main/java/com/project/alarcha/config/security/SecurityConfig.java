@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/sign-in").permitAll()
                 .antMatchers("/user/refreshtoken").permitAll()
                 .antMatchers( "/user/sign-up").permitAll()
-                .antMatchers("/area/create").hasAuthority("SUPER_ADMIN")
+//                .antMatchers("/area/create").hasAuthority("SUPER_ADMIN")
                 .anyRequest().permitAll();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
