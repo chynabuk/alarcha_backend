@@ -2,6 +2,7 @@ package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Room;
 import com.project.alarcha.entities.RoomType;
+import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.models.RoomModel.RoomTypeModel;
 import com.project.alarcha.repositories.RoomTypeRepository;
@@ -17,6 +18,9 @@ import java.util.List;
 public class RoomTypeServiceImpl implements RoomTypeService {
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    private RoomTypeRepository roomTypeRepository;
 
     @Override
     public List<RoomType> createRoomTypes(List<RoomTypeModel> roomTypeModels) {
@@ -54,12 +58,26 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     @Override
     public RoomTypeModel getById(Long roomTypeId) {
-        return null;
+        RoomType roomType = roomTypeRepository.getById(roomTypeId);
+
+        if (roomType == null){
+            throw new ApiFailException("RoomType not found");
+        }
+
+        return toModelDetailed(roomType);
     }
 
     @Override
     public List<RoomTypeModel> getAll() {
-        return null;
+        List<RoomTypeModel> roomTypeModels = new ArrayList<>();
+
+        for (RoomType roomType : roomTypeRepository.findAll()){
+            if (!roomType.getIsDeleted()){
+                roomTypeModels.add(toModel(roomType));
+            }
+        }
+
+        return roomTypeModels;
     }
 
     @Override
@@ -69,6 +87,39 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     @Override
     public RoomTypeModel deleteRoomType(Long roomTypeId) {
-        return null;
+        RoomType roomType = roomTypeRepository.getById(roomTypeId);
+
+        if (roomType != null){
+            throw new ApiFailException("RoomType not found");
+        }
+
+        if (roomType.getIsDeleted()){
+            throw new ApiFailException("RoomType is already deleted");
+        }
+
+        roomType.setIsDeleted(true);
+
+        return toModel(roomType);
+    }
+
+    private RoomTypeModel toModel(RoomType roomType){
+        RoomTypeModel roomTypeModel = new RoomTypeModel();
+        roomTypeModel.setId(roomType.getId());
+        roomTypeModel.setHotelName(roomType.getHotel().getHotelName());
+        roomTypeModel.setType(roomType.getType());
+        roomTypeModel.setPrice(roomType.getPrice());
+
+        return roomTypeModel;
+    }
+
+    private RoomTypeModel toModelDetailed(RoomType roomType){
+        RoomTypeModel roomTypeModel = new RoomTypeModel();
+        roomTypeModel.setId(roomType.getId());
+        roomTypeModel.setHotelName(roomType.getHotel().getHotelName());
+        roomTypeModel.setType(roomType.getType());
+        roomTypeModel.setPrice(roomType.getPrice());
+        roomTypeModel.setRoomModels(roomService.getByRoomType(roomType));
+
+        return roomTypeModel;
     }
 }

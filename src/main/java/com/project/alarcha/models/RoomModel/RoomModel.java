@@ -1,6 +1,5 @@
 package com.project.alarcha.models.RoomModel;
 
-import com.project.alarcha.entities.RoomType;
 import com.project.alarcha.enums.RoomStatus;
 import com.project.alarcha.models.BaseModel;
 import lombok.Getter;

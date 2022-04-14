@@ -1,6 +1,7 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Room;
+import com.project.alarcha.entities.RoomType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.repositories.RoomRepository;
@@ -73,6 +74,19 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<RoomModel> getByRoomType(RoomType roomType) {
+        List<RoomModel> roomModels = new ArrayList<>();
+
+        for (Room room : roomType.getRooms()){
+            if (!room.getIsDeleted()){
+                roomModels.add(toModel(room));
+            }
+        }
+
+        return roomModels;
+    }
+
+    @Override
     public List<RoomModel> getAll() {
         List<RoomModel> roomModels = new ArrayList<>();
 
@@ -124,6 +138,7 @@ public class RoomServiceImpl implements RoomService {
 
     private RoomModel toModel(Room room){
         RoomModel roomModel = new RoomModel();
+        roomModel.setId(room.getId());
         roomModel.setRoomNumber(room.getRoomNumber());
         roomModel.setRoomStatus(room.getRoomStatus());
         roomModel.setBedNumber(room.getBedNumber());

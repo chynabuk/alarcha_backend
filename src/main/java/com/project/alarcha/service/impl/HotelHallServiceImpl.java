@@ -105,6 +105,7 @@ public class HotelHallServiceImpl implements HotelHallService {
 
     private HotelHallModel toModel(HotelHall hotelHall){
         HotelHallModel hotelHallModel = new HotelHallModel();
+        hotelHallModel.setId(hotelHall.getId());
         hotelHallModel.setName(hotelHall.getName());
         hotelHallModel.setPrice(hotelHall.getPrice());
         hotelHallModel.setHotelName(hotelHall.getHotel().getHotelName());

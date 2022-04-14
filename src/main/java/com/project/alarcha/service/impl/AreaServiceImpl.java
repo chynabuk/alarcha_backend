@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @Service
 public class AreaServiceImpl implements AreaService {
@@ -63,6 +66,18 @@ public class AreaServiceImpl implements AreaService {
         return areaRepository.getById(areaId);
     }
 
+    @Override
+    public List<AreaModel> getAll() {
+        List<AreaModel> areaModels = new ArrayList<>();
+
+        for (Area area : areaRepository.findAll()){
+            if (!area.getIsDeleted()){
+                areaModels.add(toModel(area));
+            }
+        }
+        return areaModels;
+    }
+
     private Area initAndGet(Area area, AreaModel areaCreateModel){
         area.setAreaName(areaCreateModel.getAreaName());
 //        area.setObjects(areaCreateModel.getObjects());
@@ -94,8 +109,9 @@ public class AreaServiceImpl implements AreaService {
 
     private AreaModel toModel(Area area){
         AreaModel areaModel = new AreaModel();
+        areaModel.setId(area.getId());
         areaModel.setAreaName(area.getAreaName());
-        areaModel.setEmail(areaModel.getEmail());
+        areaModel.setEmail(area.getUser().getEmail());
 
         return areaModel;
     }
