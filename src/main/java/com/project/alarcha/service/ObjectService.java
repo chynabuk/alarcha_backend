@@ -6,6 +6,6 @@ import com.project.alarcha.models.ObjectModel.ObjectModel;
 import java.util.List;
 
 public interface ObjectService {
-    ObjectModel createObject(Object object);
+    List<Object> createObjects(List<ObjectModel> objectModels);
     List<Object> convertToObjects(List<ObjectModel> objectModels);
 }

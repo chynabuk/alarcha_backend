@@ -16,20 +16,21 @@ public class ObjectServiceImpl implements ObjectService {
     private AreaService areaService;
 
     @Override
-    public ObjectModel createObject(Object object) {
-        return null;
-    }
-
-    @Override
-    public List<Object> convertToObjects(List<ObjectModel> objectModels) {
+    public List<Object> createObjects(List<ObjectModel> objectModels) {
         List<Object> objects = new ArrayList<>();
 
         for(ObjectModel objectModel : objectModels){
             Object object = new Object();
             object.setName(objectModel.getName());
+            object.setIsDeleted(false);
 
             objects.add(object);
         }
         return objects;
+    }
+
+    @Override
+    public List<Object> convertToObjects(List<ObjectModel> objectModels) {
+        return null;
     }
 }

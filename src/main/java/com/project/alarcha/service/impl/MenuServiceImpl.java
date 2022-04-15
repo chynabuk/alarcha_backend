@@ -10,13 +10,9 @@ import java.util.List;
 
 @Service
 public class MenuServiceImpl implements MenuService {
-    @Override
-    public MenuModel createMenu(Menu menu) {
-        return null;
-    }
 
     @Override
-    public List<Menu> convertToMenus(List<MenuModel> menuModels) {
+    public List<Menu> createMenus(List<MenuModel> menuModels) {
         List<Menu> menus = new ArrayList<>();
 
         for(MenuModel menuModel : menuModels){
@@ -24,9 +20,15 @@ public class MenuServiceImpl implements MenuService {
             menu.setName(menuModel.getName());
             menu.setPrice(menuModel.getPrice());
             menu.setDescription(menuModel.getDescription());
+            menu.setIsDeleted(false);
 
             menus.add(menu);
         }
         return menus;
+    }
+
+    @Override
+    public List<Menu> convertToMenus(List<MenuModel> menuModels) {
+        return null;
     }
 }

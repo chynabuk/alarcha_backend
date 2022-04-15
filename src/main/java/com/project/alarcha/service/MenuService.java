@@ -6,6 +6,6 @@ import com.project.alarcha.models.MenuModel.MenuModel;
 import java.util.List;
 
 public interface MenuService {
-    MenuModel createMenu(Menu menu);
+    List<Menu> createMenus(List<MenuModel> menuModels);
     List<Menu> convertToMenus(List<MenuModel> menuModels);
 }

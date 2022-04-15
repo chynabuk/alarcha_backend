@@ -13,4 +13,6 @@ import java.util.List;
 public class MenuSectionModel extends BaseModel {
     private String name;
     private List<MenuModel> menuModels;
+    private Long objectTypeId;
+    private String objectTypeName;
 }

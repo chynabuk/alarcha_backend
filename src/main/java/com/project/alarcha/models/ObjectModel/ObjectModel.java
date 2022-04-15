@@ -10,5 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ObjectModel extends BaseEntity {
     private String name;
-    private Long object_type_id;
+    private Long objectTypeId;
 }
