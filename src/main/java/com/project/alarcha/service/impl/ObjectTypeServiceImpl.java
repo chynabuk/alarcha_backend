@@ -10,6 +10,7 @@ import com.project.alarcha.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,6 +36,35 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         return objectTypeModel;
     }
 
+    @Override
+    public ObjectTypeModel getById(Long objectTypeId) {
+        ObjectType objectType = objectTypeRepository.getById(objectTypeId);
+        return toModel(objectType);
+    }
+
+    @Override
+    public List<ObjectTypeModel> getAll() {
+        List<ObjectTypeModel> objectTypeModels = new ArrayList<>();
+
+        for(ObjectType objectType : objectTypeRepository.findAll()){
+            if(!objectType.getIsDeleted()){
+                objectTypeModels.add(toModel(objectType));
+            }
+        }
+
+        return objectTypeModels;
+    }
+
+    @Override
+    public ObjectTypeModel updateObjectType(ObjectTypeModel objectTypeModel) {
+        return null;
+    }
+
+    @Override
+    public ObjectTypeModel deleteObjectType(Long ObjectTypeId) {
+        return null;
+    }
+
     private ObjectType initAndGet(ObjectType objectType, ObjectTypeModel objectTypeModel){
         objectType.setName(objectTypeModel.getName());
         objectType.setPrice(objectTypeModel.getPrice());
@@ -54,5 +84,17 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectType.setIsDeleted(false);
 
         return objectType;
+    }
+
+    private ObjectTypeModel toModel(ObjectType objectType){
+        ObjectTypeModel objectTypeModel = new ObjectTypeModel();
+        objectTypeModel.setId(objectType.getId());
+        objectTypeModel.setName(objectType.getName());
+        objectTypeModel.setPrice(objectType.getPrice());
+        objectTypeModel.setMenuSectionModels(menuSectionService.getAll());
+        objectTypeModel.setObjectModels(objectService.getAll());
+        objectTypeModel.setAreaName(objectType.getArea().getAreaName());
+
+        return objectTypeModel;
     }
 }

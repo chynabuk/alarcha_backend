@@ -48,4 +48,49 @@ public class MenuSectionServiceImpl implements MenuSectionService {
 
         return menuSections;
     }
+
+    @Override
+    public MenuSectionModel getById(Long menuSectionId) {
+        return null;
+    }
+
+    @Override
+    public List<MenuSectionModel> getAll() {
+        List<MenuSectionModel> menuSectionModels = new ArrayList<>();
+
+        for(MenuSection menuSection : menuSectionRepository.findAll()){
+            if(!menuSection.getIsDeleted()){
+                menuSectionModels.add(toModelDetailed(menuSection));
+            }
+        }
+        return menuSectionModels;
+    }
+
+    @Override
+    public MenuSectionModel updateMenuSection(MenuSectionModel menuSectionModel) {
+        return null;
+    }
+
+    @Override
+    public MenuSectionModel deleteMenuSection(Long menuSectionId) {
+        return null;
+    }
+
+    private MenuSectionModel toModel(MenuSection menuSection){
+        MenuSectionModel menuSectionModel = new MenuSectionModel();
+        menuSectionModel.setId(menuSection.getId());
+        menuSectionModel.setObjectTypeName(menuSection.getObjectType().getName());
+
+        return menuSectionModel;
+    }
+
+    private MenuSectionModel toModelDetailed(MenuSection menuSection){
+        MenuSectionModel menuSectionModel = new MenuSectionModel();
+        menuSectionModel.setId(menuSection.getId());
+        menuSectionModel.setName(menuSection.getName());
+        menuSectionModel.setObjectTypeName(menuSection.getObjectType().getName());
+        menuSectionModel.setMenuModels(menuService.getByMenuSection(menuSection));
+
+        return menuSectionModel;
+    }
 }

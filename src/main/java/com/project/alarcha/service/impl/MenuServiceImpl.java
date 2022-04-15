@@ -1,8 +1,11 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Menu;
+import com.project.alarcha.entities.MenuSection;
 import com.project.alarcha.models.MenuModel.MenuModel;
+import com.project.alarcha.repositories.MenuRepository;
 import com.project.alarcha.service.MenuService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,6 +13,14 @@ import java.util.List;
 
 @Service
 public class MenuServiceImpl implements MenuService {
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Override
+    public MenuModel createMenu(MenuModel menuModel) {
+        return null;
+    }
 
     @Override
     public List<Menu> createMenus(List<MenuModel> menuModels) {
@@ -30,5 +41,58 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<Menu> convertToMenus(List<MenuModel> menuModels) {
         return null;
+    }
+
+    @Override
+    public MenuModel getById(Long menuId) {
+        return null;
+    }
+
+    @Override
+    public List<MenuModel> getByMenuSection(MenuSection menuSection) {
+        List<MenuModel> menuModels = new ArrayList<>();
+
+        for(Menu menu : menuSection.getMenus()){
+            if(!menu.getIsDeleted()){
+                menuModels.add(toModel(menu));
+            }
+        }
+
+        return menuModels;
+    }
+
+    @Override
+    public List<MenuModel> getAll() {
+        List<MenuModel> menuModels = new ArrayList<>();
+
+        for(Menu menu : menuRepository.findAll()){
+            if(!menu.getIsDeleted()){
+                menuModels.add(toModel(menu));
+            }
+        }
+
+        return menuModels;
+    }
+
+    @Override
+    public MenuModel updateMenu(MenuModel menuModel) {
+        return null;
+    }
+
+    @Override
+    public MenuModel deleteMenu(Long menuId) {
+        return null;
+    }
+
+    private MenuModel toModel(Menu menu){
+        MenuModel menuModel = new MenuModel();
+        menuModel.setId(menu.getId());
+        menuModel.setName(menu.getName());
+        menuModel.setPrice(menu.getPrice());
+        menuModel.setDescription(menu.getDescription());
+        menuModel.setObjectTypeName(menu.getMenuSection().getObjectType().getName());
+
+        return menuModel;
+
     }
 }

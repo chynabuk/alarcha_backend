@@ -14,7 +14,8 @@ import java.util.List;
 public class ObjectTypeModel extends BaseModel {
     private String name;
     private float price;
-    private Long areaId;
     private List<MenuSectionModel> menuSectionModels;
     private List<ObjectModel> objectModels;
+    private Long areaId;
+    private String areaName;
 }

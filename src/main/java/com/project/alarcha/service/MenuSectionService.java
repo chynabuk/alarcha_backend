@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface MenuSectionService {
     List<MenuSection> createMenuSections(List<MenuSectionModel> menuSectionModels);
+    MenuSectionModel getById(Long menuSectionId);
+    List<MenuSectionModel> getAll();
+    MenuSectionModel updateMenuSection(MenuSectionModel menuSectionModel);
+    MenuSectionModel deleteMenuSection(Long menuSectionId);
 }
