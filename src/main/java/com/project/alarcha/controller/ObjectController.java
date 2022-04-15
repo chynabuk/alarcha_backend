@@ -1,5 +1,8 @@
 package com.project.alarcha.controller;
 
+import com.project.alarcha.models.MenuModel.MenuModel;
+import com.project.alarcha.models.MenuModel.MenuSectionModel;
+import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
 import com.project.alarcha.service.MenuSectionService;
 import com.project.alarcha.service.MenuService;
@@ -35,4 +38,25 @@ public class ObjectController {
     public ResponseMessage<List<ObjectTypeModel>> getAll(){
         return new ResponseMessage<List<ObjectTypeModel>>().prepareSuccessMessage(objectTypeService.getAll());
     }
+
+//    @DeleteMapping("/delete/objectType/{objectTypeId}")
+//    public ResponseMessage<ObjectTypeModel> deleteObjectType(@PathVariable(name = "object_type_id") Long objectTypeId) {
+//        return new ResponseMessage<ObjectTypeModel>().prepareSuccessMessage(objectTypeService.deleteObjectType(objectTypeId));
+//    }
+//
+//    @DeleteMapping("/delete/menu/{menuId}")
+//    public ResponseMessage<MenuModel> deleteMenu(@PathVariable(name = "menu_id") Long menuId) {
+//        return new ResponseMessage<MenuModel>().prepareSuccessMessage(menuService.deleteMenu(menuId));
+//    }
+//
+//    @DeleteMapping("/delete/{objectId}")
+//    public ResponseMessage<ObjectModel> deleteObject(@PathVariable(name = "object_id") Long objectId) {
+//        return new ResponseMessage<ObjectModel>().prepareSuccessMessage(objectService.deleteObject(objectId));
+//    }
+//
+//    @DeleteMapping("/delete/menuSection/{menuSectionId}")
+//    public ResponseMessage<MenuSectionModel> deleteMenuSection(@PathVariable(name = "menu_section_id") Long menuSectionId) {
+//        return new ResponseMessage<MenuSectionModel>().prepareSuccessMessage(menuSectionService.deleteMenuSection(menuSectionId));
+//    }
+
 }

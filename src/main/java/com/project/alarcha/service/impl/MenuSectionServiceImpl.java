@@ -2,6 +2,7 @@ package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Menu;
 import com.project.alarcha.entities.MenuSection;
+import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.MenuModel.MenuModel;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
 import com.project.alarcha.repositories.MenuSectionRepository;
@@ -73,7 +74,19 @@ public class MenuSectionServiceImpl implements MenuSectionService {
 
     @Override
     public MenuSectionModel deleteMenuSection(Long menuSectionId) {
-        return null;
+        MenuSection menuSection = menuSectionRepository.getById(menuSectionId);
+
+        if(menuSection != null){
+            if(menuSection.getIsDeleted()){
+                throw new ApiFailException("Menu section is already deleted!!");
+            }
+
+            menuSection.setIsDeleted(true);
+        }
+
+        menuSectionRepository.save(menuSection);
+
+        return toModel(menuSection);
     }
 
     private MenuSectionModel toModel(MenuSection menuSection){

@@ -2,6 +2,7 @@ package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Object;
 import com.project.alarcha.entities.ObjectType;
+import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.repositories.ObjectRepository;
 import com.project.alarcha.service.AreaService;
@@ -74,7 +75,19 @@ public class ObjectServiceImpl implements ObjectService {
 
     @Override
     public ObjectModel deleteObject(Long objectId) {
-        return null;
+        Object object = objectRepository.getById(objectId);
+
+        if(object != null){
+            if(object.getIsDeleted()){
+                throw new ApiFailException("Object is already deleted!");
+            }
+
+            object.setIsDeleted(true);
+        }
+
+        objectRepository.save(object);
+
+        return toModel(object);
     }
 
     private ObjectModel toModel(Object object){

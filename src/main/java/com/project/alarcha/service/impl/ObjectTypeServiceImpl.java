@@ -3,6 +3,7 @@ package com.project.alarcha.service.impl;
 import com.project.alarcha.entities.MenuSection;
 import com.project.alarcha.entities.Object;
 import com.project.alarcha.entities.ObjectType;
+import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
 import com.project.alarcha.repositories.ObjectTypeRepository;
@@ -61,8 +62,19 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     }
 
     @Override
-    public ObjectTypeModel deleteObjectType(Long ObjectTypeId) {
-        return null;
+    public ObjectTypeModel deleteObjectType(Long objectTypeId) {
+        ObjectType objectType = objectTypeRepository.getById(objectTypeId);
+
+        if(objectType != null){
+            if(objectType.getIsDeleted()){
+                throw new ApiFailException("ObjectType is already deleted!");
+            }
+            objectType.setIsDeleted(true);
+        }
+
+        objectTypeRepository.save(objectType);
+
+        return toModel(objectType);
     }
 
     private ObjectType initAndGet(ObjectType objectType, ObjectTypeModel objectTypeModel){
