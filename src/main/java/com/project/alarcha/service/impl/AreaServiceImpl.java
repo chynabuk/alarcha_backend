@@ -80,6 +80,9 @@ public class AreaServiceImpl implements AreaService {
 
     private Area initAndGet(Area area, AreaModel areaCreateModel){
         area.setAreaName(areaCreateModel.getAreaName());
+        area.setObjectTypes(areaCreateModel.getObjectTypes());
+        area.setHotels(areaCreateModel.getHotels());
+        area.setUser(userService.getByEmail(areaCreateModel.getEmail()));
 //        area.setObjects(areaCreateModel.getObjects());
 //        area.setHotels(areaCreateModel.getHotels());
         area.setIsDeleted(false);
