@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -48,6 +49,11 @@ public class UserController {
     @PostMapping("/refreshtoken")
     public ResponseMessage<ResponseEntity<?>> refreshtoken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         return new ResponseMessage<ResponseEntity<?>>().prepareSuccessMessage(refreshTokenService.refreshtoken(refreshTokenRequest));
+    }
+
+    @GetMapping("/get-admins")
+    public ResponseMessage<List<UserToSendModel>> getAdmins() {
+        return new ResponseMessage<List<UserToSendModel>>().prepareSuccessMessage(userService.getAdmins());
     }
 
 }

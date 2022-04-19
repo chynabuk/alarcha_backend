@@ -6,6 +6,7 @@ import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
+import com.project.alarcha.repositories.AreaRepository;
 import com.project.alarcha.repositories.ObjectTypeRepository;
 import com.project.alarcha.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     private MenuSectionService menuSectionService;
 
     @Autowired
-    private AreaService areaService;
+    private AreaRepository areaRepository;
 
     @Override
     public ObjectTypeModel createObjectType(ObjectTypeModel objectTypeModel) {
@@ -69,6 +70,8 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
             if(objectType.getIsDeleted()){
                 throw new ApiFailException("ObjectType is already deleted!");
             }
+
+            //TODO cascade deletion
             objectType.setIsDeleted(true);
         }
 
@@ -77,10 +80,23 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         return toModel(objectType);
     }
 
+    @Override
+    public List<ObjectTypeModel> convertToModels(List<ObjectType> objectTypes) {
+        List<ObjectTypeModel> objectTypeModels = new ArrayList<>();
+
+        for (ObjectType objectType : objectTypes){
+            if (!objectType.getIsDeleted()){
+                objectTypeModels.add(toModel(objectType));
+            }
+        }
+
+        return objectTypeModels;
+    }
+
     private ObjectType initAndGet(ObjectType objectType, ObjectTypeModel objectTypeModel){
         objectType.setName(objectTypeModel.getName());
         objectType.setPrice(objectTypeModel.getPrice());
-        objectType.setArea(areaService.getById(objectTypeModel.getAreaId()));
+        objectType.setArea(areaRepository.getById(objectTypeModel.getAreaId()));
 
         List<MenuSectionModel> menuSectionModels = objectTypeModel.getMenuSectionModels();
         menuSectionModels.forEach(menuSectionModel -> menuSectionModel.setObjectTypeName(objectTypeModel.getName()));

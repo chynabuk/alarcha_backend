@@ -37,6 +37,14 @@ public class HotelController {
         return new ResponseMessage<List<HotelModel>>().prepareSuccessMessage(hotelService.getAll());
     }
 
+    @GetMapping("/get/{hotelId}")
+    public ResponseMessage<HotelModel> getById(@PathVariable Long hotelId){
+        return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.getById(hotelId));
+    }
 
+    @DeleteMapping("/delete/{hotelId}")
+    public ResponseMessage<HotelModel> deleteArea(@PathVariable Long hotelId){
+        return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.deleteHotel(hotelId));
+    }
 
 }

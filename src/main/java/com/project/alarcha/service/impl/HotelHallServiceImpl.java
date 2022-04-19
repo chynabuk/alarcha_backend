@@ -24,6 +24,7 @@ public class HotelHallServiceImpl implements HotelHallService {
             HotelHall hotelHall = new HotelHall();
             hotelHall.setName(hotelHallModel.getName());
             hotelHall.setPrice(hotelHallModel.getPrice());
+            hotelHall.setIsDeleted(false);
 
             hotelHalls.add(hotelHall);
         }

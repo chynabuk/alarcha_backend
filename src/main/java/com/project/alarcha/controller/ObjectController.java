@@ -1,8 +1,5 @@
 package com.project.alarcha.controller;
 
-import com.project.alarcha.models.MenuModel.MenuModel;
-import com.project.alarcha.models.MenuModel.MenuSectionModel;
-import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
 import com.project.alarcha.service.MenuSectionService;
 import com.project.alarcha.service.MenuService;
@@ -40,7 +37,7 @@ public class ObjectController {
     }
 
 //    @DeleteMapping("/delete/objectType/{objectTypeId}")
-//    public ResponseMessage<ObjectTypeModel> deleteObjectType(@PathVariable(name = "object_type_id") Long objectTypeId) {
+//    public ResponseMessage<ObjectTypeModel> deleteObjectType(@PathVariable(name = "objectTypeId") Long objectTypeId) {
 //        return new ResponseMessage<ObjectTypeModel>().prepareSuccessMessage(objectTypeService.deleteObjectType(objectTypeId));
 //    }
 //

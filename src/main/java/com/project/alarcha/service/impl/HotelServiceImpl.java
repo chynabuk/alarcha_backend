@@ -7,8 +7,8 @@ import com.project.alarcha.entities.RoomType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallModel;
 import com.project.alarcha.models.HotelModel.HotelModel;
-import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.models.RoomModel.RoomTypeModel;
+import com.project.alarcha.repositories.AreaRepository;
 import com.project.alarcha.repositories.HotelRepository;
 import com.project.alarcha.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class HotelServiceImpl implements HotelService {
     private HotelRepository hotelRepository;
 
     @Autowired
-    private AreaService areaService;
+    private AreaRepository areaRepository;
 
     @Autowired
     private RoomTypeService roomTypeService;
@@ -78,6 +78,18 @@ public class HotelServiceImpl implements HotelService {
             if (hotel.getIsDeleted()){
                 throw new ApiFailException("Hotel is already deleted");
             }
+
+            for (RoomType roomType : hotel.getRoomTypes()){
+                for (Room room : roomType.getRooms()){
+                    room.setIsDeleted(true);
+                }
+                roomType.setIsDeleted(true);
+            }
+
+            for (HotelHall hotelHall : hotel.getHotelHalls()){
+                hotelHall.setIsDeleted(true);
+            }
+
             hotel.setIsDeleted(true);
         }
 
@@ -86,9 +98,21 @@ public class HotelServiceImpl implements HotelService {
         return toModel(hotel);
     }
 
+    @Override
+    public List<HotelModel> convertToModel(List<Hotel> hotels) {
+        List<HotelModel> hotelModels = new ArrayList<>();
+
+        for (Hotel hotel : hotels){
+            if (!hotel.getIsDeleted()){
+                hotelModels.add(toModel(hotel));
+            }
+        }
+        return hotelModels;
+    }
+
     private Hotel initAndGet(Hotel hotel, HotelModel hotelModel){
         hotel.setHotelName(hotelModel.getHotelName());
-        hotel.setArea(areaService.getById(hotelModel.getAreaId()));
+        hotel.setArea(areaRepository.getById(hotelModel.getAreaId()));
 
         List<RoomTypeModel> roomTypeModels = hotelModel.getRoomTypeModels();
         roomTypeModels.forEach(roomTypeModel -> roomTypeModel.setHotelName(hotelModel.getHotelName()));
