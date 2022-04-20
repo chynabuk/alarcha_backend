@@ -1,5 +1,6 @@
 package com.project.alarcha.service;
 
+import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
 
 import java.util.List;
@@ -10,4 +11,5 @@ public interface ObjectTypeService {
     List<ObjectTypeModel> getAll();
     ObjectTypeModel updateObjectType(ObjectTypeModel objectTypeModel);
     ObjectTypeModel deleteObjectType(Long objectTypeId);
+    List<ObjectTypeModel> convertToModels(List<ObjectType> objectTypes);
 }

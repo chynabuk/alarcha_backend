@@ -5,7 +5,6 @@ import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.repositories.ObjectRepository;
-import com.project.alarcha.service.AreaService;
 import com.project.alarcha.service.ObjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +14,6 @@ import java.util.List;
 
 @Service
 public class ObjectServiceImpl implements ObjectService {
-    @Autowired
-    private AreaService areaService;
-
     @Autowired
     private ObjectRepository objectRepository;
 
@@ -47,12 +43,21 @@ public class ObjectServiceImpl implements ObjectService {
 
     @Override
     public ObjectModel getById(Long objectId) {
-        return null;
+        Object object = objectRepository.getById(objectId);
+        return toModel(object);
     }
 
     @Override
     public List<ObjectModel> getByObjectType(ObjectType objectType) {
-        return null;
+        List<ObjectModel> objectModels = new ArrayList<>();
+
+        for(Object object : objectType.getObjects()){
+            if(!object.getIsDeleted()){
+                objectModels.add(toModel(object));
+            }
+        }
+
+        return objectModels;
     }
 
     @Override

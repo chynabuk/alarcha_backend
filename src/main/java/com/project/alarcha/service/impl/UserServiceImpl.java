@@ -119,6 +119,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserToSendModel> getAdmins() {
+        List<UserToSendModel> userToSendModels = new ArrayList<>();
+
+        userRepository.findAll()
+                .stream()
+                .filter(user ->  !user.getIsDeleted() && user.getUserRole() == UserRole.ADMIN)
+                .collect(Collectors.toList())
+                    .forEach(user -> userToSendModels.add(initUserToSendModel(user)));
+
+
+        return userToSendModels;
+    }
+
+    @Override
     public UserToSendModel deleteUser(Long userId) {
         User user = getById(userId);
 

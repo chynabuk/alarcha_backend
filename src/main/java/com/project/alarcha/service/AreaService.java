@@ -8,7 +8,8 @@ import java.util.List;
 public interface AreaService{
     AreaModel createArea(AreaModel areaCreateModel);
     List<AreaModel> getAll();
-    Area getById(Long areaId);
+    AreaModel getById(Long areaId);
+    Area getAreaById(Long areaId);
     AreaModel updateArea(AreaModel areaModel);
     AreaModel deleteArea(Long areaId);
 }

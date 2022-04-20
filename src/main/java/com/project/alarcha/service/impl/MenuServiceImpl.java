@@ -46,7 +46,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public MenuModel getById(Long menuId) {
-        return null;
+        Menu menu = menuRepository.getById(menuId);
+        return toModel(menu);
     }
 
     @Override
@@ -106,6 +107,5 @@ public class MenuServiceImpl implements MenuService {
         menuModel.setObjectTypeName(menu.getMenuSection().getObjectType().getName());
 
         return menuModel;
-
     }
 }

@@ -23,4 +23,14 @@ public class AreaController {
     public ResponseMessage<List<AreaModel>> getAll(){
         return new ResponseMessage<List<AreaModel>>().prepareSuccessMessage(areaService.getAll());
     }
+
+    @GetMapping("/get/{areaId}")
+    public ResponseMessage<AreaModel> getById(@PathVariable Long areaId){
+        return new ResponseMessage<AreaModel>().prepareSuccessMessage(areaService.getById(areaId));
+    }
+
+    @DeleteMapping("/delete/{areaId}")
+    public ResponseMessage<AreaModel> deleteById(@PathVariable Long areaId){
+        return new ResponseMessage<AreaModel>().prepareSuccessMessage(areaService.deleteArea(areaId));
+    }
 }
