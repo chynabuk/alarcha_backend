@@ -24,8 +24,4 @@ public class Menu extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "menu_section_id", referencedColumnName = "id")
     private MenuSection menuSection;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "object_type_id", referencedColumnName = "id")
-    private ObjectType objectType;
 }

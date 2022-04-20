@@ -16,6 +16,7 @@ public interface UserService {
     User getByEmail(String email);
     User getCurrentUser();
     User getById(Long id);
+    List<UserToSendModel> getAdmins();
     UserToSendModel deleteUser(Long userId);
     UserToSendModel updateUser(UserUpdateModel userUpdateModel);
     void createSuperAdmin();

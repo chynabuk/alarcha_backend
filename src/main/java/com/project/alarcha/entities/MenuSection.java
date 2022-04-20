@@ -17,5 +17,9 @@ public class MenuSection extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "menuSection", cascade = CascadeType.ALL)
-    private List<Menu> menu;
+    private List<Menu> menus;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "object_type_id", referencedColumnName = "id")
+    private ObjectType objectType;
 }

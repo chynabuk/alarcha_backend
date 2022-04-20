@@ -14,6 +14,7 @@ import java.util.List;
 public class HotelHallModel extends BaseModel {
     private String name;
     private Float price;
+    private String hotelName;
     private List<HotelHallOrder> hotelHallOrders;
 
 }
