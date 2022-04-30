@@ -74,6 +74,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public Room getByRoomId(Long roomId) {
+        return roomRepository.getById(roomId);
+    }
+
+    @Override
     public List<RoomModel> getByRoomType(RoomType roomType) {
         List<RoomModel> roomModels = new ArrayList<>();
 
