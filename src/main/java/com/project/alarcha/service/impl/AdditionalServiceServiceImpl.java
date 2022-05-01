@@ -13,21 +13,16 @@ public class AdditionalServiceServiceImpl implements AdditionalServiceService {
     @Autowired
     AdditionalServiceRepository additionalServiceRepository;
 
-
     @Override
     public AdditionalServiceModel createAdditionalService(AdditionalServiceModel additionalServiceModel) {
         AdditionalService additionalService = new AdditionalService();
-
         additionalServiceRepository.save(initAndGet(additionalService, additionalServiceModel));
 
         return additionalServiceModel;
     }
     private AdditionalService initAndGet(AdditionalService additionalService, AdditionalServiceModel additionalServiceModel){
-
         additionalService.setName(additionalServiceModel.getName());
-
         additionalService.setPrice(additionalServiceModel.getPrice());
-
         additionalService.setDescription(additionalServiceModel.getDescription());
 
         return additionalService;

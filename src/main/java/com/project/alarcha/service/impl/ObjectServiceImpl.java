@@ -29,6 +29,7 @@ public class ObjectServiceImpl implements ObjectService {
         for(ObjectModel objectModel : objectModels){
             Object object = new Object();
             object.setName(objectModel.getName());
+            object.setNumberOfSeats(objectModel.getNumberOfSeats());
             object.setIsDeleted(false);
 
             objects.add(object);
@@ -45,6 +46,11 @@ public class ObjectServiceImpl implements ObjectService {
     public ObjectModel getById(Long objectId) {
         Object object = objectRepository.getById(objectId);
         return toModel(object);
+    }
+
+    @Override
+    public Object getByObjectId(Long objectId) {
+        return objectRepository.getById(objectId);
     }
 
     @Override

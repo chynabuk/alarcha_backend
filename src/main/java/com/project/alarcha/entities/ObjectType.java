@@ -28,4 +28,10 @@ public class ObjectType extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "area_id", referencedColumnName = "id")
     private Area area;
+
+    @Column(name = "final_price")
+    private Float finalPrice;
+
+    @Column(name = "hours")
+    private Integer hours;
 }

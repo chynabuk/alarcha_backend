@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ObjectModel extends BaseEntity {
     private String name;
+    private Integer numberOfSeats;
     private Long objectTypeId;
     private String objectTypeName;
 }

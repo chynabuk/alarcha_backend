@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Time;
 import java.util.List;
 
 @Getter
@@ -18,4 +19,8 @@ public class ObjectTypeModel extends BaseModel {
     private List<ObjectModel> objectModels;
     private Long areaId;
     private String areaName;
+    private Float finalPrice;
+    private Time starTime;
+    private Time endTime;
+    private Integer hours;
 }
