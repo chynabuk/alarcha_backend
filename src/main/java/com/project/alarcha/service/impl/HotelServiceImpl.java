@@ -11,8 +11,10 @@ import com.project.alarcha.models.RoomModel.RoomTypeModel;
 import com.project.alarcha.repositories.AreaRepository;
 import com.project.alarcha.repositories.HotelRepository;
 import com.project.alarcha.service.*;
+import com.project.alarcha.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,17 +117,33 @@ public class HotelServiceImpl implements HotelService {
         hotel.setArea(areaRepository.getById(hotelModel.getAreaId()));
 
         List<RoomTypeModel> roomTypeModels = hotelModel.getRoomTypeModels();
-        roomTypeModels.forEach(roomTypeModel -> roomTypeModel.setHotelName(hotelModel.getHotelName()));
+        if (roomTypeModels != null){
+            roomTypeModels.forEach(roomTypeModel -> roomTypeModel.setHotelName(hotelModel.getHotelName()));
+            List<RoomType> roomTypes = roomTypeService.createRoomTypes(roomTypeModels);
 
-        System.out.println(hotelModel.getHotelName());
+            if (roomTypes != null){
+                hotel.setRoomTypes(roomTypes);
+                roomTypes.forEach(roomType -> roomType.setHotel(hotel));
+            }
 
-        List<RoomType> roomTypes = roomTypeService.createRoomTypes(roomTypeModels);
-        hotel.setRoomTypes(roomTypes);
-        roomTypes.forEach(roomType -> roomType.setHotel(hotel));
+        }
 
-        List<HotelHall> hotelHalls = hotelHallService.createHotelHalls(hotelModel.getHotelHallModels());
-        hotel.setHotelHalls(hotelHalls);
-        hotelHalls.forEach(hotelHall -> hotelHall.setHotel(hotel));
+        List<HotelHallModel> hotelHallModels = hotelModel.getHotelHallModels();
+        if (hotelHallModels != null){
+            List<HotelHall> hotelHalls = hotelHallService.createHotelHalls(hotelModel.getHotelHallModels());
+            if (hotelHalls != null){
+                hotel.setHotelHalls(hotelHalls);
+                hotelHalls.forEach(hotelHall -> hotelHall.setHotel(hotel));
+            }
+        }
+
+
+//        MultipartFile multipartFile = hotelModel.getMultipartFile();
+//        String imageName = multipartFile.getOriginalFilename();
+//
+//        FileUploadUtil.saveFileToDIR("hotel", multipartFile);
+
+        hotel.setImageName(null);
 
         hotel.setIsDeleted(false);
 

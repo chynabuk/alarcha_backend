@@ -1,26 +1,21 @@
-package com.project.alarcha.models.ObjectModel;
+package com.project.alarcha.models.HotelModel;
 
-import com.project.alarcha.models.BaseModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Date;
 import java.sql.Time;
+import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class ObjectOrderModel extends BaseModel {
+public class HotelHallOrderModel {
+    private Long hotelHallId;
     private Long userId;
-    private Long objectId;
-    private float totalPrice;
-    private String fullName;
-
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date registrationDate;
-
     private Time startTime;
     private Time endTime;
 }

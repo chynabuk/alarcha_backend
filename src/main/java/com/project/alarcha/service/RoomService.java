@@ -11,6 +11,7 @@ public interface RoomService {
     List<Room> createRooms(List<RoomModel> roomModels);
     List<Room> convertToRoom(List<RoomModel> roomModels);
     RoomModel getById(Long roomId);
+    Room getByRoomId(Long roomId);
     List<RoomModel> getByRoomType(RoomType roomType);
     List<RoomModel> getAll();
     RoomModel updateRoom(RoomModel roomModel);

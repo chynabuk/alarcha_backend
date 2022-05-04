@@ -193,6 +193,7 @@ public class UserServiceImpl implements UserService {
 
     private User initAndSaveUser(UserRegistrationModel userRegistrationModel) {
         User user = new User();
+        user.setIsDeleted(false);
         user.setFirstName(userRegistrationModel.getFirstName());
         user.setLastName(userRegistrationModel.getLastName());
         String encodingPassword = encoder.encode(userRegistrationModel.getPassword());

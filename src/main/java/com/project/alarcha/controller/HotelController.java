@@ -1,6 +1,5 @@
 package com.project.alarcha.controller;
 
-import com.project.alarcha.models.AreaModel.AreaModel;
 import com.project.alarcha.models.HotelModel.HotelModel;
 import com.project.alarcha.service.HotelHallService;
 import com.project.alarcha.service.HotelService;
@@ -9,6 +8,7 @@ import com.project.alarcha.service.RoomTypeService;
 import com.project.alarcha.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,6 +29,7 @@ public class HotelController {
 
     @PostMapping("/create")
     public ResponseMessage<HotelModel> createArea(@RequestBody HotelModel hotelModel){
+//        hotelModel.setMultipartFile(img);
         return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.createHotel(hotelModel));
     }
 

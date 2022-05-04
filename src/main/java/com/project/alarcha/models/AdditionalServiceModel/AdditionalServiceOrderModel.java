@@ -1,4 +1,4 @@
-package com.project.alarcha.models.ObjectModel;
+package com.project.alarcha.models.AdditionalServiceModel;
 
 import com.project.alarcha.models.BaseModel;
 import lombok.Getter;
@@ -12,10 +12,9 @@ import java.sql.Time;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ObjectOrderModel extends BaseModel {
+public class AdditionalServiceOrderModel extends BaseModel {
     private Long userId;
-    private Long objectId;
-    private float totalPrice;
+    private Long additionalServiceId;
     private String fullName;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")

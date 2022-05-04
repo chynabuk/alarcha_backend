@@ -16,6 +16,9 @@ public class Object extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "number_of_seats")
+    private Integer numberOfSeats;
+
     @ManyToOne
     @JoinColumn(name = "object_type_id", referencedColumnName = "id")
     private ObjectType objectType;
