@@ -20,6 +20,12 @@ public class HotelHall extends BaseEntity{
     @Column(name = "price", nullable = false)
     private Float price;
 
+    @Column(name = "final_price")
+    private Float finalPrice;
+
+    @Column(name = "number_of_seats")
+    private Integer numberOfSeats;
+
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;

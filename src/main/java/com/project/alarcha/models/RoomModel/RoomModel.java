@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class RoomModel extends BaseModel {
+    private Long roomTypeId;
     private Integer roomNumber;
     private RoomStatus roomStatus;
     private List<RoomOrderModel> roomOrderModels;

@@ -4,17 +4,23 @@ import com.project.alarcha.entities.HotelHall;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallModel;
 import com.project.alarcha.repositories.HotelHallsRepository;
+import com.project.alarcha.repositories.HotelRepository;
 import com.project.alarcha.service.HotelHallService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class HotelHallServiceImpl implements HotelHallService {
     @Autowired
     private HotelHallsRepository hotelHallsRepository;
+
+    @Autowired
+    private HotelRepository hotelRepository;
 
     @Override
     public List<HotelHall> createHotelHalls(List<HotelHallModel> hotelHallModelModels) {
@@ -32,8 +38,17 @@ public class HotelHallServiceImpl implements HotelHallService {
     }
 
     @Override
-    public HotelHallModel createHotelHall(HotelHall hotelHall) {
-        return null;
+    public HotelHallModel createHotelHall(HotelHallModel hotelHallModel) {
+        HotelHall hotelHall = new HotelHall();
+        hotelHall.setName(hotelHallModel.getName());
+        hotelHall.setPrice(hotelHallModel.getPrice());
+        hotelHall.setFinalPrice(hotelHallModel.getFinalPrice());
+        hotelHall.setNumberOfSeats(hotelHallModel.getNumberOfSeats());
+        hotelHall.setHotel(hotelRepository.getById(hotelHallModel.getHotelId()));
+        hotelHall.setIsDeleted(false);
+
+        hotelHallsRepository.save(hotelHall);
+        return hotelHallModel;
     }
 
     @Override
@@ -55,6 +70,11 @@ public class HotelHallServiceImpl implements HotelHallService {
         HotelHall hotelHall = hotelHallsRepository.getById(id);
 
         return toModel(hotelHall);
+    }
+
+    @Override
+    public HotelHall getHotelHallById(long id) {
+        return hotelHallsRepository.getById(id);
     }
 
     @Override

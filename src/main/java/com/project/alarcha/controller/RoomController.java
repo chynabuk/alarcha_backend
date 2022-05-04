@@ -1,5 +1,6 @@
 package com.project.alarcha.controller;
 
+import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.service.RoomOrderService;
 import com.project.alarcha.service.RoomService;
@@ -15,6 +16,11 @@ public class RoomController {
 
     @Autowired
     private RoomOrderService roomOrderService;
+
+    @PostMapping("/create")
+    public ResponseMessage<RoomModel> createRoom(@RequestBody RoomModel roomModel){
+        return new ResponseMessage<RoomModel>().prepareSuccessMessage(roomService.createRoom(roomModel));
+    }
 
     @PostMapping("/order")
     public ResponseMessage<RoomOrderModel> orderRoom(@RequestBody RoomOrderModel roomOrderModel){
