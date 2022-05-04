@@ -19,4 +19,6 @@ public interface UserService {
     UserToSendModel deleteUser(Long userId);
     UserToSendModel updateUser(UserUpdateModel userUpdateModel);
     void createSuperAdmin();
+
+    Long getUsersCount();
 }
