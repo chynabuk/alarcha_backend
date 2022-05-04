@@ -1,5 +1,6 @@
 package com.project.alarcha.service.impl;
 
+import com.project.alarcha.entities.Menu;
 import com.project.alarcha.entities.MenuSection;
 import com.project.alarcha.entities.Object;
 import com.project.alarcha.entities.ObjectType;
@@ -72,6 +73,17 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
             }
 
             //TODO cascade deletion
+            for(MenuSection menuSection : objectType.getMenuSections()){
+                for(Menu menu : menuSection.getMenus()){
+                    menu.setIsDeleted(true);
+                }
+                menuSection.setIsDeleted(true);
+            }
+
+            for(Object object : objectType.getObjects()){
+                object.setIsDeleted(true);
+            }
+
             objectType.setIsDeleted(true);
         }
 
@@ -97,6 +109,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectType.setName(objectTypeModel.getName());
         objectType.setPrice(objectTypeModel.getPrice());
         objectType.setArea(areaRepository.getById(objectTypeModel.getAreaId()));
+        objectType.setPricePerHour(objectTypeModel.getPricePerHour());
 
         List<MenuSectionModel> menuSectionModels = objectTypeModel.getMenuSectionModels();
         menuSectionModels.forEach(menuSectionModel -> menuSectionModel.setObjectTypeName(objectTypeModel.getName()));
@@ -119,6 +132,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setId(objectType.getId());
         objectTypeModel.setName(objectType.getName());
         objectTypeModel.setPrice(objectType.getPrice());
+        objectTypeModel.setPricePerHour(objectType.getPricePerHour());
         objectTypeModel.setMenuSectionModels(menuSectionService.getAll());
         objectTypeModel.setObjectModels(objectService.getAll());
         objectTypeModel.setAreaName(objectType.getArea().getAreaName());

@@ -1,6 +1,6 @@
 package com.project.alarcha.entities;
 
-import com.project.alarcha.enums.ObjectOrderStatus;
+import com.project.alarcha.enums.AdditionalServiceOrderStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,13 +8,13 @@ import java.sql.Date;
 import java.sql.Time;
 
 @Entity
-@Table(name = "object_orders")
+@Table(name = "additional_service_orders")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ObjectOrder extends BaseEntity {
+public class AdditionalServiceOrder extends BaseEntity {
     @Column(name = "registration_date", nullable = false)
     private Date registrationDate;
 
@@ -24,9 +24,6 @@ public class ObjectOrder extends BaseEntity {
     @Column(name = "end_time", nullable = false)
     private Time endTime;
 
-    @Column(name = "total_price")
-    private float totalPrice;
-
     @Column(name = "full_name")
     private String fullName;
 
@@ -35,10 +32,10 @@ public class ObjectOrder extends BaseEntity {
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "object_id", referencedColumnName = "id")
-    private Object object;
+    @JoinColumn(name = "additional_service_id", referencedColumnName = "id")
+    private AdditionalService additionalService;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ObjectOrderStatus objectOrderStatus;
+    private AdditionalServiceOrderStatus additionalServiceOrderStatus;
 }

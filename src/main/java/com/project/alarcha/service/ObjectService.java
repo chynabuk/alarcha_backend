@@ -11,6 +11,7 @@ public interface ObjectService {
     List<Object> createObjects(List<ObjectModel> objectModels);
     List<Object> convertToObjects(List<ObjectModel> objectModels);
     ObjectModel getById(Long objectId);
+    Object getByObjectId(Long objectId);
     List<ObjectModel> getByObjectType(ObjectType objectType);
     List<ObjectModel> getAll();
     ObjectModel updateObject(ObjectModel objectModel);
