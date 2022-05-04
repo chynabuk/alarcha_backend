@@ -19,6 +19,9 @@ public class ObjectType extends BaseEntity {
     @Column(name = "price", nullable = false)
     private float price;
 
+    @Column(name = "price_per_hour")
+    private float pricePerHour;
+
     @OneToMany(mappedBy = "objectType", cascade = CascadeType.ALL)
     private List<MenuSection> menuSections;
 
@@ -28,10 +31,4 @@ public class ObjectType extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "area_id", referencedColumnName = "id")
     private Area area;
-
-    @Column(name = "final_price")
-    private Float finalPrice;
-
-    @Column(name = "hours")
-    private Integer hours;
 }

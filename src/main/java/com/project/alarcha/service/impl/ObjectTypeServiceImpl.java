@@ -109,6 +109,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectType.setName(objectTypeModel.getName());
         objectType.setPrice(objectTypeModel.getPrice());
         objectType.setArea(areaRepository.getById(objectTypeModel.getAreaId()));
+        objectType.setPricePerHour(objectTypeModel.getPricePerHour());
 
         List<MenuSectionModel> menuSectionModels = objectTypeModel.getMenuSectionModels();
         menuSectionModels.forEach(menuSectionModel -> menuSectionModel.setObjectTypeName(objectTypeModel.getName()));
@@ -131,6 +132,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setId(objectType.getId());
         objectTypeModel.setName(objectType.getName());
         objectTypeModel.setPrice(objectType.getPrice());
+        objectTypeModel.setPricePerHour(objectType.getPricePerHour());
         objectTypeModel.setMenuSectionModels(menuSectionService.getAll());
         objectTypeModel.setObjectModels(objectService.getAll());
         objectTypeModel.setAreaName(objectType.getArea().getAreaName());

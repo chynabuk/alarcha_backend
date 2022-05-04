@@ -2,6 +2,8 @@ package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Object;
 import com.project.alarcha.entities.ObjectOrder;
+import com.project.alarcha.entities.ObjectType;
+import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.ObjectOrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
@@ -50,14 +52,18 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         checkObjectOrderTime(objectOrderModel);
 
-        objectOrder.setUser(userService.getById(objectOrderModel.getUserId()));
+        User user = userService.getById(objectOrderModel.getUserId());
+
+        objectOrder.setUser(user);
         objectOrder.setIsDeleted(false);
+        objectOrder.setFullName(user.getFirstName() + " " + user.getLastName());
         Object object = objectService.getByObjectId(objectOrderModel.getObjectId());
         objectOrder.setObject(object);
         objectOrder.setRegistrationDate(objectOrderModel.getRegistrationDate());
         objectOrder.setStartTime(objectOrderModel.getStartTime());
         objectOrder.setEndTime(objectOrderModel.getEndTime());
         objectOrder.setObjectOrderStatus(ObjectOrderStatus.IN_PROCESS);
+        objectOrder.setTotalPrice(getTotalPrice(object.getObjectType(), objectOrderModel));
 
         return objectOrder;
     }
@@ -70,7 +76,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         Date registrationDate = objectOrderModel.getRegistrationDate();
 
         for(ObjectOrder objectOrder : objectOrders){
-            if(objectOrderModel.getObjectId() == objectOrder.getObject().getId()){
+            if(objectOrderModel.getObjectId().equals(objectOrder.getObject().getId())){
                 if( (registrationDate.getYear() == objectOrder.getRegistrationDate().getYear() && registrationDate.getMonth() == objectOrder.getRegistrationDate().getMonth()
                 && registrationDate.getDay() == objectOrder.getRegistrationDate().getDay())
                 ){
@@ -89,9 +95,22 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         }
     }
 
+    private float getTotalPrice(ObjectType objectType, ObjectOrderModel objectOrderModel){
+        Time startTime = objectOrderModel.getStartTime();
+        Time endTime = objectOrderModel.getEndTime();
+        int hours = endTime.getHours() - startTime.getHours();
+        float price = objectType.getPrice();
+        float pricePerHour = objectType.getPricePerHour();
+
+        float totalPrice = (hours - 1) * pricePerHour + price;
+
+        return totalPrice;
+    }
+
     private ObjectOrderModel toModel(ObjectOrder objectOrder){
         ObjectOrderModel objectOrderModel = new ObjectOrderModel();
         objectOrderModel.setUserId(objectOrder.getUser().getId());
+        objectOrderModel.setFullName(objectOrder.getFullName());
         objectOrderModel.setObjectId(objectOrder.getObject().getId());
         objectOrderModel.setRegistrationDate(objectOrder.getRegistrationDate());
         objectOrderModel.setStartTime(objectOrder.getStartTime());
