@@ -215,7 +215,4 @@ public class UserServiceImpl implements UserService {
         return userTokenModel;
     }
 
-    public Long getUsersCount(){
-        return userRepository.count();
-    }
 }

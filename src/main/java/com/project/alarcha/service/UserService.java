@@ -20,5 +20,4 @@ public interface UserService {
     UserToSendModel updateUser(UserUpdateModel userUpdateModel);
     void createSuperAdmin();
 
-    Long getUsersCount();
 }
