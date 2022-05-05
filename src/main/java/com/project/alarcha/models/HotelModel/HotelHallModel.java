@@ -18,6 +18,8 @@ public class HotelHallModel extends BaseModel {
     private Integer numberOfSeats;
     private String hotelName;
     private Long hotelId;
+    private String img;
     private List<HotelHallOrder> hotelHallOrders;
+    private List<HotelHall_ImgModel> hotelHall_imgModels;
 
 }

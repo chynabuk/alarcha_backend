@@ -1,6 +1,7 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Room;
+import com.project.alarcha.entities.RoomOrder;
 import com.project.alarcha.entities.RoomType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomModel;
@@ -136,6 +137,12 @@ public class RoomServiceImpl implements RoomService {
                 throw new ApiFailException("Room is already deleted");
             }
             room.setIsDeleted(true);
+
+            for (RoomOrder roomOrder : room.getRoomOrders()){
+                if (!roomOrder.getIsDeleted()){
+                    roomOrder.setIsDeleted(true);
+                }
+            }
         }
 
         roomRepository.save(room);

@@ -19,4 +19,5 @@ public class RoomModel extends BaseModel {
     private Integer bedNumber;
     private Long hotelId;
     private String hotelName;
+    private String img;
 }

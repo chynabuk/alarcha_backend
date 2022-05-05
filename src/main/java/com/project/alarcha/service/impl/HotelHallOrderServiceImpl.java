@@ -1,9 +1,11 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.HotelHallOrder;
+import com.project.alarcha.entities.RoomOrder;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
+import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.HotelHallOrderRepository;
 import com.project.alarcha.service.HotelHallOrderService;
 import com.project.alarcha.service.HotelHallService;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +46,60 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         }
 
         hotelHallOrderRepository.save(hotelHallOrder);
+        return toModel(hotelHallOrder);
+    }
+
+    @Override
+    public HotelHallOrderModel declineOrder(Long orderId) {
+        HotelHallOrder hotelHallOrder = hotelHallOrderRepository.getById(orderId);
+
+        if(hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+            hotelHallOrder.setOrderStatus(OrderStatus.DECLINED);
+        }
+
+        hotelHallOrderRepository.save(hotelHallOrder);
+        return toModel(hotelHallOrder);
+    }
+
+    @Override
+    public HotelHallOrderModel deleteOrder(Long id) {
+        HotelHallOrder hotelHallOrder = hotelHallOrderRepository.getById(id);
+        if (hotelHallOrder != null){
+            if (hotelHallOrder.getIsDeleted()){
+                throw new ApiFailException("Room is already deleted");
+            }
+            hotelHallOrder.setIsDeleted(true);
+        }
+
+        hotelHallOrderRepository.save(hotelHallOrder);
+
+        return toModel(hotelHallOrder);
+    }
+
+    @Override
+    public List<HotelHallOrderModel> getAll() {
+        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
+
+        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
+            if (!hotelHallOrder.getIsDeleted()){
+                hotelHallOrderModels.add(toModel(hotelHallOrder));
+            }
+        }
+        return hotelHallOrderModels;
+    }
+
+    @Override
+    public HotelHallOrderModel getById(Long id) {
+        HotelHallOrder hotelHallOrder = hotelHallOrderRepository.getById(id);
+
+        if (hotelHallOrder == null){
+            throw new ApiFailException("HotelHall order not found");
+        }
+
+        if (hotelHallOrder.getIsDeleted()){
+            throw new ApiFailException("HotelHall order is deleted");
+        }
+
         return toModel(hotelHallOrder);
     }
 

@@ -15,4 +15,5 @@ public class RoomTypeModel extends BaseModel {
     private Float price;
     private String hotelName;
     private List<RoomModel> roomModels;
+    private List<RoomTypeImageModel> roomTypeImageModels;
 }

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +44,60 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         }
 
         roomOrderRepository.save(roomOrder);
+        return toModel(roomOrder);
+    }
+
+    @Override
+    public RoomOrderModel declineOrder(Long orderId) {
+        RoomOrder roomOrder = roomOrderRepository.getById(orderId);
+
+        if (roomOrder.getRoomOrderStatus() == RoomOrderStatus.IN_PROCESS){
+            roomOrder.setRoomOrderStatus(RoomOrderStatus.DECLINED);
+        }
+
+        roomOrderRepository.save(roomOrder);
+        return toModel(roomOrder);
+    }
+
+    @Override
+    public RoomOrderModel deleteOrder(Long id) {
+        RoomOrder roomOrder = roomOrderRepository.getById(id);
+        if (roomOrder != null){
+            if (roomOrder.getIsDeleted()){
+                throw new ApiFailException("Room is already deleted");
+            }
+            roomOrder.setIsDeleted(true);
+        }
+
+        roomOrderRepository.save(roomOrder);
+
+        return toModel(roomOrder);
+    }
+
+    @Override
+    public List<RoomOrderModel> getAll() {
+        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
+
+        for (RoomOrder roomOrder : roomOrderRepository.findAll()){
+            if (!roomOrder.getIsDeleted()){
+                roomOrderModels.add(toModel(roomOrder));
+            }
+        }
+        return roomOrderModels;
+    }
+
+    @Override
+    public RoomOrderModel getById(Long id) {
+        RoomOrder roomOrder = roomOrderRepository.getById(id);
+
+        if (roomOrder == null){
+            throw new ApiFailException("Room order not found");
+        }
+
+        if (roomOrder.getIsDeleted()){
+            throw new ApiFailException("Room order is deleted");
+        }
+
         return toModel(roomOrder);
     }
 

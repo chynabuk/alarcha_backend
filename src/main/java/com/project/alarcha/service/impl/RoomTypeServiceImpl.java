@@ -1,12 +1,15 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Room;
+import com.project.alarcha.entities.RoomOrder;
 import com.project.alarcha.entities.RoomType;
+import com.project.alarcha.entities.RoomTypeImage;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.models.RoomModel.RoomTypeModel;
 import com.project.alarcha.repositories.RoomTypeRepository;
 import com.project.alarcha.service.RoomService;
+import com.project.alarcha.service.RoomTypeImageService;
 import com.project.alarcha.service.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,15 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     @Autowired
     private RoomTypeRepository roomTypeRepository;
+
+    @Autowired
+    private RoomTypeImageService roomTypeImageService;
+
+    @Override
+    public RoomTypeModel createRoomType(RoomTypeModel roomTypeModel) {
+        roomTypeRepository.save(initAndGet(roomTypeModel));
+        return roomTypeModel;
+    }
 
     @Override
     public List<RoomType> createRoomTypes(List<RoomTypeModel> roomTypeModels) {
@@ -97,9 +109,44 @@ public class RoomTypeServiceImpl implements RoomTypeService {
             throw new ApiFailException("RoomType is already deleted");
         }
 
+        for (Room room : roomType.getRooms()){
+            if (!room.getIsDeleted()){
+                room.setIsDeleted(true);
+
+                for (RoomOrder roomOrder : room.getRoomOrders()){
+                    if (!roomOrder.getIsDeleted()){
+                        roomOrder.setIsDeleted(true);
+                    }
+                }
+            }
+        }
+
+        for (RoomTypeImage roomTypeImage : roomType.getRoomTypeImages()){
+            if (!roomType.getIsDeleted()){
+                roomTypeImage.setIsDeleted(true);
+            }
+        }
+
         roomType.setIsDeleted(true);
 
         return toModel(roomType);
+    }
+
+    private RoomType initAndGet(RoomTypeModel roomTypeModel){
+        RoomType roomType = new RoomType();
+        roomType.setType(roomTypeModel.getType());
+        roomType.setPrice(roomTypeModel.getPrice());
+        roomType.setIsDeleted(false);
+
+        List<RoomTypeImage> roomTypeImages = roomTypeImageService
+                .uploadImages(roomTypeModel
+                .getRoomTypeImageModels());
+
+        roomType.setRoomTypeImages(roomTypeImages);
+
+        roomTypeImages.forEach(roomTypeImage -> roomTypeImage.setRoomType(roomType));
+
+        return roomType;
     }
 
     private RoomTypeModel toModel(RoomType roomType){

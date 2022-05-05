@@ -8,6 +8,7 @@ import com.project.alarcha.models.RoomModel.RoomTypeModel;
 import java.util.List;
 
 public interface RoomTypeService {
+    RoomTypeModel createRoomType(RoomTypeModel roomTypeModel);
     List<RoomType> createRoomTypes(List<RoomTypeModel> roomTypeModels);
     List<RoomType> convertToRoomType(List<RoomModel> roomModels);
     RoomTypeModel getById(Long roomTypeId);

@@ -11,11 +11,10 @@ import com.project.alarcha.models.RoomModel.RoomTypeModel;
 import com.project.alarcha.repositories.AreaRepository;
 import com.project.alarcha.repositories.HotelRepository;
 import com.project.alarcha.service.*;
-import com.project.alarcha.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,13 +136,7 @@ public class HotelServiceImpl implements HotelService {
             }
         }
 
-
-//        MultipartFile multipartFile = hotelModel.getMultipartFile();
-//        String imageName = multipartFile.getOriginalFilename();
-//
-//        FileUploadUtil.saveFileToDIR("hotel", multipartFile);
-
-        hotel.setImageName(null);
+        hotel.setImg(hotelModel.getImgName().getBytes(StandardCharsets.UTF_8));
 
         hotel.setIsDeleted(false);
 
@@ -177,6 +170,7 @@ public class HotelServiceImpl implements HotelService {
         hotelModel.setRoomTypeModels(roomTypeService.getAll());
         hotelModel.setHotelHallModels(hotelHallService.getAll());
         hotelModel.setAreaName(hotel.getArea().getAreaName());
+        hotelModel.setImgName(new String(hotel.getImg(), StandardCharsets.UTF_8));
 
         return hotelModel;
     }

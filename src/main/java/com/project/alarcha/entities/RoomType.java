@@ -25,4 +25,7 @@ public class RoomType extends BaseEntity{
 
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
     private List<Room> rooms;
+
+    @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
+    private List<RoomTypeImage> roomTypeImages;
 }

@@ -15,6 +15,7 @@ import java.util.List;
 public class HotelModel extends BaseModel {
     private String hotelName;
     private MultipartFile multipartFile;
+    private String imgName;
     private List<RoomTypeModel> roomTypeModels;
     private List<HotelHallModel> hotelHallModels;
     private Long areaId;
