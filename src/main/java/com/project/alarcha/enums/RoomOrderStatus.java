@@ -3,7 +3,8 @@ package com.project.alarcha.enums;
 public enum RoomOrderStatus {
     IN_PROCESS,
     CONFIRMED,
-    CANCELLED;
+    CANCELLED,
+    DECLINED;
 
     RoomOrderStatus(){}
 

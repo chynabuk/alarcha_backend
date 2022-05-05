@@ -34,4 +34,7 @@ public class HotelHall extends BaseEntity{
     cascade = CascadeType.ALL)
     private List<HotelHallOrder> hotelHallOrders;
 
+    @OneToMany(mappedBy = "hotelHall", cascade = CascadeType.ALL)
+    private List<HotelHall_IMG> hotelHallImages;
+
 }

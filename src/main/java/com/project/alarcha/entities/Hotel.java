@@ -26,8 +26,8 @@ public class Hotel extends BaseEntity{
     @Column(name = "hotel_name", nullable = false)
     private String hotelName;
 
-    @Column(name = "image_name")
-    private String imageName;
+    @Column(name = "img")
+    private byte[] img;
 
     @ManyToOne
     @JoinColumn(name = "area_id", referencedColumnName = "id")

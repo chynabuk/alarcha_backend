@@ -1,6 +1,8 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.HotelHall;
+import com.project.alarcha.entities.HotelHallOrder;
+import com.project.alarcha.entities.HotelHall_IMG;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallModel;
 import com.project.alarcha.repositories.HotelHallsRepository;
@@ -112,6 +114,18 @@ public class HotelHallServiceImpl implements HotelHallService {
                 throw new ApiFailException("Hotell hall is already deleted");
             }
             hotelHall.setIsDeleted(true);
+
+            for (HotelHallOrder hotelHallOrder : hotelHall.getHotelHallOrders()){
+                if (!hotelHallOrder.getIsDeleted()){
+                    hotelHallOrder.setIsDeleted(true);
+                }
+            }
+
+            for (HotelHall_IMG hotelHall_img : hotelHall.getHotelHallImages()){
+                if (!hotelHall_img.getIsDeleted()){
+                    hotelHall_img.setIsDeleted(true);
+                }
+            }
         }
 
         hotelHallsRepository.save(hotelHall);
