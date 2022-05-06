@@ -2,6 +2,7 @@ package com.project.alarcha.entities;
 
 import com.project.alarcha.enums.ObjectOrderStatus;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -15,17 +16,25 @@ import java.sql.Time;
 @AllArgsConstructor
 @ToString
 public class ObjectOrder extends BaseEntity {
-    @Column(name = "registration_date", nullable = false)
+    @Column(name = "registration_date")
     private Date registrationDate;
 
-    @Column(name = "start_time", nullable = false)
+    @Column(name = "start_time")
     private Time startTime;
 
-    @Column(name = "end_time", nullable = false)
+    @Column(name = "end_time")
     private Time endTime;
 
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @Column(name = "start_date")
+    private java.util.Date startDate;
+
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @Column(name = "end_date")
+    private java.util.Date endDate;
+
     @Column(name = "total_price")
-    private float totalPrice;
+    private Float totalPrice;
 
     @Column(name = "full_name")
     private String fullName;

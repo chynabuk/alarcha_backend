@@ -13,8 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ObjectTypeModel extends BaseModel {
     private String name;
-    private float price;
-    private float pricePerHour;
+    private Float price;
+    private Float pricePerHour;
     private List<MenuSectionModel> menuSectionModels;
     private List<ObjectModel> objectModels;
     private Long areaId;

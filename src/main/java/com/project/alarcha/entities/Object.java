@@ -16,7 +16,7 @@ public class Object extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "number_of_seats")
+    @Column(name = "number_of_seats", nullable = false)
     private Integer numberOfSeats;
 
     @ManyToOne

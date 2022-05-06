@@ -15,12 +15,16 @@ import java.sql.Time;
 public class ObjectOrderModel extends BaseModel {
     private Long userId;
     private Long objectId;
-    private float totalPrice;
+    private Float totalPrice;
     private String fullName;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date registrationDate;
-
     private Time startTime;
     private Time endTime;
+
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    private java.util.Date startDate;
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    private java.util.Date endDate;
 }

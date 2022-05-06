@@ -5,6 +5,7 @@ import com.project.alarcha.entities.ObjectOrder;
 import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.ObjectOrderStatus;
+import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
 import com.project.alarcha.repositories.ObjectOrderRepository;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,7 +55,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
 
         if(objectOrder.getObjectOrderStatus() == ObjectOrderStatus.IN_PROCESS){
-            objectOrder.setObjectOrderStatus(ObjectOrderStatus.CANCELLED);
+            objectOrder.setObjectOrderStatus(ObjectOrderStatus.DECLINED);
         }
 
         objectOrderRepository.save(objectOrder);
@@ -104,20 +106,40 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     private ObjectOrder initAndGetObjectOrder(ObjectOrderModel objectOrderModel){
         ObjectOrder objectOrder = new ObjectOrder();
 
-        checkObjectOrderTime(objectOrderModel);
-
         User user = userService.getById(objectOrderModel.getUserId());
+        Object object = objectService.getByObjectId(objectOrderModel.getObjectId());
+        ObjectType objectType = object.getObjectType();
 
         objectOrder.setUser(user);
         objectOrder.setIsDeleted(false);
         objectOrder.setFullName(user.getFirstName() + " " + user.getLastName());
-        Object object = objectService.getByObjectId(objectOrderModel.getObjectId());
         objectOrder.setObject(object);
-        objectOrder.setRegistrationDate(objectOrderModel.getRegistrationDate());
-        objectOrder.setStartTime(objectOrderModel.getStartTime());
-        objectOrder.setEndTime(objectOrderModel.getEndTime());
         objectOrder.setObjectOrderStatus(ObjectOrderStatus.IN_PROCESS);
-        objectOrder.setTotalPrice(getTotalPrice(object.getObjectType(), objectOrderModel));
+
+        if(objectType.getTimeType() == TimeType.TIME){
+            checkObjectOrderTime(objectOrderModel);
+
+            Time startTime = objectOrderModel.getStartTime();
+            Time endTime = objectOrderModel.getEndTime();
+            Float price = objectType.getPrice();
+            Float pricePerHour = objectType.getPricePerHour();
+
+            objectOrder.setRegistrationDate(objectOrderModel.getRegistrationDate());
+            objectOrder.setStartTime(objectOrderModel.getStartTime());
+            objectOrder.setEndTime(objectOrderModel.getEndTime());
+            objectOrder.setTotalPrice(getTotalPriceByTime(price, pricePerHour, startTime, endTime));
+        }
+        else if(objectType.getTimeType() == TimeType.DATE){
+            checkObjectOrderDate(objectOrderModel);
+
+            Float price = object.getObjectType().getPrice();
+            Date startDate = objectOrderModel.getStartDate();
+            Date endDate = objectOrderModel.getEndDate();
+
+            objectOrder.setStartDate(objectOrderModel.getStartDate());
+            objectOrder.setEndDate(objectOrderModel.getEndDate());
+            objectOrder.setTotalPrice(getTotalPriceByDate(price, startDate, endDate));
+        }
 
         return objectOrder;
     }
@@ -125,9 +147,19 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     private void checkObjectOrderTime(ObjectOrderModel objectOrderModel){
         List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
 
+        LocalTime currentTime = LocalTime.now();
+
         Time startTime = objectOrderModel.getStartTime();
         Time endTime = objectOrderModel.getEndTime();
         Date registrationDate = objectOrderModel.getRegistrationDate();
+
+        if(startTime == null || endTime == null){
+            throw new ApiFailException("Time must not be null!");
+        }
+
+        if (endTime.compareTo(startTime) <= 0){
+            throw new ApiFailException("endTime must be greater than startTime");
+        }
 
         for(ObjectOrder objectOrder : objectOrders){
             if(objectOrderModel.getObjectId().equals(objectOrder.getObject().getId())){
@@ -149,16 +181,55 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         }
     }
 
-    private float getTotalPrice(ObjectType objectType, ObjectOrderModel objectOrderModel){
-        Time startTime = objectOrderModel.getStartTime();
-        Time endTime = objectOrderModel.getEndTime();
+    private void checkObjectOrderDate(ObjectOrderModel objectOrderModel){
+        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
+
+        Date currentDate = new Date();
+
+        Date startDate = objectOrderModel.getStartDate();
+        Date endDate = objectOrderModel.getEndDate();
+
+        if (startDate == null || endDate == null){
+            throw new ApiFailException("dates must not be null");
+        }
+
+        if (endDate.compareTo(startDate) <= 0){
+            throw new ApiFailException("endDate must be greater than startDate");
+        }
+
+        if (startDate.compareTo(currentDate) < 0){
+            throw new ApiFailException("start date can not be less than currentDate");
+        }
+
+
+        for (ObjectOrder objectOrder : objectOrders){
+            if (objectOrderModel.getObjectId() == objectOrder.getObject().getId()){
+                if (objectOrder.getObjectOrderStatus() == ObjectOrderStatus.CONFIRMED){
+                    Date rSDate = objectOrder.getStartDate();
+                    Date rEDate = objectOrder.getEndDate();
+                    if (
+                            (startDate.getYear() == rSDate.getYear() && startDate.getMonth() == rSDate.getMonth())
+                                    && (endDate.getYear() == rEDate.getYear() && endDate.getMonth() == rEDate.getMonth())
+                    )
+                    {
+                        for (int i = startDate.getDate(); i < endDate.getDate(); i++){
+                            if (i >= rSDate.getDate() && i <= rEDate.getDate()){
+                                throw new ApiFailException("You can't order for this date");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private Float getTotalPriceByTime(Float price, Float pricePerHour, Time startTime, Time endTime){
         int hours = endTime.getHours() - startTime.getHours();
-        float price = objectType.getPrice();
-        float pricePerHour = objectType.getPricePerHour();
+        return (hours - 1) * pricePerHour + price;
+    }
 
-        float totalPrice = (hours - 1) * pricePerHour + price;
-
-        return totalPrice;
+    private Float getTotalPriceByDate(Float price, Date startDate, Date endDate){
+        return (endDate.getDate() - startDate.getDate()) * price;
     }
 
     private ObjectOrderModel toModel(ObjectOrder objectOrder){
@@ -166,9 +237,18 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         objectOrderModel.setUserId(objectOrder.getUser().getId());
         objectOrderModel.setFullName(objectOrder.getFullName());
         objectOrderModel.setObjectId(objectOrder.getObject().getId());
-        objectOrderModel.setRegistrationDate(objectOrder.getRegistrationDate());
-        objectOrderModel.setStartTime(objectOrder.getStartTime());
-        objectOrderModel.setEndTime(objectOrder.getEndTime());
+
+        ObjectType objectType = objectOrder.getObject().getObjectType();
+
+        if(objectType.getTimeType() == TimeType.TIME){
+            objectOrderModel.setRegistrationDate(objectOrder.getRegistrationDate());
+            objectOrderModel.setStartTime(objectOrder.getStartTime());
+            objectOrderModel.setEndTime(objectOrder.getEndTime());
+        }
+        else if(objectType.getTimeType() == TimeType.DATE){
+            objectOrderModel.setStartDate(objectOrder.getStartDate());
+            objectOrderModel.setEndDate(objectOrder.getEndDate());
+        }
 
         return objectOrderModel;
     }

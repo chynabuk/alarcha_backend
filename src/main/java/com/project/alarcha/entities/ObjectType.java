@@ -1,5 +1,6 @@
 package com.project.alarcha.entities;
 
+import com.project.alarcha.enums.TimeType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,10 +18,10 @@ public class ObjectType extends BaseEntity {
     private String name;
 
     @Column(name = "price", nullable = false)
-    private float price;
+    private Float price;
 
-    @Column(name = "price_per_hour")
-    private float pricePerHour;
+    @Column(name = "price_per_hour", nullable = false)
+    private Float pricePerHour;
 
     @OneToMany(mappedBy = "objectType", cascade = CascadeType.ALL)
     private List<MenuSection> menuSections;
@@ -31,4 +32,8 @@ public class ObjectType extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "area_id", referencedColumnName = "id")
     private Area area;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "time_type")
+    private TimeType timeType;
 }
