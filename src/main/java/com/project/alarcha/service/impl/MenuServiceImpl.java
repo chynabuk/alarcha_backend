@@ -5,6 +5,7 @@ import com.project.alarcha.entities.MenuSection;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.MenuModel.MenuModel;
 import com.project.alarcha.repositories.MenuRepository;
+import com.project.alarcha.repositories.MenuSectionRepository;
 import com.project.alarcha.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,22 @@ public class MenuServiceImpl implements MenuService {
     @Autowired
     private MenuRepository menuRepository;
 
+    @Autowired
+    private MenuSectionRepository menuSectionRepository;
+
     @Override
     public MenuModel createMenu(MenuModel menuModel) {
-        return null;
+        Menu menu = new Menu();
+        MenuSection menuSection = menuSectionRepository.getById(menuModel.getMenuSectionId());
+        menu.setName(menuModel.getName());
+        menu.setPrice(menuModel.getPrice());
+        menu.setDescription(menuModel.getDescription());
+        menu.setMenuSection(menuSection);
+        menu.setIsDeleted(false);
+
+        menuRepository.save(menu);
+
+        return menuModel;
     }
 
     @Override

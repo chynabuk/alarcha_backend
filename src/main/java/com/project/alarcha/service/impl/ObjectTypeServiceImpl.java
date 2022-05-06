@@ -6,6 +6,7 @@ import com.project.alarcha.entities.Object;
 import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
+import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
 import com.project.alarcha.repositories.AreaRepository;
 import com.project.alarcha.repositories.ObjectTypeRepository;
@@ -72,7 +73,6 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
                 throw new ApiFailException("ObjectType is already deleted!");
             }
 
-            //TODO cascade deletion
             for(MenuSection menuSection : objectType.getMenuSections()){
                 for(Menu menu : menuSection.getMenus()){
                     menu.setIsDeleted(true);
@@ -112,15 +112,26 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectType.setPricePerHour(objectTypeModel.getPricePerHour());
 
         List<MenuSectionModel> menuSectionModels = objectTypeModel.getMenuSectionModels();
-        menuSectionModels.forEach(menuSectionModel -> menuSectionModel.setObjectTypeName(objectTypeModel.getName()));
+        if(menuSectionModels != null){
+            menuSectionModels.forEach(menuSectionModel -> menuSectionModel.setObjectTypeName(objectTypeModel.getName()));
 
-        List<MenuSection> menuSections = menuSectionService.createMenuSections(menuSectionModels);
-        objectType.setMenuSections(menuSections);
-        menuSections.forEach(menuSection -> menuSection.setObjectType(objectType));
+            List<MenuSection> menuSections = menuSectionService.createMenuSections(menuSectionModels);
+            if(menuSections != null){
+                objectType.setMenuSections(menuSections);
+                menuSections.forEach(menuSection -> menuSection.setObjectType(objectType));
+            }
+        }
 
-        List<Object> objects = objectService.createObjects(objectTypeModel.getObjectModels());
-        objectType.setObjects(objects);
-        objects.forEach(object -> object.setObjectType(objectType));
+        List<ObjectModel> objectModels = objectTypeModel.getObjectModels();
+        if(objectModels != null){
+            objectModels.forEach(objectModel -> objectModel.setObjectTypeName(objectTypeModel.getName()));
+
+            List<Object> objects = objectService.createObjects(objectTypeModel.getObjectModels());
+            if(objects != null){
+                objectType.setObjects(objects);
+                objects.forEach(object -> object.setObjectType(objectType));
+            }
+        }
 
         objectType.setIsDeleted(false);
 

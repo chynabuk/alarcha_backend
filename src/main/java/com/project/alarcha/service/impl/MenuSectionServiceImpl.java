@@ -2,12 +2,15 @@ package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Menu;
 import com.project.alarcha.entities.MenuSection;
+import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.MenuModel.MenuModel;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
 import com.project.alarcha.repositories.MenuSectionRepository;
+import com.project.alarcha.repositories.ObjectTypeRepository;
 import com.project.alarcha.service.MenuSectionService;
 import com.project.alarcha.service.MenuService;
+import com.project.alarcha.service.ObjectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,15 @@ public class MenuSectionServiceImpl implements MenuSectionService {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private ObjectTypeRepository objectTypeRepository;
+
+    @Override
+    public MenuSectionModel createMenuSection(MenuSectionModel menuSectionModel) {
+        menuSectionRepository.save(initAndGet(menuSectionModel));
+        return menuSectionModel;
+    }
 
     @Override
     public List<MenuSection> createMenuSections(List<MenuSectionModel> menuSectionModels) {
@@ -77,17 +89,34 @@ public class MenuSectionServiceImpl implements MenuSectionService {
     public MenuSectionModel deleteMenuSection(Long menuSectionId) {
         MenuSection menuSection = menuSectionRepository.getById(menuSectionId);
 
-        if(menuSection != null){
-            if(menuSection.getIsDeleted()){
-                throw new ApiFailException("Menu section is already deleted!!");
-            }
-
-            menuSection.setIsDeleted(true);
+        if(menuSection == null){
+            throw new ApiFailException("MenuSection is not found!");
         }
 
+        if(menuSection.getIsDeleted()){
+            throw new ApiFailException("MenuSection is already deleted!");
+        }
+
+        for(Menu menu : menuSection.getMenus()){
+            if(!menu.getIsDeleted()){
+                menu.setIsDeleted(true);
+            }
+        }
+
+        menuSection.setIsDeleted(true);
         menuSectionRepository.save(menuSection);
 
         return toModel(menuSection);
+    }
+
+    private MenuSection initAndGet(MenuSectionModel menuSectionModel){
+        MenuSection menuSection = new MenuSection();
+        ObjectType objectType = objectTypeRepository.getById(menuSectionModel.getObjectTypeId());
+        menuSection.setName(menuSectionModel.getName());
+        menuSection.setObjectType(objectType);
+        menuSection.setIsDeleted(false);
+
+        return menuSection;
     }
 
     private MenuSectionModel toModel(MenuSection menuSection){

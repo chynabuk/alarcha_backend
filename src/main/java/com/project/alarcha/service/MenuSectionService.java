@@ -6,6 +6,7 @@ import com.project.alarcha.models.MenuModel.MenuSectionModel;
 import java.util.List;
 
 public interface MenuSectionService {
+    MenuSectionModel createMenuSection(MenuSectionModel menuSectionModel);
     List<MenuSection> createMenuSections(List<MenuSectionModel> menuSectionModels);
     MenuSectionModel getById(Long menuSectionId);
     List<MenuSectionModel> getAll();

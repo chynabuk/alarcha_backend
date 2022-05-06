@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +42,59 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         if(objectOrder.getObjectOrderStatus() == ObjectOrderStatus.IN_PROCESS){
             objectOrder.setObjectOrderStatus(ObjectOrderStatus.CONFIRMED);
+        }
+
+        objectOrderRepository.save(objectOrder);
+        return toModel(objectOrder);
+    }
+
+    @Override
+    public ObjectOrderModel declineOrder(Long orderId) {
+        ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
+
+        if(objectOrder.getObjectOrderStatus() == ObjectOrderStatus.IN_PROCESS){
+            objectOrder.setObjectOrderStatus(ObjectOrderStatus.CANCELLED);
+        }
+
+        objectOrderRepository.save(objectOrder);
+        return toModel(objectOrder);
+    }
+
+    @Override
+    public List<ObjectOrderModel> getAll() {
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+
+        for(ObjectOrder objectOrder : objectOrderRepository.findAll()){
+            if(!objectOrder.getIsDeleted()){
+                objectOrderModels.add(toModel(objectOrder));
+            }
+        }
+        return objectOrderModels;
+    }
+
+    @Override
+    public ObjectOrderModel getById(Long id) {
+        ObjectOrder objectOrder = objectOrderRepository.getById(id);
+
+        if(objectOrder == null){
+            throw new ApiFailException("Object order is not found!");
+        }
+
+        if(objectOrder.getIsDeleted()){
+            throw new ApiFailException("Object order is already deleted!");
+        }
+
+        return toModel(objectOrder);
+    }
+
+    @Override
+    public ObjectOrderModel deleteOrder(Long orderId) {
+        ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
+        if(objectOrder != null){
+            if(objectOrder.getIsDeleted()){
+                throw new ApiFailException("Object order is already deleted!");
+            }
+            objectOrder.setIsDeleted(true);
         }
 
         objectOrderRepository.save(objectOrder);

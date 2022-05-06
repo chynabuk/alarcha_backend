@@ -1,10 +1,12 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Object;
+import com.project.alarcha.entities.ObjectOrder;
 import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.repositories.ObjectRepository;
+import com.project.alarcha.repositories.ObjectTypeRepository;
 import com.project.alarcha.service.ObjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +19,20 @@ public class ObjectServiceImpl implements ObjectService {
     @Autowired
     private ObjectRepository objectRepository;
 
+    @Autowired
+    private ObjectTypeRepository objectTypeRepository;
+
     @Override
     public ObjectModel createObject(ObjectModel objectModel) {
-        return null;
+        Object object = new Object();
+        ObjectType objectType = objectTypeRepository.getById(objectModel.getObjectTypeId());
+        object.setName(objectModel.getName());
+        object.setNumberOfSeats(objectModel.getNumberOfSeats());
+        object.setObjectType(objectType);
+        object.setIsDeleted(false);
+
+        objectRepository.save(object);
+        return objectModel;
     }
 
     @Override
@@ -94,6 +107,12 @@ public class ObjectServiceImpl implements ObjectService {
             }
 
             object.setIsDeleted(true);
+
+            for(ObjectOrder objectOrder : object.getObjectOrders()){
+                if(!objectOrder.getIsDeleted()){
+                    objectOrder.setIsDeleted(true);
+                }
+            }
         }
 
         objectRepository.save(object);
