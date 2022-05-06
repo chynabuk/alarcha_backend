@@ -2,6 +2,8 @@ package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.Room;
 import com.project.alarcha.entities.RoomOrder;
+import com.project.alarcha.entities.User;
+import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.enums.RoomOrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
@@ -39,8 +41,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     public RoomOrderModel acceptOrder(Long orderId) {
         RoomOrder roomOrder = roomOrderRepository.getById(orderId);
 
-        if (roomOrder.getRoomOrderStatus() == RoomOrderStatus.IN_PROCESS){
-            roomOrder.setRoomOrderStatus(RoomOrderStatus.CONFIRMED);
+        if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+            roomOrder.setOrderStatus(OrderStatus.CONFIRMED);
         }
 
         roomOrderRepository.save(roomOrder);
@@ -51,8 +53,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     public RoomOrderModel declineOrder(Long orderId) {
         RoomOrder roomOrder = roomOrderRepository.getById(orderId);
 
-        if (roomOrder.getRoomOrderStatus() == RoomOrderStatus.IN_PROCESS){
-            roomOrder.setRoomOrderStatus(RoomOrderStatus.DECLINED);
+        if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+            roomOrder.setOrderStatus(OrderStatus.DECLINED);
         }
 
         roomOrderRepository.save(roomOrder);
@@ -106,27 +108,54 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         checkRoomOrderDate(roomOrderModel);
 
-        roomOrder.setUser(userService.getById(roomOrderModel.getUserId()));
+        User user = userService.getById(roomOrderModel.getUserId());
+        roomOrder.setUser(user);
         Room room = roomService.getByRoomId(roomOrderModel.getRoomId());
         roomOrder.setIsDeleted(false);
         roomOrder.setRoom(room);
         roomOrder.setHotelName(room.getHotelName());
-        roomOrder.setStartDate(roomOrderModel.getStartDate());
-        roomOrder.setEndDate(roomOrderModel.getEndDate());
-        roomOrder.setRoomOrderStatus(RoomOrderStatus.IN_PROCESS);
+        roomOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
+
+        Float price = room.getRoomType().getPrice();
+        Date startDate = roomOrderModel.getStartDate();
+        Date endDate = roomOrderModel.getEndDate();
+
+        roomOrder.setStartDate(startDate);
+        roomOrder.setEndDate(endDate);
+        roomOrder.setTotalPrice(getTotalPrice(price, startDate, endDate));
+        roomOrder.setOrderStatus(OrderStatus.IN_PROCESS);
 
         return roomOrder;
+    }
+
+    private Float getTotalPrice(Float price, Date startDate, Date endDate){
+        return (endDate.getDate() - startDate.getDate()) * price;
     }
 
     private void checkRoomOrderDate(RoomOrderModel roomOrderModel){
         List<RoomOrder> roomOrders = roomOrderRepository.findAll();
 
+        Date currentDate = new Date();
+
         Date startDate = roomOrderModel.getStartDate();
         Date endDate = roomOrderModel.getEndDate();
 
+        if (startDate == null || endDate == null){
+            throw new ApiFailException("dates must not be null");
+        }
+
+        if (endDate.compareTo(startDate) <= 0){
+            throw new ApiFailException("endDate must be greater than startDate");
+        }
+
+        if (startDate.compareTo(currentDate) < 0){
+            throw new ApiFailException("start date can not be less than currentDate");
+        }
+
+
         for (RoomOrder roomOrder : roomOrders){
             if (roomOrderModel.getRoomId() == roomOrder.getRoom().getId()){
-                if (roomOrder.getRoomOrderStatus() == RoomOrderStatus.CONFIRMED){
+                if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED){
                     Date rSDate = roomOrder.getStartDate();
                     Date rEDate = roomOrder.getEndDate();
                     if (
@@ -134,8 +163,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
                                     && (endDate.getYear() == rEDate.getYear() && endDate.getMonth() == rEDate.getMonth())
                     )
                     {
-                        for (int i = startDate.getDay(); i < endDate.getDay(); i++){
-                            if (i >= rSDate.getDay() && i <= rEDate.getDay()){
+                        for (int i = startDate.getDate(); i < endDate.getDate(); i++){
+                            if (i >= rSDate.getDate() && i <= rEDate.getDate()){
                                 throw new ApiFailException("You can't order for this date");
                             }
                         }
@@ -151,6 +180,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         roomOrderModel.setRoomId(roomOrder.getId());
         roomOrderModel.setStartDate(roomOrder.getStartDate());
         roomOrderModel.setEndDate(roomOrder.getEndDate());
+        roomOrderModel.setUserFullName(roomOrder.getUserFullName());
+        roomOrderModel.setOrderStatus(roomOrder.getOrderStatus());
 
         return roomOrderModel;
     }

@@ -35,6 +35,16 @@ public class RoomTypeImageServiceImpl implements RoomTypeImageService {
     }
 
     @Override
+    public List<RoomTypeImageModel> convertToModels(List<RoomTypeImage> roomTypeImages) {
+        List<RoomTypeImageModel> roomTypeImageModels = new ArrayList<>();
+
+        roomTypeImages.forEach(roomTypeImage ->
+                roomTypeImageModels.add(toModel(roomTypeImage)));
+
+        return roomTypeImageModels;
+    }
+
+    @Override
     public RoomTypeImageModel deleteImage(Long id) {
         RoomTypeImage roomTypeImage = roomTypeImageRepository.getById(id);
 

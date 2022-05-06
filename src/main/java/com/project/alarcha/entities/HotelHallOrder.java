@@ -25,6 +25,9 @@ public class HotelHallOrder extends BaseEntity{
     @Column(name = "end_time", nullable = false)
     private Time endTime;
 
+    @Column(name = "total_price")
+    private Float totalPrice;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
@@ -36,4 +39,7 @@ public class HotelHallOrder extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(name = "user_full_name")
+    private String userFullName;
 }

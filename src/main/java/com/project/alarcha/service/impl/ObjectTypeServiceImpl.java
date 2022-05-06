@@ -1,9 +1,7 @@
 package com.project.alarcha.service.impl;
 
-import com.project.alarcha.entities.Menu;
-import com.project.alarcha.entities.MenuSection;
+import com.project.alarcha.entities.*;
 import com.project.alarcha.entities.Object;
-import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
@@ -29,6 +27,9 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
 
     @Autowired
     private AreaRepository areaRepository;
+
+    @Autowired
+    private ObjectTypeImgService objectTypeImgService;
 
     @Override
     public ObjectTypeModel createObjectType(ObjectTypeModel objectTypeModel) {
@@ -112,15 +113,24 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectType.setPricePerHour(objectTypeModel.getPricePerHour());
 
         List<MenuSectionModel> menuSectionModels = objectTypeModel.getMenuSectionModels();
-        menuSectionModels.forEach(menuSectionModel -> menuSectionModel.setObjectTypeName(objectTypeModel.getName()));
+        if (menuSectionModels != null){
+            menuSectionModels.forEach(menuSectionModel -> menuSectionModel.setObjectTypeName(objectTypeModel.getName()));
+            List<MenuSection> menuSections = menuSectionService.createMenuSections(menuSectionModels);
+            objectType.setMenuSections(menuSections);
+            menuSections.forEach(menuSection -> menuSection.setObjectType(objectType));
+        }
 
-        List<MenuSection> menuSections = menuSectionService.createMenuSections(menuSectionModels);
-        objectType.setMenuSections(menuSections);
-        menuSections.forEach(menuSection -> menuSection.setObjectType(objectType));
+        if (objectTypeModel.getObjectModels() != null){
+            List<Object> objects = objectService.createObjects(objectTypeModel.getObjectModels());
+            objectType.setObjects(objects);
+            objects.forEach(object -> object.setObjectType(objectType));
+        }
 
-        List<Object> objects = objectService.createObjects(objectTypeModel.getObjectModels());
-        objectType.setObjects(objects);
-        objects.forEach(object -> object.setObjectType(objectType));
+        if (objectTypeModel.getObjectTypeImgModels() != null){
+            List<ObjectTypeImage> objectTypeImages = objectTypeImgService.uploadImages(objectTypeModel.getObjectTypeImgModels());
+            objectType.setObjectTypeImages(objectTypeImages);
+            objectTypeImages.forEach(objectTypeImage -> objectTypeImage.setObjectType(objectType));
+        }
 
         objectType.setIsDeleted(false);
 

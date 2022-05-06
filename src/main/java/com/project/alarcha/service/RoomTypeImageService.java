@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface RoomTypeImageService {
     List<RoomTypeImage> uploadImages(List<RoomTypeImageModel> roomTypeImageModels);
+    List<RoomTypeImageModel> convertToModels(List<RoomTypeImage> roomTypeImages);
     RoomTypeImageModel deleteImage(Long id);
     RoomTypeImageModel updateImage(Long id);
 }

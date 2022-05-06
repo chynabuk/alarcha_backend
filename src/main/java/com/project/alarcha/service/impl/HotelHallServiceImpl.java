@@ -8,6 +8,7 @@ import com.project.alarcha.models.HotelModel.HotelHallModel;
 import com.project.alarcha.repositories.HotelHallsRepository;
 import com.project.alarcha.repositories.HotelRepository;
 import com.project.alarcha.service.HotelHallService;
+import com.project.alarcha.service.HotelHall_ImgService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ public class HotelHallServiceImpl implements HotelHallService {
 
     @Autowired
     private HotelRepository hotelRepository;
+
+    @Autowired
+    private HotelHall_ImgService hotelHall_imgService;
 
     @Override
     public List<HotelHall> createHotelHalls(List<HotelHallModel> hotelHallModelModels) {
@@ -41,15 +45,8 @@ public class HotelHallServiceImpl implements HotelHallService {
 
     @Override
     public HotelHallModel createHotelHall(HotelHallModel hotelHallModel) {
-        HotelHall hotelHall = new HotelHall();
-        hotelHall.setName(hotelHallModel.getName());
-        hotelHall.setPrice(hotelHallModel.getPrice());
-        hotelHall.setFinalPrice(hotelHallModel.getFinalPrice());
-        hotelHall.setNumberOfSeats(hotelHallModel.getNumberOfSeats());
-        hotelHall.setHotel(hotelRepository.getById(hotelHallModel.getHotelId()));
-        hotelHall.setIsDeleted(false);
+        hotelHallsRepository.save(initAndGet(hotelHallModel));
 
-        hotelHallsRepository.save(hotelHall);
         return hotelHallModel;
     }
 
@@ -133,6 +130,27 @@ public class HotelHallServiceImpl implements HotelHallService {
         return toModel(hotelHall);
     }
 
+    private HotelHall initAndGet(HotelHallModel hotelHallModel){
+        HotelHall hotelHall = new HotelHall();
+        hotelHall.setName(hotelHallModel.getName());
+        hotelHall.setPrice(hotelHallModel.getPrice());
+        hotelHall.setPriceForNextHours(hotelHallModel.getPriceForNextHours());
+        hotelHall.setNumberOfSeats(hotelHallModel.getNumberOfSeats());
+        hotelHall.setHotel(hotelRepository.getById(hotelHallModel.getHotelId()));
+        hotelHall.setIsDeleted(false);
+
+        if (hotelHallModel.getHotelHall_imgModels() != null){
+            List<HotelHall_IMG> hotelHall_imgs = hotelHall_imgService.uploadImages(hotelHallModel.getHotelHall_imgModels());
+
+            hotelHall.setHotelHallImages(hotelHall_imgs);
+
+            hotelHall_imgs.forEach(hotelHall_img -> hotelHall_img.setHotelHall(hotelHall));
+
+        }
+
+        return hotelHall;
+    }
+
     private void setValuesOnUpdateHotelHall(HotelHall hotelHall, HotelHallModel hotelHallModel){
         hotelHall.setName(hotelHallModel.getName());
         hotelHall.setPrice(hotelHallModel.getPrice());
@@ -143,7 +161,9 @@ public class HotelHallServiceImpl implements HotelHallService {
         hotelHallModel.setId(hotelHall.getId());
         hotelHallModel.setName(hotelHall.getName());
         hotelHallModel.setPrice(hotelHall.getPrice());
+        hotelHall.setPriceForNextHours(hotelHall.getPriceForNextHours());
         hotelHallModel.setHotelName(hotelHall.getHotel().getHotelName());
+        hotelHallModel.setHotelHall_imgModels(hotelHall_imgService.convertToModels(hotelHall.getHotelHallImages()));
 
         return hotelHallModel;
     }

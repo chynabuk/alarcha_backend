@@ -25,7 +25,7 @@ public class ObjectOrder extends BaseEntity {
     private Time endTime;
 
     @Column(name = "total_price")
-    private float totalPrice;
+    private Float totalPrice;
 
     @Column(name = "full_name")
     private String fullName;

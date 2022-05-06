@@ -3,6 +3,7 @@ package com.project.alarcha.service.impl;
 import com.project.alarcha.entities.Room;
 import com.project.alarcha.entities.RoomOrder;
 import com.project.alarcha.entities.RoomType;
+import com.project.alarcha.enums.RoomStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.repositories.RoomRepository;
@@ -29,7 +30,7 @@ public class RoomServiceImpl implements RoomService {
         Room room = new Room();
         RoomType roomType = roomTypeRepository.getById(roomModel.getRoomTypeId());
         room.setRoomNumber(roomModel.getRoomNumber());
-        room.setRoomStatus(roomModel.getRoomStatus());
+        room.setRoomStatus(RoomStatus.ACTIVE);
         room.setBedNumber(roomModel.getBedNumber());
         room.setRoomType(roomType);
         room.setHotelName(roomType.getHotel().getHotelName());

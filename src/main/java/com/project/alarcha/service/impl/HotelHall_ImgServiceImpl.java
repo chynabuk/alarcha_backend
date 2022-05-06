@@ -37,6 +37,15 @@ public class HotelHall_ImgServiceImpl implements HotelHall_ImgService {
     }
 
     @Override
+    public List<HotelHall_ImgModel> convertToModels(List<HotelHall_IMG> hotelHall_imgs) {
+        List<HotelHall_ImgModel> hotelHall_imgModels = new ArrayList<>();
+
+        hotelHall_imgs.forEach(hotelHall_img -> hotelHall_imgModels.add(toModel(hotelHall_img)));
+
+        return hotelHall_imgModels;
+    }
+
+    @Override
     public HotelHall_ImgModel deleteImage(Long id) {
         HotelHall_IMG hotelHall_img = hotelHall_imgRepository.getById(id);
 
