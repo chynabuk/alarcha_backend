@@ -136,9 +136,18 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         List<RoomOrder> roomOrders = roomOrderRepository.findAll();
 
         Date currentDate = new Date();
+        Date tempDate = new Date();
+        currentDate.setTime(0);
+        currentDate.setYear(tempDate.getYear());
+        currentDate.setMonth(tempDate.getMonth());
+        currentDate.setDate(tempDate.getDate());
+        currentDate.setHours(12);
 
         Date startDate = roomOrderModel.getStartDate();
+        startDate.setHours(12);
+
         Date endDate = roomOrderModel.getEndDate();
+        endDate.setHours(12);
 
         if (startDate == null || endDate == null){
             throw new ApiFailException("dates must not be null");

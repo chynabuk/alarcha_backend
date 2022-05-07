@@ -136,7 +136,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         Time endTime = hotelHallOrderModel.getEndTime();
         Date registrationDate = hotelHallOrderModel.getRegistrationDate();
 
-        registrationDate.setHours(6);
+        registrationDate.setHours(0);
         registrationDate.setMinutes(0);
         registrationDate.setSeconds(0);
 
@@ -151,7 +151,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         currentDate.setYear(tempDate.getYear());
         currentDate.setMonth(tempDate.getMonth());
         currentDate.setDate(tempDate.getDate());
-        currentDate.setHours(6);
+        currentDate.setHours(0);
         currentDate.setMinutes(0);
         currentDate.setSeconds(0);
 
