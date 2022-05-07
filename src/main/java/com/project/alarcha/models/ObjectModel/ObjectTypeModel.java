@@ -18,6 +18,7 @@ public class ObjectTypeModel extends BaseModel {
     private Float pricePerHour;
     private List<MenuSectionModel> menuSectionModels;
     private List<ObjectModel> objectModels;
+    private List<ObjectTypeImgModel> objectTypeImgModels;
     private Long areaId;
     private String areaName;
     private TimeType timeType;

@@ -29,6 +29,9 @@ public class ObjectType extends BaseEntity {
     @OneToMany(mappedBy = "objectType", cascade = CascadeType.ALL)
     private List<Object> objects;
 
+    @OneToMany(mappedBy = "objectType", cascade = CascadeType.ALL)
+    private List<ObjectTypeImage> objectTypeImages;
+
     @ManyToOne
     @JoinColumn(name = "area_id", referencedColumnName = "id")
     private Area area;

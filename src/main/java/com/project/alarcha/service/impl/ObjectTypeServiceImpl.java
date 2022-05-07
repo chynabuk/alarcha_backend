@@ -1,9 +1,7 @@
 package com.project.alarcha.service.impl;
 
-import com.project.alarcha.entities.Menu;
-import com.project.alarcha.entities.MenuSection;
+import com.project.alarcha.entities.*;
 import com.project.alarcha.entities.Object;
-import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
 import com.project.alarcha.models.ObjectModel.ObjectModel;
@@ -30,6 +28,9 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
 
     @Autowired
     private AreaRepository areaRepository;
+
+    @Autowired
+    private ObjectTypeImgService objectTypeImgService;
 
     @Override
     public ObjectTypeModel createObjectType(ObjectTypeModel objectTypeModel) {
@@ -124,14 +125,21 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         }
 
         List<ObjectModel> objectModels = objectTypeModel.getObjectModels();
-        if(objectModels != null){
+        if(objectModels != null) {
             objectModels.forEach(objectModel -> objectModel.setObjectTypeName(objectTypeModel.getName()));
 
             List<Object> objects = objectService.createObjects(objectTypeModel.getObjectModels());
-            if(objects != null){
+            if (objects != null) {
                 objectType.setObjects(objects);
                 objects.forEach(object -> object.setObjectType(objectType));
             }
+
+        }
+
+        if (objectTypeModel.getObjectTypeImgModels() != null) {
+            List<ObjectTypeImage> objectTypeImages = objectTypeImgService.uploadImages(objectTypeModel.getObjectTypeImgModels());
+            objectType.setObjectTypeImages(objectTypeImages);
+            objectTypeImages.forEach(objectTypeImage -> objectTypeImage.setObjectType(objectType));
         }
 
         objectType.setIsDeleted(false);

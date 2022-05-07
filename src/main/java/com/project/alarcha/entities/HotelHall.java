@@ -20,8 +20,8 @@ public class HotelHall extends BaseEntity{
     @Column(name = "price", nullable = false)
     private Float price;
 
-    @Column(name = "final_price")
-    private Float finalPrice;
+    @Column(name = "price_for_next_hours")
+    private Float priceForNextHours;
 
     @Column(name = "number_of_seats")
     private Integer numberOfSeats;

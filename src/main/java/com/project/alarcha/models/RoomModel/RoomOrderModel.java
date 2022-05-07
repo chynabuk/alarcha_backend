@@ -1,5 +1,6 @@
 package com.project.alarcha.models.RoomModel;
 
+import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.models.BaseModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +15,10 @@ import java.util.Date;
 public class RoomOrderModel extends BaseModel {
     private Long roomId;
     private Long userId;
+    private String userFullName;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date startDate;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date endDate;
+    private OrderStatus orderStatus;
 }

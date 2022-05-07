@@ -1,5 +1,6 @@
 package com.project.alarcha.models.HotelModel;
 
+import com.project.alarcha.enums.OrderStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,8 +15,10 @@ import java.util.Date;
 public class HotelHallOrderModel {
     private Long hotelHallId;
     private Long userId;
+    private String userFullName;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date registrationDate;
     private Time startTime;
     private Time endTime;
+    private OrderStatus orderStatus;
 }

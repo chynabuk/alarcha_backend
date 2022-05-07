@@ -1,5 +1,6 @@
 package com.project.alarcha.entities;
 
+import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.enums.RoomOrderStatus;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,9 +20,15 @@ public class RoomOrder extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "user_full_name")
+    private String userFullName;
+
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
+
+    @Column(name = "total_price")
+    private Float totalPrice;
 
     @Column(name = "start_date", nullable = false)
     private Date startDate;
@@ -36,5 +43,5 @@ public class RoomOrder extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private RoomOrderStatus roomOrderStatus;
+    private OrderStatus orderStatus;
 }

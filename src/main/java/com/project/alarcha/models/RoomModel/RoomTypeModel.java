@@ -13,6 +13,7 @@ import java.util.List;
 public class RoomTypeModel extends BaseModel {
     private String type;
     private Float price;
+    private Long hotelId;
     private String hotelName;
     private List<RoomModel> roomModels;
     private List<RoomTypeImageModel> roomTypeImageModels;

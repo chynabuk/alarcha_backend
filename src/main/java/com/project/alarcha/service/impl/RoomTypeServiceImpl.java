@@ -1,12 +1,10 @@
 package com.project.alarcha.service.impl;
 
-import com.project.alarcha.entities.Room;
-import com.project.alarcha.entities.RoomOrder;
-import com.project.alarcha.entities.RoomType;
-import com.project.alarcha.entities.RoomTypeImage;
+import com.project.alarcha.entities.*;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.models.RoomModel.RoomTypeModel;
+import com.project.alarcha.repositories.HotelRepository;
 import com.project.alarcha.repositories.RoomTypeRepository;
 import com.project.alarcha.service.RoomService;
 import com.project.alarcha.service.RoomTypeImageService;
@@ -27,6 +25,9 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     @Autowired
     private RoomTypeImageService roomTypeImageService;
+
+    @Autowired
+    private HotelRepository hotelRepository;
 
     @Override
     public RoomTypeModel createRoomType(RoomTypeModel roomTypeModel) {
@@ -134,17 +135,39 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     private RoomType initAndGet(RoomTypeModel roomTypeModel){
         RoomType roomType = new RoomType();
+
+        Hotel hotel = hotelRepository.getById(roomTypeModel.getHotelId());
+
+        if (hotel == null){
+            throw new ApiFailException("can not set hotel");
+        }
+
         roomType.setType(roomTypeModel.getType());
         roomType.setPrice(roomTypeModel.getPrice());
         roomType.setIsDeleted(false);
 
-        List<RoomTypeImage> roomTypeImages = roomTypeImageService
-                .uploadImages(roomTypeModel
-                .getRoomTypeImageModels());
+        roomType.setHotel(hotel);
 
-        roomType.setRoomTypeImages(roomTypeImages);
+        List<RoomModel> roomModels = roomTypeModel.getRoomModels();
 
-        roomTypeImages.forEach(roomTypeImage -> roomTypeImage.setRoomType(roomType));
+        if (roomModels != null){
+            roomModels.forEach(roomModel -> roomModel.setHotelName(roomTypeModel.getHotelName()));
+
+            List<Room> rooms = roomService.createRooms(roomModels);
+            roomType.setRooms(rooms);
+
+            rooms.forEach(room -> room.setRoomType(roomType));
+        }
+
+        if (roomTypeModel.getRoomTypeImageModels() != null){
+            List<RoomTypeImage> roomTypeImages = roomTypeImageService
+                    .uploadImages(roomTypeModel
+                            .getRoomTypeImageModels());
+
+            roomType.setRoomTypeImages(roomTypeImages);
+
+            roomTypeImages.forEach(roomTypeImage -> roomTypeImage.setRoomType(roomType));
+        }
 
         return roomType;
     }
@@ -166,6 +189,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         roomTypeModel.setType(roomType.getType());
         roomTypeModel.setPrice(roomType.getPrice());
         roomTypeModel.setRoomModels(roomService.getByRoomType(roomType));
+        roomTypeModel.setRoomTypeImageModels(roomTypeImageService.convertToModels(roomType.getRoomTypeImages()));
 
         return roomTypeModel;
     }

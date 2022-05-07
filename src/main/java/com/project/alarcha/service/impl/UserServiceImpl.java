@@ -17,6 +17,7 @@ import com.project.alarcha.service.RefreshTokenService;
 import com.project.alarcha.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -229,4 +230,5 @@ public class UserServiceImpl implements UserService {
         userTokenModel.setRefreshtoken(refreshToken.getToken());
         return userTokenModel;
     }
+
 }
