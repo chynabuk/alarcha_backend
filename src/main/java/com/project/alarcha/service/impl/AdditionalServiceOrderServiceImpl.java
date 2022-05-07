@@ -3,7 +3,7 @@ package com.project.alarcha.service.impl;
 import com.project.alarcha.entities.AdditionalService;
 import com.project.alarcha.entities.AdditionalServiceOrder;
 import com.project.alarcha.entities.User;
-import com.project.alarcha.enums.AdditionalServiceOrderStatus;
+import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.AdditionalServiceModel.AdditionalServiceOrderModel;
 import com.project.alarcha.repositories.AdditionalServiceOrderRepository;
@@ -36,8 +36,8 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
     public AdditionalServiceOrderModel acceptOrder(Long orderId) {
         AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(orderId);
 
-        if(additionalServiceOrder.getAdditionalServiceOrderStatus() == AdditionalServiceOrderStatus.IN_PROCESS){
-            additionalServiceOrder.setAdditionalServiceOrderStatus(AdditionalServiceOrderStatus.CONFIRMED);
+        if(additionalServiceOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+            additionalServiceOrder.setOrderStatus(OrderStatus.CONFIRMED);
         }
 
         additionalServiceOrderRepository.save(additionalServiceOrder);
@@ -63,7 +63,7 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
 
         checkTime(additionalServiceOrder);
 
-        additionalServiceOrder.setAdditionalServiceOrderStatus(AdditionalServiceOrderStatus.IN_PROCESS);
+        additionalServiceOrder.setOrderStatus(OrderStatus.IN_PROCESS);
 
         return additionalServiceOrder;
     }

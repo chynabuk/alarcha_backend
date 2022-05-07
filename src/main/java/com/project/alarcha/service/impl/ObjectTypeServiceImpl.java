@@ -110,6 +110,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectType.setPrice(objectTypeModel.getPrice());
         objectType.setArea(areaRepository.getById(objectTypeModel.getAreaId()));
         objectType.setPricePerHour(objectTypeModel.getPricePerHour());
+        objectType.setTimeType(objectTypeModel.getTimeType());
 
         List<MenuSectionModel> menuSectionModels = objectTypeModel.getMenuSectionModels();
         if(menuSectionModels != null){
@@ -147,6 +148,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
         objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
         objectTypeModel.setAreaName(objectType.getArea().getAreaName());
+        objectTypeModel.setTimeType(objectType.getTimeType());
 
         return objectTypeModel;
     }

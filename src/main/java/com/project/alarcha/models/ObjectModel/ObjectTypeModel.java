@@ -1,5 +1,6 @@
 package com.project.alarcha.models.ObjectModel;
 
+import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.models.BaseModel;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
 import lombok.Getter;
@@ -19,4 +20,5 @@ public class ObjectTypeModel extends BaseModel {
     private List<ObjectModel> objectModels;
     private Long areaId;
     private String areaName;
+    private TimeType timeType;
 }

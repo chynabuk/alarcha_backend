@@ -4,7 +4,7 @@ import com.project.alarcha.entities.Object;
 import com.project.alarcha.entities.ObjectOrder;
 import com.project.alarcha.entities.ObjectType;
 import com.project.alarcha.entities.User;
-import com.project.alarcha.enums.ObjectOrderStatus;
+import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
@@ -42,8 +42,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     public ObjectOrderModel acceptOrder(Long orderId) {
         ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
 
-        if(objectOrder.getObjectOrderStatus() == ObjectOrderStatus.IN_PROCESS){
-            objectOrder.setObjectOrderStatus(ObjectOrderStatus.CONFIRMED);
+        if(objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+            objectOrder.setOrderStatus(OrderStatus.CONFIRMED);
         }
 
         objectOrderRepository.save(objectOrder);
@@ -54,8 +54,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     public ObjectOrderModel declineOrder(Long orderId) {
         ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
 
-        if(objectOrder.getObjectOrderStatus() == ObjectOrderStatus.IN_PROCESS){
-            objectOrder.setObjectOrderStatus(ObjectOrderStatus.DECLINED);
+        if(objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+            objectOrder.setOrderStatus(OrderStatus.DECLINED);
         }
 
         objectOrderRepository.save(objectOrder);
@@ -114,7 +114,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         objectOrder.setIsDeleted(false);
         objectOrder.setFullName(user.getFirstName() + " " + user.getLastName());
         objectOrder.setObject(object);
-        objectOrder.setObjectOrderStatus(ObjectOrderStatus.IN_PROCESS);
+        objectOrder.setOrderStatus(OrderStatus.IN_PROCESS);
 
         if(objectType.getTimeType() == TimeType.TIME){
             checkObjectOrderTime(objectOrderModel);
@@ -147,7 +147,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     private void checkObjectOrderTime(ObjectOrderModel objectOrderModel){
         List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
 
-        LocalTime currentTime = LocalTime.now();
+        Time currentTime = Time.valueOf(LocalTime.now());
 
         Time startTime = objectOrderModel.getStartTime();
         Time endTime = objectOrderModel.getEndTime();
@@ -161,12 +161,16 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
             throw new ApiFailException("endTime must be greater than startTime");
         }
 
+        if(startTime.before(currentTime)){
+            throw new ApiFailException("startTime can not be less than currentTime");
+        }
+
         for(ObjectOrder objectOrder : objectOrders){
             if(objectOrderModel.getObjectId().equals(objectOrder.getObject().getId())){
                 if( (registrationDate.getYear() == objectOrder.getRegistrationDate().getYear() && registrationDate.getMonth() == objectOrder.getRegistrationDate().getMonth()
                 && registrationDate.getDay() == objectOrder.getRegistrationDate().getDay())
                 ){
-                    if(objectOrder.getObjectOrderStatus() == ObjectOrderStatus.CONFIRMED){
+                    if(objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
                         Time rSTime = objectOrder.getStartTime();
                         Time rETime = objectOrder.getEndTime();
 
@@ -185,9 +189,18 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
 
         Date currentDate = new Date();
+        currentDate.setTime(0);
+        Date tempDate = new Date();
+        currentDate.setYear(tempDate.getYear());
+        currentDate.setMonth(tempDate.getMonth());
+        currentDate.setDate(tempDate.getDate());
+        currentDate.setHours(tempDate.getHours());
 
         Date startDate = objectOrderModel.getStartDate();
+        startDate.setHours(12);
+
         Date endDate = objectOrderModel.getEndDate();
+        endDate.setHours(12);
 
         if (startDate == null || endDate == null){
             throw new ApiFailException("dates must not be null");
@@ -201,10 +214,9 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
             throw new ApiFailException("start date can not be less than currentDate");
         }
 
-
         for (ObjectOrder objectOrder : objectOrders){
             if (objectOrderModel.getObjectId() == objectOrder.getObject().getId()){
-                if (objectOrder.getObjectOrderStatus() == ObjectOrderStatus.CONFIRMED){
+                if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
                     Date rSDate = objectOrder.getStartDate();
                     Date rEDate = objectOrder.getEndDate();
                     if (

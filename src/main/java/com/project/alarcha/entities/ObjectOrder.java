@@ -1,6 +1,6 @@
 package com.project.alarcha.entities;
 
-import com.project.alarcha.enums.ObjectOrderStatus;
+import com.project.alarcha.enums.OrderStatus;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -49,5 +49,5 @@ public class ObjectOrder extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ObjectOrderStatus objectOrderStatus;
+    private OrderStatus orderStatus;
 }

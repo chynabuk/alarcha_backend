@@ -1,6 +1,6 @@
 package com.project.alarcha.entities;
 
-import com.project.alarcha.enums.AdditionalServiceOrderStatus;
+import com.project.alarcha.enums.OrderStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,5 +37,5 @@ public class AdditionalServiceOrder extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private AdditionalServiceOrderStatus additionalServiceOrderStatus;
+    private OrderStatus orderStatus;
 }
