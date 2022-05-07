@@ -17,7 +17,7 @@ public class Hotel extends BaseEntity{
 
     @OneToMany(mappedBy = "hotel",
     cascade = CascadeType.ALL)
-    private List<Room> rooms;
+    private List<RoomType> roomTypes;
 
     @OneToMany(mappedBy = "hotel",
     cascade = CascadeType.ALL)
@@ -25,6 +25,9 @@ public class Hotel extends BaseEntity{
 
     @Column(name = "hotel_name", nullable = false)
     private String hotelName;
+
+    @Column(name = "img")
+    private byte[] img;
 
     @ManyToOne
     @JoinColumn(name = "area_id", referencedColumnName = "id")

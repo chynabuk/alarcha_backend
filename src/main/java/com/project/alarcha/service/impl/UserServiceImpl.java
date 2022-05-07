@@ -76,15 +76,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createSuperAdmin() {
-//        User user = new User();
-//        user.setFirstName("Kuba");
-//        user.setLastName("Kushtarbekov");
-//        user.setEmail("kuba@gmail.com");
-//        user.setPassword(encoder.encode("kuba12345"));
-//        user.setPhone("+996 777777777");
-//        user.setUserStatus(UserStatus.ACTIVE);
-//        user.setUserRole(UserRole.SUPER_ADMIN);
-//        userRepository.save(user);
+        User user = new User();
+        user.setFirstName("Kuba");
+        user.setLastName("Kushtarbekov");
+        user.setEmail("kuba@gmail.com");
+        user.setPassword(encoder.encode("kuba12345"));
+        user.setPhone("+996 777777777");
+        user.setUserStatus(UserStatus.ACTIVE);
+        user.setUserRole(UserRole.SUPER_ADMIN);
+        user.setIsDeleted(false);
+        userRepository.save(user);
     }
 
     @Override
@@ -116,6 +117,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(Long id) {
         return userRepository.getById(id);
+    }
+
+    @Override
+    public List<UserToSendModel> getAdmins() {
+        List<UserToSendModel> userToSendModels = new ArrayList<>();
+
+        userRepository.findAll()
+                .stream()
+                .filter(user ->  !user.getIsDeleted() && user.getUserRole() == UserRole.ADMIN)
+                .collect(Collectors.toList())
+                    .forEach(user -> userToSendModels.add(initUserToSendModel(user)));
+
+
+        return userToSendModels;
     }
 
     @Override
@@ -179,6 +194,7 @@ public class UserServiceImpl implements UserService {
 
     private User initAndSaveUser(UserRegistrationModel userRegistrationModel) {
         User user = new User();
+        user.setIsDeleted(false);
         user.setFirstName(userRegistrationModel.getFirstName());
         user.setLastName(userRegistrationModel.getLastName());
         String encodingPassword = encoder.encode(userRegistrationModel.getPassword());

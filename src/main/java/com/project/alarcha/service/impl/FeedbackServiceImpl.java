@@ -47,7 +47,9 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
 
         if (!feedback.getIsReplied()){
-            EmailSender.sendEmail(feedback.getEmail(), replyToUserMessageModel.getSubject(), replyToUserMessageModel.getBody());
+            EmailSender emailSender = new EmailSender();
+
+            emailSender.sendEmail(feedback.getEmail(), replyToUserMessageModel.getSubject(), replyToUserMessageModel.getBody());
             feedback.setIsReplied(true);
         }
 

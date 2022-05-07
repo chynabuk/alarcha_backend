@@ -1,7 +1,6 @@
 package com.project.alarcha.models.RoomModel;
 
 import com.project.alarcha.enums.RoomStatus;
-import com.project.alarcha.enums.RoomType;
 import com.project.alarcha.models.BaseModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +12,12 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class RoomModel extends BaseModel {
+    private Long roomTypeId;
     private Integer roomNumber;
     private RoomStatus roomStatus;
     private List<RoomOrderModel> roomOrderModels;
-    private RoomType roomType;
     private Integer bedNumber;
-    private Integer price;
+    private Long hotelId;
+    private String hotelName;
+    private String img;
 }

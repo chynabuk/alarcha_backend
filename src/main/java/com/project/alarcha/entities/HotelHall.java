@@ -20,6 +20,12 @@ public class HotelHall extends BaseEntity{
     @Column(name = "price", nullable = false)
     private Float price;
 
+    @Column(name = "price_for_next_hours")
+    private Float priceForNextHours;
+
+    @Column(name = "number_of_seats")
+    private Integer numberOfSeats;
+
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
@@ -27,5 +33,8 @@ public class HotelHall extends BaseEntity{
     @OneToMany(mappedBy = "hotelHall",
     cascade = CascadeType.ALL)
     private List<HotelHallOrder> hotelHallOrders;
+
+    @OneToMany(mappedBy = "hotelHall", cascade = CascadeType.ALL)
+    private List<HotelHall_IMG> hotelHallImages;
 
 }

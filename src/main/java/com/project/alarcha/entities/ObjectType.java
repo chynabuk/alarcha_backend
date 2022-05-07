@@ -17,11 +17,21 @@ public class ObjectType extends BaseEntity {
     private String name;
 
     @Column(name = "price", nullable = false)
-    private float price;
+    private Float price;
+
+    @Column(name = "price_per_hour")
+    private Float pricePerHour;
 
     @OneToMany(mappedBy = "objectType", cascade = CascadeType.ALL)
-    private List<Menu> menus;
+    private List<MenuSection> menuSections;
 
     @OneToMany(mappedBy = "objectType", cascade = CascadeType.ALL)
     private List<Object> objects;
+
+    @OneToMany(mappedBy = "objectType", cascade = CascadeType.ALL)
+    private List<ObjectTypeImage> objectTypeImages;
+
+    @ManyToOne
+    @JoinColumn(name = "area_id", referencedColumnName = "id")
+    private Area area;
 }
