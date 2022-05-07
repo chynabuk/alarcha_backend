@@ -6,6 +6,7 @@ import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.FeedbackModel.FeedbackModel;
 import com.project.alarcha.models.FeedbackModel.ReplyToUserMessageModel;
 import com.project.alarcha.repositories.FeedbackRepository;
+import com.project.alarcha.service.EmailSenderService;
 import com.project.alarcha.service.FeedbackService;
 import com.project.alarcha.util.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import java.util.List;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
+
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Autowired
     private FeedbackRepository feedbackRepository;
@@ -47,9 +51,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
 
         if (!feedback.getIsReplied()){
-            EmailSender emailSender = new EmailSender();
-
-            emailSender.sendEmail(feedback.getEmail(), replyToUserMessageModel.getSubject(), replyToUserMessageModel.getBody());
+            emailSenderService.sendEmail(feedback.getEmail(), replyToUserMessageModel.getSubject(), replyToUserMessageModel.getBody());
             feedback.setIsReplied(true);
         }
 
