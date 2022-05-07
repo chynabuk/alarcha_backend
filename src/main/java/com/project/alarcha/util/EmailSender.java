@@ -1,17 +1,17 @@
-package com.project.alarcha.service;
+package com.project.alarcha.util;
 
 
+import lombok.experimental.UtilityClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
 
-@Service
-public class EmailSenderService {
+@UtilityClass
+public class EmailSender {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    public void sendEmail(String toEmail, String subject, String body){
+    public static void sendEmail(String toEmail, String subject, String body){
         SimpleMailMessage message = new SimpleMailMessage();
         //Нужно будет поменять(также в application.properties прописать username и password
         message.setFrom("sharshenkulov.1@gmail.com");

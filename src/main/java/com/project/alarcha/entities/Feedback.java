@@ -21,4 +21,6 @@ public class Feedback extends BaseEntity{
     private String name;
     @Column(name = "message", nullable = false)
     private String message;
+    @Column(name = "is_replied")
+    private Boolean isReplied;
 }
