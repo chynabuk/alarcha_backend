@@ -14,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrderService {
@@ -44,14 +48,68 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
         return toModel(additionalServiceOrder);
     }
 
+    @Override
+    public AdditionalServiceOrderModel declineOrder(Long orderId) {
+        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(orderId);
+
+        if(additionalServiceOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+            additionalServiceOrder.setOrderStatus(OrderStatus.DECLINED);
+        }
+
+        additionalServiceOrderRepository.save(additionalServiceOrder);
+        return toModel(additionalServiceOrder);
+    }
+
+    @Override
+    public List<AdditionalServiceOrderModel> getAll() {
+        List<AdditionalServiceOrderModel> additionalServiceOrderModels = new ArrayList<>();
+
+        for(AdditionalServiceOrder additionalServiceOrder : additionalServiceOrderRepository.findAll()){
+            if(!additionalServiceOrder.getIsDeleted()){
+                additionalServiceOrderModels.add(toModel(additionalServiceOrder));
+            }
+        }
+        return additionalServiceOrderModels;
+    }
+
+    @Override
+    public AdditionalServiceOrderModel getById(Long id) {
+        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(id);
+
+        if(additionalServiceOrder == null){
+            throw new ApiFailException("Additional service order is not found!");
+        }
+
+        if(additionalServiceOrder.getIsDeleted()){
+            throw new ApiFailException("Additional service order is deleted!");
+        }
+
+        return toModel(additionalServiceOrder);
+    }
+
+    @Override
+    public AdditionalServiceOrderModel deleteOrder(Long orderId) {
+        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(orderId);
+
+        if(additionalServiceOrder != null){
+            if(additionalServiceOrder.getIsDeleted()){
+                throw new ApiFailException("Additional service is already deleted!");
+            }
+            additionalServiceOrder.setIsDeleted(true);
+        }
+
+        additionalServiceOrderRepository.save(additionalServiceOrder);
+        return toModel(additionalServiceOrder);
+    }
+
     private AdditionalServiceOrder initAndGetAdditionalServiceOrder(AdditionalServiceOrderModel additionalServiceOrderModel){
         AdditionalServiceOrder additionalServiceOrder = new AdditionalServiceOrder();
 
         AdditionalService additionalService = additionalServiceS.getByAdditionalServiceId(additionalServiceOrderModel.getAdditionalServiceId());
+        User user = userService.getById(additionalServiceOrderModel.getUserId());
 
         checkStock(additionalService);
-
-        User user = userService.getById(additionalServiceOrderModel.getUserId());
+        checkAdditionalServiceOrderTime(additionalServiceOrderModel);
 
         additionalServiceOrder.setUser(user);
         additionalServiceOrder.setFullName(user.getFirstName() + " " + user.getLastName());
@@ -80,6 +138,10 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
             additionalServiceOrder.setEndTime(eTime);
         }
         else if(endTime != null){
+            if (endTime.compareTo(startTime) <= 0){
+                throw new ApiFailException("endTime must be greater than startTime");
+            }
+
             int hours = endTime.getHours() - startTime.getHours();
 
             if(hours < 4){
@@ -97,6 +159,40 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
         }
         else {
             throw new ApiFailException("The following additional service is not in stock!");
+        }
+    }
+
+    private void checkAdditionalServiceOrderTime(AdditionalServiceOrderModel additionalServiceOrderModel){
+        Time currentTime = Time.valueOf(LocalTime.now());
+
+        Time startTime = additionalServiceOrderModel.getStartTime();
+        Date registrationDate = additionalServiceOrderModel.getRegistrationDate();
+
+        if(startTime == null || registrationDate == null){
+            throw new ApiFailException("Time or registration date must not be null!");
+        }
+
+        registrationDate.setHours(0);
+        registrationDate.setMinutes(0);
+        registrationDate.setSeconds(0);
+
+        Date currentDate = new Date();
+        currentDate.setTime(0);
+        Date tempDate = new Date();
+
+        currentDate.setYear(tempDate.getYear());
+        currentDate.setMonth(tempDate.getMonth());
+        currentDate.setDate(tempDate.getDate());
+        currentDate.setHours(0);
+        currentDate.setMinutes(0);
+        currentDate.setSeconds(0);
+
+        if(registrationDate.before(currentDate)){
+            throw new ApiFailException("RegistrationDate can not be less than currentDate");
+        }
+
+        if(registrationDate.equals(currentDate) && startTime.before(currentTime)){
+            throw new ApiFailException("startTime can not be less than currentTime");
         }
     }
 

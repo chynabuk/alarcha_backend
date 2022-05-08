@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Date;
 import java.sql.Time;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -18,13 +18,11 @@ public class ObjectOrderModel extends BaseModel {
     private Float totalPrice;
     private String fullName;
 
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private Date registrationDate;
     private Time startTime;
     private Time endTime;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private java.util.Date startDate;
+    private Date startDate;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private java.util.Date endDate;
+    private Date endDate;
 }

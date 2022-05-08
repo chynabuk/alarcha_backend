@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Date;
 import java.sql.Time;
+import java.util.Date;
 
 @Getter
 @Setter

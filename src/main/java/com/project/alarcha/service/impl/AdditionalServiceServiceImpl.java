@@ -29,11 +29,13 @@ public class AdditionalServiceServiceImpl implements AdditionalServiceService {
     public AdditionalServiceModel getById(Long additionalServiceId) {
         AdditionalService additionalService = additionalServiceRepository.getById(additionalServiceId);
 
-        if(additionalService != null){
-            if(additionalService.getIsDeleted()){
-                throw new ApiFailException("There is no additional service like this!");
-            }
-        }
+       if(additionalService == null){
+           throw new ApiFailException("Additional Service is not found!");
+       }
+
+       if(additionalService.getIsDeleted()){
+           throw new ApiFailException("Additional Service is deleted!");
+       }
 
         return toModel(additionalService);
     }

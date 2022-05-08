@@ -4,6 +4,7 @@ package com.project.alarcha.controller;
 import com.project.alarcha.models.AdditionalServiceModel.AdditionalServiceModel;
 import com.project.alarcha.models.AdditionalServiceModel.AdditionalServiceOrderModel;
 import com.project.alarcha.models.HotelModel.HotelModel;
+import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
 import com.project.alarcha.service.AdditionalServiceOrderService;
 import com.project.alarcha.service.AdditionalServiceService;
 import com.project.alarcha.util.ResponseMessage;
@@ -49,5 +50,25 @@ public class AdditionalServiceController {
     @PostMapping("/order/{additionalServiceOrderId}/accept")
     public ResponseMessage<AdditionalServiceOrderModel> acceptOrder(@PathVariable Long additionalServiceOrderId){
         return new ResponseMessage<AdditionalServiceOrderModel>().prepareSuccessMessage(additionalServiceOrderService.acceptOrder(additionalServiceOrderId));
+    }
+
+    @PostMapping("/order/{additionalServiceOrderId}/decline")
+    public ResponseMessage<AdditionalServiceOrderModel> declineOrder(@PathVariable Long additionalServiceOrderId){
+        return new ResponseMessage<AdditionalServiceOrderModel>().prepareSuccessMessage(additionalServiceOrderService.declineOrder(additionalServiceOrderId));
+    }
+
+    @DeleteMapping("/order/delete/{additionalServiceOrderId}")
+    public ResponseMessage<AdditionalServiceOrderModel> deleteOrder(@PathVariable Long additionalServiceOrderId){
+        return new ResponseMessage<AdditionalServiceOrderModel>().prepareSuccessMessage(additionalServiceOrderService.deleteOrder(additionalServiceOrderId));
+    }
+
+    @GetMapping("/order/get-all")
+    public ResponseMessage<List<AdditionalServiceOrderModel>> getOrders(){
+        return new ResponseMessage<List<AdditionalServiceOrderModel>>().prepareSuccessMessage(additionalServiceOrderService.getAll());
+    }
+
+    @GetMapping("/order/get/{additionalServiceOrderId}")
+    public ResponseMessage<AdditionalServiceOrderModel> getOrder(@PathVariable Long additionalServiceOrderId){
+        return new ResponseMessage<AdditionalServiceOrderModel>().prepareSuccessMessage(additionalServiceOrderService.getById(additionalServiceOrderId));
     }
 }

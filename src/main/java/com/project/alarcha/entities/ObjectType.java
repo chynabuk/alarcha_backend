@@ -20,7 +20,7 @@ public class ObjectType extends BaseEntity {
     @Column(name = "price", nullable = false)
     private Float price;
 
-    @Column(name = "price_per_hour", nullable = false)
+    @Column(name = "price_per_hour")
     private Float pricePerHour;
 
     @OneToMany(mappedBy = "objectType", cascade = CascadeType.ALL)
