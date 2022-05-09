@@ -78,6 +78,10 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
         for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
             if (!hotelHallOrder.getIsDeleted()){
+                if (isExpired(hotelHallOrder.getExpirationDate())){
+                    hotelHallOrder.setIsDeleted(true);
+                    hotelHallOrderRepository.save(hotelHallOrder);
+                }
                 hotelHallOrderModels.add(toModel(hotelHallOrder));
             }
         }
@@ -123,6 +127,10 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrder.setStartTime(hotelHallOrderModel.getStartTime());
         hotelHallOrder.setEndTime(hotelHallOrderModel.getEndTime());
         hotelHallOrder.setEndDate(startDate);
+
+        Date expirationDate = new Date();
+        expirationDate.setDate(startDate.getDate() + 2);
+        hotelHallOrder.setExpirationDate(expirationDate);
         hotelHallOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
 
         hotelHallOrder.setTotalPrice(getTotalPrice(price, priceForNextHours, hotelHallOrderModel));
@@ -130,6 +138,12 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrder.setIsDeleted(false);
 
         return hotelHallOrder;
+    }
+
+    private boolean isExpired(Date expiredDate){
+        Date currentDate = new Date();
+
+        return expiredDate.after(currentDate);
     }
 
     private void checkHotelHallOrderTime(HotelHallOrderModel hotelHallOrderModel){

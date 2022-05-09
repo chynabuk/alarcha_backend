@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -18,18 +19,21 @@ public abstract class BaseEntity {
     private Boolean isDeleted;
 
     @Column(name = "create_date")
-    private LocalDateTime createDate;
+    private Date createDate;
 
     @Column(name = "update_date")
-    private LocalDateTime updateDate;
+    private Date updateDate;
+
+    @Column(name = "deleted_date")
+    private Date deletedDate;
 
     @PostPersist
     public void postPersist() {
-        this.createDate = LocalDateTime.now();
+        this.createDate = new Date();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.updateDate = LocalDateTime.now();
+        this.updateDate = new Date();
     }
 }
