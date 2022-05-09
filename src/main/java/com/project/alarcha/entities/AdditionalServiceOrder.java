@@ -2,10 +2,11 @@ package com.project.alarcha.entities;
 
 import com.project.alarcha.enums.OrderStatus;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.sql.Time;
+import java.util.Date;
 
 @Entity
 @Table(name = "additional_service_orders")
@@ -15,6 +16,7 @@ import java.sql.Time;
 @AllArgsConstructor
 @ToString
 public class AdditionalServiceOrder extends BaseEntity {
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     @Column(name = "registration_date", nullable = false)
     private Date registrationDate;
 

@@ -2,6 +2,7 @@ package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.*;
 import com.project.alarcha.entities.Object;
+import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
 import com.project.alarcha.models.ObjectModel.ObjectModel;
@@ -110,8 +111,11 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectType.setName(objectTypeModel.getName());
         objectType.setPrice(objectTypeModel.getPrice());
         objectType.setArea(areaRepository.getById(objectTypeModel.getAreaId()));
-        objectType.setPricePerHour(objectTypeModel.getPricePerHour());
         objectType.setTimeType(objectTypeModel.getTimeType());
+
+        if(objectType.getTimeType() == TimeType.TIME){
+            objectType.setPricePerHour(objectTypeModel.getPricePerHour());
+        }
 
         List<MenuSectionModel> menuSectionModels = objectTypeModel.getMenuSectionModels();
         if(menuSectionModels != null){
