@@ -16,8 +16,11 @@ import java.util.Date;
 @ToString
 public class HotelHallOrder extends BaseEntity{
 
-    @Column(name = "registration_date", nullable = false)
-    private Date registration_date;
+    @Column(name = "start_date", nullable = false)
+    private Date startDate;
+
+    @Column(name = "end_datte", nullable = false)
+    private Date endDate;
 
     @Column(name = "start_time", nullable = false)
     private Time startTime;

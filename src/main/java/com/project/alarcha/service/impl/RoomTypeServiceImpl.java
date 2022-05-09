@@ -31,8 +31,9 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     @Override
     public RoomTypeModel createRoomType(RoomTypeModel roomTypeModel) {
-        roomTypeRepository.save(initAndGet(roomTypeModel));
-        return roomTypeModel;
+        RoomType roomType = initAndGet(roomTypeModel);
+        roomTypeRepository.save(roomType);
+        return toModel(roomType);
     }
 
     @Override
@@ -70,12 +71,20 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     }
 
     @Override
-    public RoomTypeModel getById(Long roomTypeId) {
-        RoomType roomType = roomTypeRepository.getById(roomTypeId);
+    public List<RoomTypeModel> convertToRoomTypeModels(List<RoomType> roomTypes) {
+        List<RoomTypeModel> roomTypeModels = new ArrayList<>();
 
-        if (roomType == null){
-            throw new ApiFailException("RoomType not found");
+        for (RoomType roomType : roomTypes){
+            if (!roomType.getIsDeleted()){
+                roomTypeModels.add(toModel(roomType));
+            }
         }
+        return roomTypeModels;
+    }
+
+    @Override
+    public RoomTypeModel getById(Long roomTypeId) {
+        RoomType roomType = getRoomType(roomTypeId);
 
         return toModelDetailed(roomType);
     }
@@ -100,15 +109,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     @Override
     public RoomTypeModel deleteRoomType(Long roomTypeId) {
-        RoomType roomType = roomTypeRepository.getById(roomTypeId);
-
-        if (roomType != null){
-            throw new ApiFailException("RoomType not found");
-        }
-
-        if (roomType.getIsDeleted()){
-            throw new ApiFailException("RoomType is already deleted");
-        }
+        RoomType roomType = getRoomType(roomTypeId);
 
         for (Room room : roomType.getRooms()){
             if (!room.getIsDeleted()){
@@ -131,6 +132,20 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         roomType.setIsDeleted(true);
 
         return toModel(roomType);
+    }
+
+    private RoomType getRoomType(Long id){
+        RoomType roomType = roomTypeRepository.getById(id);
+
+        if (roomType != null){
+            throw new ApiFailException("RoomType not found");
+        }
+
+        if (roomType.getIsDeleted()){
+            throw new ApiFailException("RoomType not found or deleted");
+        }
+
+        return roomType;
     }
 
     private RoomType initAndGet(RoomTypeModel roomTypeModel){

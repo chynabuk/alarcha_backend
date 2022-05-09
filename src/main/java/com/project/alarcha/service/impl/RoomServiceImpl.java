@@ -33,12 +33,11 @@ public class RoomServiceImpl implements RoomService {
         room.setRoomStatus(RoomStatus.ACTIVE);
         room.setBedNumber(roomModel.getBedNumber());
         room.setRoomType(roomType);
-        room.setHotelName(roomType.getHotel().getHotelName());
         room.setIsDeleted(false);
 
         roomRepository.save(room);
 
-        return roomModel;
+        return toModel(room);
     }
 
     @Override
@@ -50,7 +49,6 @@ public class RoomServiceImpl implements RoomService {
             room.setRoomNumber(roomModel.getRoomNumber());
             room.setRoomStatus(roomModel.getRoomStatus());
             room.setBedNumber(roomModel.getBedNumber());
-            room.setHotelName(roomModel.getHotelName());
 
             System.out.println("Room");
             System.out.println(roomModel.getHotelName());
@@ -83,13 +81,13 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomModel getById(Long roomId) {
-        Room room = roomRepository.getById(roomId);
+        Room room = getRoom(roomId);
         return toModel(room);
     }
 
     @Override
     public Room getByRoomId(Long roomId) {
-        return roomRepository.getById(roomId);
+        return getRoom(roomId);
     }
 
     @Override
@@ -120,7 +118,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomModel updateRoom(RoomModel roomModel) {
-        Room room = roomRepository.getById(roomModel.getId());
+        Room room = getRoom(roomModel.getId());
 
         setValuesOnUpdateRoom(room, roomModel);
 
@@ -131,24 +129,32 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomModel deleteRoom(Long roomId) {
-        Room room = roomRepository.getById(roomId);
+        Room room = getRoom(roomId);
 
-        if (room != null){
-            if (room.getIsDeleted()){
-                throw new ApiFailException("Room is already deleted");
-            }
-            room.setIsDeleted(true);
+        room.setIsDeleted(true);
 
-            for (RoomOrder roomOrder : room.getRoomOrders()){
-                if (!roomOrder.getIsDeleted()){
-                    roomOrder.setIsDeleted(true);
-                }
+        for (RoomOrder roomOrder : room.getRoomOrders()){
+            if (!roomOrder.getIsDeleted()){
+                roomOrder.setIsDeleted(true);
             }
         }
 
         roomRepository.save(room);
 
         return toModel(room);
+    }
+
+    private Room getRoom(Long id){
+        Room room = roomRepository.getById(id);
+
+        if (room != null){
+            throw new ApiFailException("Room is not found");
+        }
+        if (room.getIsDeleted()){
+            throw new ApiFailException("Room is not found or deleted");
+        }
+
+        return room;
     }
 
     private void setValuesOnUpdateRoom(Room room, RoomModel roomModel){

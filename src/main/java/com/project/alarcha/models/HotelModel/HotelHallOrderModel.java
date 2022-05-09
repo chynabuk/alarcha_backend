@@ -17,7 +17,7 @@ public class HotelHallOrderModel {
     private Long userId;
     private String userFullName;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private Date registrationDate;
+    private Date startDate;
     private Time startTime;
     private Time endTime;
     private OrderStatus orderStatus;

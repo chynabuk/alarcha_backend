@@ -1,10 +1,8 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.HotelHall_IMG;
-import com.project.alarcha.entities.RoomTypeImage;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHall_ImgModel;
-import com.project.alarcha.models.RoomModel.RoomTypeImageModel;
 import com.project.alarcha.repositories.HotelHall_ImgRepository;
 import com.project.alarcha.service.HotelHall_ImgService;
 import lombok.extern.slf4j.Slf4j;

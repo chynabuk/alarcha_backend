@@ -1,7 +1,6 @@
 package com.project.alarcha.entities;
 
 
-import com.project.alarcha.enums.NatureType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,7 +23,7 @@ public class Nature extends BaseEntity{
     @Column(name = "photo", nullable = false)
     private byte[] photo;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "nature_type_id", referencedColumnName = "id")
     private NatureType natureType;
 }

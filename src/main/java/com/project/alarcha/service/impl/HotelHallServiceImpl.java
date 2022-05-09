@@ -66,7 +66,7 @@ public class HotelHallServiceImpl implements HotelHallService {
 
     @Override
     public HotelHallModel getById(Long id) {
-        HotelHall hotelHall = hotelHallsRepository.getById(id);
+        HotelHall hotelHall = getHotelHall(id);
 
         return toModel(hotelHall);
     }
@@ -91,11 +91,8 @@ public class HotelHallServiceImpl implements HotelHallService {
 
     @Override
     public HotelHallModel updateHotelHall(HotelHallModel hotelHallModel) {
-        HotelHall hotel = hotelHallsRepository.getById(hotelHallModel.getId());
-
-        if (hotel != null){
-            setValuesOnUpdateHotelHall(hotel, hotelHallModel);
-        }
+        HotelHall hotel = getHotelHall(hotelHallModel.getId());
+        setValuesOnUpdateHotelHall(hotel, hotelHallModel);
 
         hotelHallsRepository.save(hotel);
 
@@ -104,30 +101,38 @@ public class HotelHallServiceImpl implements HotelHallService {
 
     @Override
     public HotelHallModel deleteHotelHall(Long id) {
-        HotelHall hotelHall = hotelHallsRepository.getById(id);
+        HotelHall hotelHall = getHotelHall(id);
 
-        if (hotelHall != null){
-            if (hotelHall.getIsDeleted()){
-                throw new ApiFailException("Hotell hall is already deleted");
+        hotelHall.setIsDeleted(true);
+
+        for (HotelHallOrder hotelHallOrder : hotelHall.getHotelHallOrders()){
+            if (!hotelHallOrder.getIsDeleted()){
+                hotelHallOrder.setIsDeleted(true);
             }
-            hotelHall.setIsDeleted(true);
+        }
 
-            for (HotelHallOrder hotelHallOrder : hotelHall.getHotelHallOrders()){
-                if (!hotelHallOrder.getIsDeleted()){
-                    hotelHallOrder.setIsDeleted(true);
-                }
-            }
-
-            for (HotelHall_IMG hotelHall_img : hotelHall.getHotelHallImages()){
-                if (!hotelHall_img.getIsDeleted()){
-                    hotelHall_img.setIsDeleted(true);
-                }
+        for (HotelHall_IMG hotelHall_img : hotelHall.getHotelHallImages()){
+            if (!hotelHall_img.getIsDeleted()){
+                hotelHall_img.setIsDeleted(true);
             }
         }
 
         hotelHallsRepository.save(hotelHall);
 
         return toModel(hotelHall);
+    }
+
+    private HotelHall getHotelHall(Long id){
+        HotelHall hotelHall = hotelHallsRepository.getById(id);
+
+        if (hotelHall != null) {
+            throw new ApiFailException("Hotel hall is not found");
+        }
+        if (hotelHall.getIsDeleted()){
+            throw new ApiFailException("Hotel hall is not found or deleted");
+        }
+
+        return hotelHall;
     }
 
     private HotelHall initAndGet(HotelHallModel hotelHallModel){

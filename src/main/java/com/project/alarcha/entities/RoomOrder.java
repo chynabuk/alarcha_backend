@@ -1,7 +1,6 @@
 package com.project.alarcha.entities;
 
 import com.project.alarcha.enums.OrderStatus;
-import com.project.alarcha.enums.RoomOrderStatus;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -32,10 +31,6 @@ public class RoomOrder extends BaseEntity{
 
     @Column(name = "start_date", nullable = false)
     private Date startDate;
-
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
-    @Column(name = "hotel_name", nullable = false)
-    private String hotelName;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     @Column(name = "end_date", nullable = false)
