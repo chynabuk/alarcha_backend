@@ -82,6 +82,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                     hotelHallOrder.setIsDeleted(true);
                     hotelHallOrderRepository.save(hotelHallOrder);
                 }
+            }
+            if (!hotelHallOrder.getIsDeleted()){
                 hotelHallOrderModels.add(toModel(hotelHallOrder));
             }
         }
@@ -96,10 +98,13 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     }
 
     private HotelHallOrder getHotelHallOrder(Long id){
-        HotelHallOrder hotelHallOrder = hotelHallOrderRepository.getById(id);
+        HotelHallOrder hotelHallOrder = hotelHallOrderRepository
+                .findById(id)
+                .orElseThrow(() -> new ApiFailException("HotelHall order not found"));
 
-        if (hotelHallOrder == null){
-            throw new ApiFailException("HotelHall order not found");
+        if (isExpired(hotelHallOrder.getExpirationDate())){
+            hotelHallOrder.setIsDeleted(true);
+            hotelHallOrderRepository.save(hotelHallOrder);
         }
 
         if (hotelHallOrder.getIsDeleted()){
@@ -129,7 +134,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrder.setEndDate(startDate);
 
         Date expirationDate = new Date();
-        expirationDate.setDate(startDate.getDate() + 2);
+        expirationDate.setDate(startDate.getDate() + 3);
         hotelHallOrder.setExpirationDate(expirationDate);
         hotelHallOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
 
