@@ -20,7 +20,7 @@ public class AdditionalService extends BaseEntity {
     private String description;
 
     @Column(name = "price", nullable = false)
-    private float price;
+    private Float price;
 
     @Column(name = "in_stock")
     private Integer inStock;

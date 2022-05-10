@@ -16,6 +16,7 @@ public class ObjectTypeModel extends BaseModel {
     private String name;
     private Float price;
     private Float pricePerHour;
+    private Integer minHours;
     private List<MenuSectionModel> menuSectionModels;
     private List<ObjectModel> objectModels;
     private List<ObjectTypeImgModel> objectTypeImgModels;

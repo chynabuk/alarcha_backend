@@ -27,22 +27,14 @@ public class AdditionalServiceServiceImpl implements AdditionalServiceService {
 
     @Override
     public AdditionalServiceModel getById(Long additionalServiceId) {
-        AdditionalService additionalService = additionalServiceRepository.getById(additionalServiceId);
-
-       if(additionalService == null){
-           throw new ApiFailException("Additional Service is not found!");
-       }
-
-       if(additionalService.getIsDeleted()){
-           throw new ApiFailException("Additional Service is deleted!");
-       }
+        AdditionalService additionalService = getAdditionalService(additionalServiceId);
 
         return toModel(additionalService);
     }
 
     @Override
     public AdditionalService getByAdditionalServiceId(Long additionalServiceId) {
-        return additionalServiceRepository.getById(additionalServiceId);
+        return getAdditionalService(additionalServiceId);
     }
 
     @Override
@@ -59,16 +51,10 @@ public class AdditionalServiceServiceImpl implements AdditionalServiceService {
     }
 
     @Override
-    public AdditionalServiceModel deleteAdditionalService(Long AdditionalServiceId) {
-        AdditionalService additionalService = additionalServiceRepository.getById(AdditionalServiceId);
+    public AdditionalServiceModel deleteAdditionalService(Long additionalServiceId) {
+        AdditionalService additionalService = getAdditionalService(additionalServiceId);
 
-        if(additionalService != null){
-            if(additionalService.getIsDeleted()){
-                throw new ApiFailException("Additional service is already deleted!");
-            }
-
-            additionalService.setIsDeleted(true);
-        }
+        additionalService.setIsDeleted(true);
 
         additionalServiceRepository.save(additionalService);
 
@@ -77,7 +63,25 @@ public class AdditionalServiceServiceImpl implements AdditionalServiceService {
 
     @Override
     public AdditionalServiceModel updateAdditionalService(AdditionalServiceModel additionalServiceModel) {
-        return null;
+       AdditionalService additionalService = getAdditionalService(additionalServiceModel.getId());
+
+       setValuesOnAdditionalService(additionalService, additionalServiceModel);
+
+       additionalServiceRepository.save(additionalService);
+
+       return additionalServiceModel;
+    }
+
+    private AdditionalService getAdditionalService(Long additionalServiceId){
+        AdditionalService additionalService = additionalServiceRepository
+                .findById(additionalServiceId)
+                .orElseThrow(() -> new ApiFailException("Additional service is not found!"));
+
+        if(additionalService.getIsDeleted()){
+            throw new ApiFailException("Additional service is not found!");
+        }
+
+        return additionalService;
     }
 
     private AdditionalService initAndGet(AdditionalService additionalService, AdditionalServiceModel additionalServiceModel){
@@ -88,6 +92,29 @@ public class AdditionalServiceServiceImpl implements AdditionalServiceService {
         additionalService.setIsDeleted(false);
 
         return additionalService;
+    }
+
+    private void setValuesOnAdditionalService(AdditionalService additionalService, AdditionalServiceModel additionalServiceModel){
+        String name = additionalServiceModel.getName();
+        String description = additionalServiceModel.getDescription();
+        Float price = additionalServiceModel.getPrice();
+        Integer inStock = additionalServiceModel.getInStock();
+
+        if(name != null){
+            additionalService.setName(name);
+        }
+
+        if(description != null){
+            additionalService.setDescription(description);
+        }
+
+        if(price != null){
+            additionalService.setPrice(price);
+        }
+
+        if(inStock != null){
+            additionalService.setInStock(inStock);
+        }
     }
 
     private AdditionalServiceModel toModel(AdditionalService additionalService){

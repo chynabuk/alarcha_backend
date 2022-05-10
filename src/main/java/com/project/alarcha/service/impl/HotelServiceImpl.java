@@ -164,16 +164,17 @@ public class HotelServiceImpl implements HotelService {
         if (hotelName != null){
             hotel.setHotelName(hotelName);
         }
-        if (roomTypeModels != null){
-            List<RoomType> roomTypes = roomTypeService.createRoomTypes(roomTypeModels);
-            hotel.setRoomTypes(roomTypes);
-            roomTypes.forEach(roomType -> roomType.setHotel(hotel));
-        }
-        if (hotelHallModels != null){
-            List<HotelHall> hotelHalls = hotelHallService.createHotelHalls(hotelHallModels);
-            hotel.setHotelHalls(hotelHalls);
-            hotelHalls.forEach(hotelHall -> hotelHall.setHotel(hotel));
-        }
+//        if (roomTypeModels != null){
+//            List<RoomType> roomTypes = roomTypeService.createRoomTypes(roomTypeModels);
+//            hotel.setRoomTypes(roomTypes);
+//            roomTypes.forEach(roomType -> roomType.setHotel(hotel));
+//        }
+//        if (hotelHallModels != null){
+//            List<HotelHall> hotelHalls = hotelHallService.createHotelHalls(hotelHallModels);
+//            hotel.setHotelHalls(hotelHalls);
+//            hotelHalls.forEach(hotelHall -> hotelHall.setHotel(hotel));
+//        }
+
     }
 
     private HotelModel toModel(Hotel hotel){

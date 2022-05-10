@@ -44,7 +44,8 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
 
     @Override
     public ObjectTypeModel getById(Long objectTypeId) {
-        ObjectType objectType = objectTypeRepository.getById(objectTypeId);
+        ObjectType objectType = getObjectType(objectTypeId);
+
         return toModel(objectType);
     }
 
@@ -63,32 +64,31 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
 
     @Override
     public ObjectTypeModel updateObjectType(ObjectTypeModel objectTypeModel) {
-        return null;
+        ObjectType objectType = getObjectType(objectTypeModel.getId());
+
+        setValuesOnUpdateObjectType(objectType, objectTypeModel);
+
+        objectTypeRepository.save(objectType);
+
+        return objectTypeModel;
     }
 
     @Override
     public ObjectTypeModel deleteObjectType(Long objectTypeId) {
-        ObjectType objectType = objectTypeRepository.getById(objectTypeId);
+        ObjectType objectType = getObjectType(objectTypeId);
 
-        if(objectType != null){
-            if(objectType.getIsDeleted()){
-                throw new ApiFailException("ObjectType is already deleted!");
+        for(MenuSection menuSection : objectType.getMenuSections()){
+            for(Menu menu : menuSection.getMenus()){
+                menu.setIsDeleted(true);
             }
-
-            for(MenuSection menuSection : objectType.getMenuSections()){
-                for(Menu menu : menuSection.getMenus()){
-                    menu.setIsDeleted(true);
-                }
-                menuSection.setIsDeleted(true);
-            }
-
-            for(Object object : objectType.getObjects()){
-                object.setIsDeleted(true);
-            }
-
-            objectType.setIsDeleted(true);
+            menuSection.setIsDeleted(true);
         }
 
+        for(Object object : objectType.getObjects()){
+            object.setIsDeleted(true);
+        }
+
+        objectType.setIsDeleted(true);
         objectTypeRepository.save(objectType);
 
         return toModel(objectType);
@@ -107,6 +107,18 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         return objectTypeModels;
     }
 
+    private ObjectType getObjectType(Long objectTypeId){
+        ObjectType objectType = objectTypeRepository
+                .findById(objectTypeId)
+                .orElseThrow(() -> new ApiFailException("ObjectType is not found!"));
+
+        if(objectType.getIsDeleted()){
+            throw new ApiFailException("ObjectType is not found or deleted!");
+        }
+
+        return objectType;
+    }
+
     private ObjectType initAndGet(ObjectType objectType, ObjectTypeModel objectTypeModel){
         objectType.setName(objectTypeModel.getName());
         objectType.setPrice(objectTypeModel.getPrice());
@@ -115,6 +127,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
 
         if(objectType.getTimeType() == TimeType.TIME){
             objectType.setPricePerHour(objectTypeModel.getPricePerHour());
+            objectType.setMinHours(objectTypeModel.getMinHours());
         }
 
         List<MenuSectionModel> menuSectionModels = objectTypeModel.getMenuSectionModels();
@@ -151,16 +164,38 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         return objectType;
     }
 
+    private void setValuesOnUpdateObjectType(ObjectType objectType, ObjectTypeModel objectTypeModel){
+        String name = objectTypeModel.getName();
+        Float price = objectTypeModel.getPrice();
+        Float pricePerHour = objectTypeModel.getPricePerHour();
+
+        if(name != null){
+            objectType.setName(name);
+        }
+
+        if(price != null){
+            objectType.setPrice(price);
+        }
+
+        if(pricePerHour != null){
+            objectType.setPricePerHour(pricePerHour);
+        }
+    }
+
     private ObjectTypeModel toModel(ObjectType objectType){
         ObjectTypeModel objectTypeModel = new ObjectTypeModel();
         objectTypeModel.setId(objectType.getId());
         objectTypeModel.setName(objectType.getName());
         objectTypeModel.setPrice(objectType.getPrice());
-        objectTypeModel.setPricePerHour(objectType.getPricePerHour());
         objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
         objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
         objectTypeModel.setAreaName(objectType.getArea().getAreaName());
         objectTypeModel.setTimeType(objectType.getTimeType());
+
+        if(objectType.getTimeType() == TimeType.TIME){
+            objectTypeModel.setPricePerHour(objectType.getPricePerHour());
+            objectTypeModel.setMinHours(objectType.getMinHours());
+        }
 
         return objectTypeModel;
     }

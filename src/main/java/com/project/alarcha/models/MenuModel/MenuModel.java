@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MenuModel extends BaseModel {
     private String name;
-    private float price;
+    private Float price;
     private String description;
     private Long menuSectionId;
     private String objectTypeName;

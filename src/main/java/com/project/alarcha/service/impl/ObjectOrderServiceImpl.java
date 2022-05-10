@@ -40,7 +40,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     @Override
     public ObjectOrderModel acceptOrder(Long orderId) {
-        ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
+        ObjectOrder objectOrder = getObjectOrder(orderId);
 
         if(objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             objectOrder.setOrderStatus(OrderStatus.CONFIRMED);
@@ -52,7 +52,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     @Override
     public ObjectOrderModel declineOrder(Long orderId) {
-        ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
+        ObjectOrder objectOrder = getObjectOrder(orderId);
 
         if(objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             objectOrder.setOrderStatus(OrderStatus.DECLINED);
@@ -68,6 +68,11 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         for(ObjectOrder objectOrder : objectOrderRepository.findAll()){
             if(!objectOrder.getIsDeleted()){
+                if(isExpired(objectOrder.getExpirationDate())){
+                    objectOrder.setIsDeleted(true);
+                    objectOrderRepository.save(objectOrder);
+                }
+
                 objectOrderModels.add(toModel(objectOrder));
             }
         }
@@ -76,30 +81,19 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     @Override
     public ObjectOrderModel getById(Long id) {
-        ObjectOrder objectOrder = objectOrderRepository.getById(id);
-
-        if(objectOrder == null){
-            throw new ApiFailException("Object order is not found!");
-        }
-
-        if(objectOrder.getIsDeleted()){
-            throw new ApiFailException("Object order is deleted!");
-        }
+        ObjectOrder objectOrder = getObjectOrder(id);
 
         return toModel(objectOrder);
     }
 
     @Override
     public ObjectOrderModel deleteOrder(Long orderId) {
-        ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
-        if(objectOrder != null){
-            if(objectOrder.getIsDeleted()){
-                throw new ApiFailException("Object order is already deleted!");
-            }
-            objectOrder.setIsDeleted(true);
-        }
+        ObjectOrder objectOrder = getObjectOrder(orderId);
+
+        objectOrder.setIsDeleted(true);
 
         objectOrderRepository.save(objectOrder);
+
         return toModel(objectOrder);
     }
 
@@ -116,17 +110,28 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         objectOrder.setObject(object);
         objectOrder.setOrderStatus(OrderStatus.IN_PROCESS);
 
+        Date expirationDate = new Date();
+
         if(objectType.getTimeType() == TimeType.TIME){
             checkObjectOrderTime(objectOrderModel);
 
-            objectOrder.setStartDate(objectOrderModel.getStartDate());
-            objectOrder.setEndDate(objectOrderModel.getStartDate());
-
+            Date startDate = objectOrderModel.getStartDate();
             Time startTime = objectOrderModel.getStartTime();
             Time endTime = objectOrderModel.getEndTime();
             Float price = objectType.getPrice();
             Float pricePerHour = objectType.getPricePerHour();
+            Integer minHours = objectType.getMinHours();
+            int hours = endTime.getHours() - startTime.getHours();
 
+            if(hours < minHours){
+                throw new ApiFailException("You can not order this ObjectType for less than " + minHours + " hours.");
+            }
+
+            expirationDate.setDate(startDate.getDate() + 3);
+
+            objectOrder.setStartDate(startDate);
+            objectOrder.setEndDate(startDate);
+            objectOrder.setExpirationDate(expirationDate);
             objectOrder.setStartTime(startTime);
             objectOrder.setEndTime(endTime);
             objectOrder.setTotalPrice(getTotalPriceByTime(price, pricePerHour, startTime, endTime));
@@ -138,12 +143,21 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
             Date startDate = objectOrderModel.getStartDate();
             Date endDate = objectOrderModel.getEndDate();
 
+            expirationDate.setDate(startDate.getDate() + 5);
+
             objectOrder.setStartDate(startDate);
             objectOrder.setEndDate(endDate);
+            objectOrder.setExpirationDate(expirationDate);
             objectOrder.setTotalPrice(getTotalPriceByDate(price, startDate, endDate));
         }
 
         return objectOrder;
+    }
+
+    private boolean isExpired(Date expiredDate){
+        Date currentDate = new Date();
+
+        return expiredDate.after(currentDate);
     }
 
     private void checkObjectOrderTime(ObjectOrderModel objectOrderModel){
@@ -254,6 +268,23 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 }
             }
         }
+    }
+
+    private ObjectOrder getObjectOrder(Long objectOrderId){
+        ObjectOrder objectOrder = objectOrderRepository
+                .findById(objectOrderId)
+                .orElseThrow(() -> new ApiFailException("ObjectOrder is not found!"));
+
+        if(isExpired(objectOrder.getExpirationDate())){
+            objectOrder.setIsDeleted(true);
+            objectOrderRepository.save(objectOrder);
+        }
+
+        if(objectOrder.getIsDeleted()){
+            throw new ApiFailException("ObjectOrder is not found or deleted!");
+        }
+
+        return objectOrder;
     }
 
     private Float getTotalPriceByTime(Float price, Float pricePerHour, Time startTime, Time endTime){

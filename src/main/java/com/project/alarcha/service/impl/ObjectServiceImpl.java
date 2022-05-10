@@ -57,7 +57,8 @@ public class ObjectServiceImpl implements ObjectService {
 
     @Override
     public ObjectModel getById(Long objectId) {
-        Object object = objectRepository.getById(objectId);
+        Object object = getObject(objectId);
+
         return toModel(object);
     }
 
@@ -94,30 +95,55 @@ public class ObjectServiceImpl implements ObjectService {
 
     @Override
     public ObjectModel updateObject(ObjectModel objectModel) {
-        return null;
+        Object object = getObject(objectModel.getId());
+
+        setValuesOnUpdateObject(object, objectModel);
+
+        objectRepository.save(object);
+
+        return objectModel;
     }
 
     @Override
     public ObjectModel deleteObject(Long objectId) {
-        Object object = objectRepository.getById(objectId);
+        Object object = getObject(objectId);
 
-        if(object != null){
-            if(object.getIsDeleted()){
-                throw new ApiFailException("Object is already deleted!");
-            }
+        object.setIsDeleted(true);
 
-            object.setIsDeleted(true);
-
-            for(ObjectOrder objectOrder : object.getObjectOrders()){
-                if(!objectOrder.getIsDeleted()){
-                    objectOrder.setIsDeleted(true);
-                }
+        for(ObjectOrder objectOrder : object.getObjectOrders()){
+            if(!objectOrder.getIsDeleted()){
+                objectOrder.setIsDeleted(true);
             }
         }
 
         objectRepository.save(object);
 
         return toModel(object);
+    }
+
+    private Object getObject(Long objectId){
+        Object object = objectRepository
+                .findById(objectId)
+                .orElseThrow(() -> new ApiFailException("Object is not found!"));
+
+        if(object.getIsDeleted()){
+            throw new ApiFailException("Object is not found or deleted!");
+        }
+
+        return object;
+    }
+
+    private void setValuesOnUpdateObject(Object object, ObjectModel objectModel){
+        String name = objectModel.getName();
+        Integer numberOfSeats = objectModel.getNumberOfSeats();
+
+        if(name != null){
+            object.setName(name);
+        }
+
+        if(numberOfSeats != null){
+            object.setNumberOfSeats(numberOfSeats);
+        }
     }
 
     private ObjectModel toModel(Object object){

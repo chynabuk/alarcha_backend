@@ -60,7 +60,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public MenuModel getById(Long menuId) {
-        Menu menu = menuRepository.getById(menuId);
+        Menu menu = getMenu(menuId);
+
         return toModel(menu);
     }
 
@@ -92,24 +93,54 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public MenuModel updateMenu(MenuModel menuModel) {
-        return null;
+        Menu menu = getMenu(menuModel.getId());
+
+        setValuesOnUpdateMenu(menu, menuModel);
+
+        menuRepository.save(menu);
+
+        return menuModel;
     }
 
     @Override
     public MenuModel deleteMenu(Long menuId) {
-        Menu menu = menuRepository.getById(menuId);
+        Menu menu = getMenu(menuId);
 
-        if(menu != null){
-            if(menu.getIsDeleted()){
-                throw new ApiFailException("Menu is already deleted!");
-            }
-
-            menu.setIsDeleted(true);
-        }
+        menu.setIsDeleted(true);
 
         menuRepository.save(menu);
 
         return toModel(menu);
+    }
+
+    private void setValuesOnUpdateMenu(Menu menu, MenuModel menuModel){
+        String name = menuModel.getName();
+        Float price = menuModel.getPrice();
+        String description = menuModel.getDescription();
+
+        if(name != null){
+            menu.setName(name);
+        }
+
+        if(price != null){
+            menu.setPrice(price);
+        }
+
+        if(description != null){
+            menu.setDescription(description);
+        }
+    }
+
+    private Menu getMenu(Long menuId){
+        Menu menu = menuRepository
+                .findById(menuId)
+                .orElseThrow(() -> new ApiFailException("Menu is not found!"));
+
+        if(menu.getIsDeleted()){
+            throw new ApiFailException("Menu is not found or deleted!");
+        }
+
+        return menu;
     }
 
     private MenuModel toModel(Menu menu){

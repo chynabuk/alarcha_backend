@@ -16,7 +16,7 @@ public class Menu extends BaseEntity {
     private String name;
 
     @Column(name = "price", nullable = false)
-    private float price;
+    private Float price;
 
     @Column(name = "description", nullable = false)
     private String description;

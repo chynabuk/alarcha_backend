@@ -38,7 +38,7 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
 
     @Override
     public AdditionalServiceOrderModel acceptOrder(Long orderId) {
-        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(orderId);
+        AdditionalServiceOrder additionalServiceOrder = getAdditionalServiceOrder(orderId);
 
         if(additionalServiceOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             additionalServiceOrder.setOrderStatus(OrderStatus.CONFIRMED);
@@ -50,7 +50,7 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
 
     @Override
     public AdditionalServiceOrderModel declineOrder(Long orderId) {
-        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(orderId);
+        AdditionalServiceOrder additionalServiceOrder = getAdditionalServiceOrder(orderId);
 
         if(additionalServiceOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             additionalServiceOrder.setOrderStatus(OrderStatus.DECLINED);
@@ -66,40 +66,57 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
 
         for(AdditionalServiceOrder additionalServiceOrder : additionalServiceOrderRepository.findAll()){
             if(!additionalServiceOrder.getIsDeleted()){
+                if(isExpired(additionalServiceOrder.getExpirationDate())){
+                    additionalServiceOrder.setIsDeleted(true);
+                    additionalServiceOrderRepository.save(additionalServiceOrder);
+                }
+
                 additionalServiceOrderModels.add(toModel(additionalServiceOrder));
             }
         }
+
         return additionalServiceOrderModels;
     }
 
     @Override
     public AdditionalServiceOrderModel getById(Long id) {
-        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(id);
-
-        if(additionalServiceOrder == null){
-            throw new ApiFailException("Additional service order is not found!");
-        }
-
-        if(additionalServiceOrder.getIsDeleted()){
-            throw new ApiFailException("Additional service order is deleted!");
-        }
+        AdditionalServiceOrder additionalServiceOrder = getAdditionalServiceOrder(id);
 
         return toModel(additionalServiceOrder);
     }
 
     @Override
     public AdditionalServiceOrderModel deleteOrder(Long orderId) {
-        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(orderId);
+        AdditionalServiceOrder additionalServiceOrder = getAdditionalServiceOrder(orderId);
 
-        if(additionalServiceOrder != null){
-            if(additionalServiceOrder.getIsDeleted()){
-                throw new ApiFailException("Additional service is already deleted!");
-            }
-            additionalServiceOrder.setIsDeleted(true);
-        }
+        additionalServiceOrder.setIsDeleted(true);
 
         additionalServiceOrderRepository.save(additionalServiceOrder);
+
         return toModel(additionalServiceOrder);
+    }
+
+    private AdditionalServiceOrder getAdditionalServiceOrder(Long id){
+        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository
+                .findById(id)
+                .orElseThrow(() -> new ApiFailException("Additional service order is not found!"));
+
+        if(isExpired(additionalServiceOrder.getExpirationDate())){
+            additionalServiceOrder.setIsDeleted(true);
+            additionalServiceOrderRepository.save(additionalServiceOrder);
+        }
+
+        if(additionalServiceOrder.getIsDeleted()){
+            throw new ApiFailException("Additional service order is not found or deleted!");
+        }
+
+        return additionalServiceOrder;
+    }
+
+    private boolean isExpired(Date expiredDate){
+        Date currentDate = new Date();
+
+        return expiredDate.after(currentDate);
     }
 
     private AdditionalServiceOrder initAndGetAdditionalServiceOrder(AdditionalServiceOrderModel additionalServiceOrderModel){
