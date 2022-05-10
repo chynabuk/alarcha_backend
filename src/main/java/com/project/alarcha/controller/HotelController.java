@@ -27,7 +27,7 @@ public class HotelController {
     private HotelHallService hotelHallService;
 
     @PostMapping("/create")
-    public ResponseMessage<HotelModel> createArea(@RequestBody HotelModel hotelModel){
+    public ResponseMessage<HotelModel> createHotel(@RequestBody HotelModel hotelModel){
         return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.createHotel(hotelModel));
     }
 
@@ -47,7 +47,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/delete/{hotelId}")
-    public ResponseMessage<HotelModel> deleteArea(@PathVariable Long hotelId){
+    public ResponseMessage<HotelModel> deleteHotel(@PathVariable Long hotelId){
         return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.deleteHotel(hotelId));
     }
 
