@@ -62,6 +62,22 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    public List<HotelModel> getForList() {
+        List<HotelModel> hotelModels = new ArrayList<>();
+
+        for (Hotel hotel : hotelRepository.findAll()){
+            if (!hotel.getIsDeleted()){
+                HotelModel hotelModel = new HotelModel();
+                hotelModel.setId(hotel.getId());
+                hotelModel.setHotelName(hotel.getHotelName());
+                hotelModels.add(hotelModel);
+            }
+        }
+
+        return hotelModels;
+    }
+
+    @Override
     public HotelModel updateHotel(HotelModel hotelModel) {
         Hotel hotel = getHotel(hotelModel.getId());
 
@@ -123,29 +139,29 @@ public class HotelServiceImpl implements HotelService {
         hotel.setHotelName(hotelModel.getHotelName());
         hotel.setArea(areaRepository.getById(hotelModel.getAreaId()));
 
-        List<RoomTypeModel> roomTypeModels = hotelModel.getRoomTypeModels();
-        if (roomTypeModels != null){
-            roomTypeModels.forEach(roomTypeModel -> roomTypeModel.setHotelName(hotelModel.getHotelName()));
-            List<RoomType> roomTypes = roomTypeService.createRoomTypes(roomTypeModels);
-
-            if (roomTypes != null){
-                hotel.setRoomTypes(roomTypes);
-                roomTypes.forEach(roomType -> roomType.setHotel(hotel));
-            }
-
-        }
-
-        List<HotelHallModel> hotelHallModels = hotelModel.getHotelHallModels();
-        if (hotelHallModels != null){
-            List<HotelHall> hotelHalls = hotelHallService.createHotelHalls(hotelModel.getHotelHallModels());
-            if (hotelHalls != null){
-                hotel.setHotelHalls(hotelHalls);
-                hotelHalls.forEach(hotelHall -> hotelHall.setHotel(hotel));
-            }
-        }
+//        List<RoomTypeModel> roomTypeModels = hotelModel.getRoomTypeModels();
+//        if (roomTypeModels != null){
+//            roomTypeModels.forEach(roomTypeModel -> roomTypeModel.setHotelName(hotelModel.getHotelName()));
+//            List<RoomType> roomTypes = roomTypeService.createRoomTypes(roomTypeModels);
+//
+//            if (roomTypes != null){
+//                hotel.setRoomTypes(roomTypes);
+//                roomTypes.forEach(roomType -> roomType.setHotel(hotel));
+//            }
+//
+//        }
+//
+//        List<HotelHallModel> hotelHallModels = hotelModel.getHotelHallModels();
+//        if (hotelHallModels != null){
+//            List<HotelHall> hotelHalls = hotelHallService.createHotelHalls(hotelModel.getHotelHallModels());
+//            if (hotelHalls != null){
+//                hotel.setHotelHalls(hotelHalls);
+//                hotelHalls.forEach(hotelHall -> hotelHall.setHotel(hotel));
+//            }
+//        }
 
         List<Hotel_ImgModel> hotelImgModels = hotelModel.getHotelImgModels();
-        if (hotelImgModels != null){
+        if (hotelImgModels.isEmpty() || hotelImgModels != null){
             List<Hotel_Img> hotelImgs = hotel_imgService.uploadImages(hotelImgModels);
             hotel.setHotelImgs(hotelImgs);
             hotelImgs.forEach(hotel_img -> hotel_img.setHotel(hotel));

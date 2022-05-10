@@ -24,6 +24,11 @@ public class AreaController {
         return new ResponseMessage<List<AreaModel>>().prepareSuccessMessage(areaService.getAll());
     }
 
+    @GetMapping("/get-for-select")
+    public ResponseMessage<List<AreaModel>> getForSelect(){
+        return new ResponseMessage<List<AreaModel>>().prepareSuccessMessage(areaService.getForSelectBox());
+    }
+
     @GetMapping("/get/{areaId}")
     public ResponseMessage<AreaModel> getById(@PathVariable Long areaId){
         return new ResponseMessage<AreaModel>().prepareSuccessMessage(areaService.getById(areaId));

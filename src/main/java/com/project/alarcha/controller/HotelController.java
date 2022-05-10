@@ -8,7 +8,6 @@ import com.project.alarcha.service.RoomTypeService;
 import com.project.alarcha.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,13 +28,17 @@ public class HotelController {
 
     @PostMapping("/create")
     public ResponseMessage<HotelModel> createArea(@RequestBody HotelModel hotelModel){
-//        hotelModel.setMultipartFile(img);
         return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.createHotel(hotelModel));
     }
 
     @GetMapping("/get-all")
     public ResponseMessage<List<HotelModel>> getAll(){
         return new ResponseMessage<List<HotelModel>>().prepareSuccessMessage(hotelService.getAll());
+    }
+
+    @GetMapping("/get-for-select")
+    public ResponseMessage<List<HotelModel>> getForList(){
+        return new ResponseMessage<List<HotelModel>>().prepareSuccessMessage(hotelService.getForList());
     }
 
     @GetMapping("/get/{hotelId}")

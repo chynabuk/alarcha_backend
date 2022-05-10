@@ -101,7 +101,21 @@ public class AreaServiceImpl implements AreaService {
         return areaModels;
     }
 
+    @Override
+    public List<AreaModel> getForSelectBox() {
+        List<AreaModel> areaModels = new ArrayList<>();
 
+        for (Area area : areaRepository.findAll()){
+            if (!area.getIsDeleted()){
+                AreaModel areaModel = new AreaModel();
+                areaModel.setId(area.getId());
+                areaModel.setAreaName(area.getAreaName());
+
+                areaModels.add(areaModel);
+            }
+        }
+        return areaModels;
+    }
 
     private void deleteHotelDepended(List<Hotel> hotels){
         for (Hotel hotel : hotels){
