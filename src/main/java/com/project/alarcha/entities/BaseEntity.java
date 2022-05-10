@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,4 +16,23 @@ public abstract class BaseEntity {
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
+    @Column(name = "create_date")
+    private Date createDate;
+
+    @Column(name = "update_date")
+    private Date updateDate;
+
+    @Column(name = "deleted_date")
+    private Date deletedDate;
+
+    @PostPersist
+    public void postPersist() {
+        this.createDate = new Date();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updateDate = new Date();
+    }
 }

@@ -9,6 +9,7 @@ public interface ObjectTypeService {
     ObjectTypeModel createObjectType(ObjectTypeModel objectTypeModel);
     ObjectTypeModel getById(Long objectTypeId);
     List<ObjectTypeModel> getAll();
+    List<ObjectTypeModel> getForSelect();
     ObjectTypeModel updateObjectType(ObjectTypeModel objectTypeModel);
     ObjectTypeModel deleteObjectType(Long objectTypeId);
     List<ObjectTypeModel> convertToModels(List<ObjectType> objectTypes);

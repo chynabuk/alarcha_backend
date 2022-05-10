@@ -1,25 +1,62 @@
 package com.project.alarcha.controller;
 
 
-import com.project.alarcha.models.BlogModel.BlogModel;
 import com.project.alarcha.models.NatureModel.NatureModel;
-import com.project.alarcha.service.BlogService;
+import com.project.alarcha.models.NatureModel.NatureTypeModel;
 import com.project.alarcha.service.NatureService;
+import com.project.alarcha.service.NatureTypeService;
 import com.project.alarcha.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/nature")
 public class NatureController {
     @Autowired
-    NatureService natureService;
+    private NatureService natureService;
+
+    @Autowired
+    private NatureTypeService natureTypeService;
+
+    @PostMapping("/type/create")
+    public ResponseMessage<NatureTypeModel> createNatureType(@RequestBody NatureTypeModel natureTypeModel){
+        return new ResponseMessage<NatureTypeModel>().prepareSuccessMessage(natureTypeService.createNatureType(natureTypeModel));
+    }
+
+    @DeleteMapping("/type/delete/{id}")
+    public ResponseMessage<NatureTypeModel> deleteNatureType(@PathVariable Long id){
+        return new ResponseMessage<NatureTypeModel>().prepareSuccessMessage(natureTypeService.deleteNatureType(id));
+    }
+
+    @GetMapping("/type/get-all")
+    public ResponseMessage<List<NatureTypeModel>> getNatureTypes(){
+        return new ResponseMessage<List<NatureTypeModel>>().prepareSuccessMessage(natureTypeService.getAll());
+    }
+
+    @GetMapping("/type/get/{id}")
+    public ResponseMessage<NatureTypeModel> getNatureType(@PathVariable Long id){
+        return new ResponseMessage<NatureTypeModel>().prepareSuccessMessage(natureTypeService.getById(id));
+    }
 
     @PostMapping("/create")
     public ResponseMessage<NatureModel> createNature(@RequestBody NatureModel natureModel){
         return new ResponseMessage<NatureModel>().prepareSuccessMessage(natureService.createNature(natureModel));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseMessage<NatureModel> deleteNature(@PathVariable Long id){
+        return new ResponseMessage<NatureModel>().prepareSuccessMessage(natureService.deleteNature(id));
+    }
+
+    @GetMapping("/get-all")
+    public ResponseMessage<List<NatureModel>> getNatures(){
+        return new ResponseMessage<List<NatureModel>>().prepareSuccessMessage(natureService.getAll());
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseMessage<NatureModel> getNature(@PathVariable Long id){
+        return new ResponseMessage<NatureModel>().prepareSuccessMessage(natureService.getById(id));
     }
 }

@@ -62,6 +62,22 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     }
 
     @Override
+    public List<ObjectTypeModel> getForSelect() {
+        List<ObjectTypeModel> objectTypeModels = new ArrayList<>();
+
+        for(ObjectType objectType : objectTypeRepository.findAll()){
+            if(!objectType.getIsDeleted()){
+                ObjectTypeModel objectTypeModel = new ObjectTypeModel();
+                objectTypeModel.setId(objectType.getId());
+                objectTypeModel.setName(objectType.getName());
+                objectTypeModels.add(objectTypeModel);
+            }
+        }
+
+        return objectTypeModels;
+    }
+
+    @Override
     public ObjectTypeModel updateObjectType(ObjectTypeModel objectTypeModel) {
         return null;
     }
@@ -110,6 +126,11 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     private ObjectType initAndGet(ObjectType objectType, ObjectTypeModel objectTypeModel){
         objectType.setName(objectTypeModel.getName());
         objectType.setPrice(objectTypeModel.getPrice());
+        if (objectTypeModel.getPricePerHour() != null){
+            objectType.setPricePerHour(objectTypeModel.getPricePerHour());
+        }
+        else objectType.setPricePerHour(objectTypeModel.getPrice());
+
         objectType.setArea(areaRepository.getById(objectTypeModel.getAreaId()));
         objectType.setTimeType(objectTypeModel.getTimeType());
 

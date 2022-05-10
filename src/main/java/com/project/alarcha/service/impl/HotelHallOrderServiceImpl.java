@@ -34,8 +34,9 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
     @Override
     public HotelHallOrderModel order(HotelHallOrderModel hotelHallOrderModel) {
-        hotelHallOrderRepository.save(initAndGetHotelHallOrder(hotelHallOrderModel));
-        return hotelHallOrderModel;
+        HotelHallOrder hotelHallOrder = initAndGetHotelHallOrder(hotelHallOrderModel);
+        hotelHallOrderRepository.save(hotelHallOrder);
+        return toModel(hotelHallOrder);
     }
 
     @Override
@@ -64,13 +65,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
     @Override
     public HotelHallOrderModel deleteOrder(Long id) {
-        HotelHallOrder hotelHallOrder = hotelHallOrderRepository.getById(id);
-        if (hotelHallOrder != null){
-            if (hotelHallOrder.getIsDeleted()){
-                throw new ApiFailException("Room is already deleted");
-            }
-            hotelHallOrder.setIsDeleted(true);
-        }
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(id);
 
         hotelHallOrderRepository.save(hotelHallOrder);
 
@@ -83,6 +78,12 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
         for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
             if (!hotelHallOrder.getIsDeleted()){
+                if (isExpired(hotelHallOrder.getExpirationDate())){
+                    hotelHallOrder.setIsDeleted(true);
+                    hotelHallOrderRepository.save(hotelHallOrder);
+                }
+            }
+            if (!hotelHallOrder.getIsDeleted()){
                 hotelHallOrderModels.add(toModel(hotelHallOrder));
             }
         }
@@ -91,17 +92,26 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
     @Override
     public HotelHallOrderModel getById(Long id) {
-        HotelHallOrder hotelHallOrder = hotelHallOrderRepository.getById(id);
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(id);
 
-        if (hotelHallOrder == null){
-            throw new ApiFailException("HotelHall order not found");
+        return toModel(hotelHallOrder);
+    }
+
+    private HotelHallOrder getHotelHallOrder(Long id){
+        HotelHallOrder hotelHallOrder = hotelHallOrderRepository
+                .findById(id)
+                .orElseThrow(() -> new ApiFailException("HotelHall order not found"));
+
+        if (isExpired(hotelHallOrder.getExpirationDate())){
+            hotelHallOrder.setIsDeleted(true);
+            hotelHallOrderRepository.save(hotelHallOrder);
         }
 
         if (hotelHallOrder.getIsDeleted()){
-            throw new ApiFailException("HotelHall order is deleted");
+            throw new ApiFailException("HotelHall order is not found or deleted");
         }
 
-        return toModel(hotelHallOrder);
+        return hotelHallOrder;
     }
 
     private HotelHallOrder initAndGetHotelHallOrder(HotelHallOrderModel hotelHallOrderModel){
@@ -117,9 +127,15 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         Float priceForNextHours = hotelHall.getPriceForNextHours();
 
         hotelHallOrder.setHotelHall(hotelHall);
-        hotelHallOrder.setRegistration_date(hotelHallOrderModel.getRegistrationDate());
+        Date startDate = hotelHallOrderModel.getStartDate();
+        hotelHallOrder.setStartDate(startDate);
         hotelHallOrder.setStartTime(hotelHallOrderModel.getStartTime());
         hotelHallOrder.setEndTime(hotelHallOrderModel.getEndTime());
+        hotelHallOrder.setEndDate(startDate);
+
+        Date expirationDate = new Date();
+        expirationDate.setDate(startDate.getDate() + 3);
+        hotelHallOrder.setExpirationDate(expirationDate);
         hotelHallOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
 
         hotelHallOrder.setTotalPrice(getTotalPrice(price, priceForNextHours, hotelHallOrderModel));
@@ -129,16 +145,22 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         return hotelHallOrder;
     }
 
+    private boolean isExpired(Date expiredDate){
+        Date currentDate = new Date();
+
+        return expiredDate.after(currentDate);
+    }
+
     private void checkHotelHallOrderTime(HotelHallOrderModel hotelHallOrderModel){
         List<HotelHallOrder> hotelHallOrderList = hotelHallOrderRepository.findAll();
 
         Time startTime = hotelHallOrderModel.getStartTime();
         Time endTime = hotelHallOrderModel.getEndTime();
-        Date registrationDate = hotelHallOrderModel.getRegistrationDate();
+        Date startDate = hotelHallOrderModel.getStartDate();
 
-        registrationDate.setHours(0);
-        registrationDate.setMinutes(0);
-        registrationDate.setSeconds(0);
+        startDate.setHours(0);
+        startDate.setMinutes(0);
+        startDate.setSeconds(0);
 
         Date currentDate = new Date();
         currentDate.setTime(0);
@@ -155,27 +177,27 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         currentDate.setMinutes(0);
         currentDate.setSeconds(0);
 
-        if (startTime == null || endTime == null || registrationDate == null){
-            throw new ApiFailException("startTime or endTime or registrationDate can not be null");
+        if (startTime == null || endTime == null || startDate == null){
+            throw new ApiFailException("startTime or endTime or startDate can not be null");
         }
 
-        if (registrationDate.before(currentDate)){
-            throw new ApiFailException("RegistrationDate can not be less than currentDate");
+        if (startDate.before(currentDate)){
+            throw new ApiFailException("StartDate can not be less than currentDate");
         }
 
         if (endTime.compareTo(startTime) <= 0){
             throw new ApiFailException("endTime must be greater than startTime");
         }
 
-        if (registrationDate.equals(currentDate) && startTime.compareTo(currentTime) < 0){
+        if (startDate.equals(currentDate) && startTime.compareTo(currentTime) < 0){
             throw new ApiFailException("startTime can not be less than currentTime");
         }
 
 
         for(HotelHallOrder hotelHallOrder : hotelHallOrderList){
             if(hotelHallOrderModel.getHotelHallId() == hotelHallOrder.getHotelHall().getId()){
-                if( (registrationDate.getYear() == hotelHallOrder.getRegistration_date().getYear() && registrationDate.getMonth() == hotelHallOrder.getRegistration_date().getMonth()
-                        && registrationDate.getDate() == hotelHallOrder.getRegistration_date().getDate())
+                if( (startDate.getYear() == hotelHallOrder.getStartDate().getYear() && startDate.getMonth() == hotelHallOrder.getStartDate().getMonth()
+                        && startDate.getDate() == hotelHallOrder.getStartDate().getDate())
                 ){
                     if(hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED){
                         Time rSTime = hotelHallOrder.getStartTime();
@@ -215,7 +237,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrderModel.setHotelHallId(hotelHallOrder.getId());
         hotelHallOrderModel.setStartTime(hotelHallOrder.getStartTime());
         hotelHallOrderModel.setEndTime(hotelHallOrder.getEndTime());
-        hotelHallOrderModel.setRegistrationDate(hotelHallOrder.getRegistration_date());
+        hotelHallOrderModel.setStartDate(hotelHallOrder.getStartDate());
         hotelHallOrderModel.setUserId(hotelHallOrder.getUser().getId());
         hotelHallOrderModel.setUserFullName(hotelHallOrder.getUserFullName());
         hotelHallOrderModel.setOrderStatus(hotelHallOrder.getOrderStatus());

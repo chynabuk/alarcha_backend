@@ -33,13 +33,14 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     @Override
     public RoomOrderModel order(RoomOrderModel roomOrderModel) {
-        roomOrderRepository.save(initAndGetRoomOrder(roomOrderModel));
-        return roomOrderModel;
+        RoomOrder roomOrder = initAndGetRoomOrder(roomOrderModel);
+        roomOrderRepository.save(roomOrder);
+        return toModel(roomOrder);
     }
 
     @Override
     public RoomOrderModel acceptOrder(Long orderId) {
-        RoomOrder roomOrder = roomOrderRepository.getById(orderId);
+        RoomOrder roomOrder = getRoomOrder(orderId);
 
         if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             roomOrder.setOrderStatus(OrderStatus.CONFIRMED);
@@ -51,7 +52,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     @Override
     public RoomOrderModel declineOrder(Long orderId) {
-        RoomOrder roomOrder = roomOrderRepository.getById(orderId);
+        RoomOrder roomOrder = getRoomOrder(orderId);
 
         if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             roomOrder.setOrderStatus(OrderStatus.DECLINED);
@@ -63,13 +64,9 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     @Override
     public RoomOrderModel deleteOrder(Long id) {
-        RoomOrder roomOrder = roomOrderRepository.getById(id);
-        if (roomOrder != null){
-            if (roomOrder.getIsDeleted()){
-                throw new ApiFailException("Room is already deleted");
-            }
-            roomOrder.setIsDeleted(true);
-        }
+        RoomOrder roomOrder = getRoomOrder(id);
+
+        roomOrder.setIsDeleted(true);
 
         roomOrderRepository.save(roomOrder);
 
@@ -90,6 +87,12 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     @Override
     public RoomOrderModel getById(Long id) {
+        RoomOrder roomOrder = getRoomOrder(id);
+
+        return toModel(roomOrder);
+    }
+
+    private RoomOrder getRoomOrder(Long id){
         RoomOrder roomOrder = roomOrderRepository.getById(id);
 
         if (roomOrder == null){
@@ -97,10 +100,10 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         }
 
         if (roomOrder.getIsDeleted()){
-            throw new ApiFailException("Room order is deleted");
+            throw new ApiFailException("Room order is not found or deleted");
         }
 
-        return toModel(roomOrder);
+        return roomOrder;
     }
 
     private RoomOrder initAndGetRoomOrder(RoomOrderModel roomOrderModel){
@@ -113,7 +116,6 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         Room room = roomService.getByRoomId(roomOrderModel.getRoomId());
         roomOrder.setIsDeleted(false);
         roomOrder.setRoom(room);
-        roomOrder.setHotelName(room.getHotelName());
         roomOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
 
         Float price = room.getRoomType().getPrice();
@@ -191,6 +193,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         roomOrderModel.setEndDate(roomOrder.getEndDate());
         roomOrderModel.setUserFullName(roomOrder.getUserFullName());
         roomOrderModel.setOrderStatus(roomOrder.getOrderStatus());
+        roomOrderModel.setHotelName(roomOrder.getRoom().getRoomType().getHotel().getHotelName());
 
         return roomOrderModel;
     }

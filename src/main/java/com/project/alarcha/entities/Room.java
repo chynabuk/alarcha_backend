@@ -26,9 +26,6 @@ public class Room extends BaseEntity{
     @JoinColumn(name = "room_type_id", nullable = false)
     private RoomType roomType;
 
-    @Column(name = "hotel_name")
-    private String hotelName;
-
     @OneToMany(mappedBy = "room",
     cascade = CascadeType.ALL)
     private List<RoomOrder> roomOrders;

@@ -12,6 +12,7 @@ public interface MenuSectionService {
     List<MenuSection> createMenuSections(List<MenuSectionModel> menuSectionModels);
     MenuSectionModel getById(Long menuSectionId);
     List<MenuSectionModel> getAll();
+    List<MenuSectionModel> getForSelect();
     List<MenuSectionModel> getByObjectType(ObjectType objectType);
     MenuSectionModel updateMenuSection(MenuSectionModel menuSectionModel);
     MenuSectionModel deleteMenuSection(Long menuSectionId);

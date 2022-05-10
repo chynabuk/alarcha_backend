@@ -39,6 +39,11 @@ public class RoomController {
         return new ResponseMessage<List<RoomTypeModel>>().prepareSuccessMessage(roomTypeService.getAll());
     }
 
+    @GetMapping("/type/get-for-select")
+    public ResponseMessage<List<RoomTypeModel>> getForRoomTypeSelect(){
+        return new ResponseMessage<List<RoomTypeModel>>().prepareSuccessMessage(roomTypeService.getForList());
+    }
+
     @GetMapping("/type/get/{roomTypeId}")
     public ResponseMessage<RoomTypeModel> getRoomType(@PathVariable Long roomTypeId){
         return new ResponseMessage<RoomTypeModel>().prepareSuccessMessage(roomTypeService.getById(roomTypeId));
@@ -55,7 +60,7 @@ public class RoomController {
     }
 
     @GetMapping("/get-all")
-    public ResponseMessage<List<RoomModel>> getRooms(@RequestBody RoomModel roomModl){
+    public ResponseMessage<List<RoomModel>> getRooms(){
         return new ResponseMessage<List<RoomModel>>().prepareSuccessMessage(roomService.getAll());
     }
 

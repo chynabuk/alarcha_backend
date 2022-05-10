@@ -40,12 +40,14 @@ public class AreaServiceImpl implements AreaService {
     @Override
     public AreaModel updateArea(AreaModel areaModel) {
         Area area = getAreaById(areaModel.getId());
-        if (area != null){
-            if (!area.getIsDeleted()){
-                setValuesOnUpdateArea(area, areaModel);
-            }
+        if (area == null){
+            throw new ApiFailException("area not found");
         }
-        areaRepository.save(area);
+
+        if (!area.getIsDeleted()){
+            setValuesOnUpdateArea(area, areaModel);
+            areaRepository.save(area);
+        }
 
         return areaModel;
     }
@@ -99,7 +101,21 @@ public class AreaServiceImpl implements AreaService {
         return areaModels;
     }
 
+    @Override
+    public List<AreaModel> getForSelectBox() {
+        List<AreaModel> areaModels = new ArrayList<>();
 
+        for (Area area : areaRepository.findAll()){
+            if (!area.getIsDeleted()){
+                AreaModel areaModel = new AreaModel();
+                areaModel.setId(area.getId());
+                areaModel.setAreaName(area.getAreaName());
+
+                areaModels.add(areaModel);
+            }
+        }
+        return areaModels;
+    }
 
     private void deleteHotelDepended(List<Hotel> hotels){
         for (Hotel hotel : hotels){
@@ -129,9 +145,6 @@ public class AreaServiceImpl implements AreaService {
         area.setHotels(null);
         area.setUser(userService.getByEmail(areaCreateModel.getEmail()));
         area.setIsDeleted(false);
-        User user = userService.getByEmail(areaCreateModel.getEmail());
-
-        area.setUser(user);
 
         return area;
     }

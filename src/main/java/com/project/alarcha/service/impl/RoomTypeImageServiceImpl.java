@@ -46,15 +46,7 @@ public class RoomTypeImageServiceImpl implements RoomTypeImageService {
 
     @Override
     public RoomTypeImageModel deleteImage(Long id) {
-        RoomTypeImage roomTypeImage = roomTypeImageRepository.getById(id);
-
-        if (roomTypeImage == null){
-            throw new ApiFailException("RoomTypeImage is not found");
-        }
-
-        if (roomTypeImage.getIsDeleted()){
-            throw new ApiFailException("RoomTypeImage is already deleted");
-        }
+        RoomTypeImage roomTypeImage = getRoomTypeImage(id);
 
         roomTypeImage.setIsDeleted(true);
 
@@ -66,6 +58,20 @@ public class RoomTypeImageServiceImpl implements RoomTypeImageService {
     @Override
     public RoomTypeImageModel updateImage(Long id) {
         return null;
+    }
+
+    private RoomTypeImage getRoomTypeImage(Long id){
+        RoomTypeImage roomTypeImage = roomTypeImageRepository.getById(id);
+
+        if (roomTypeImage == null){
+            throw new ApiFailException("RoomTypeImage is not found");
+        }
+
+        if (roomTypeImage.getIsDeleted()){
+            throw new ApiFailException("RoomTypeImage is not found or deleted");
+        }
+
+        return roomTypeImage;
     }
 
     private RoomTypeImageModel toModel(RoomTypeImage roomTypeImage){

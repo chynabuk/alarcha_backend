@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -16,14 +17,20 @@ import java.util.Date;
 @ToString
 public class HotelHallOrder extends BaseEntity{
 
-    @Column(name = "registration_date", nullable = false)
-    private Date registration_date;
+    @Column(name = "start_date", nullable = false)
+    private Date startDate;
+
+    @Column(name = "end_date")
+    private Date endDate;
 
     @Column(name = "start_time", nullable = false)
     private Time startTime;
 
     @Column(name = "end_time", nullable = false)
     private Time endTime;
+
+    @Column(name = "expiration_date")
+    private Date expirationDate;
 
     @Column(name = "total_price")
     private Float totalPrice;
