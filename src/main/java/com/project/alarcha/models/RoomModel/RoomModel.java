@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RoomModel extends BaseModel {
     private Long roomTypeId;
+    private String roomTypeName;
     private Integer roomNumber;
     private RoomStatus roomStatus;
     private List<RoomOrderModel> roomOrderModels;
