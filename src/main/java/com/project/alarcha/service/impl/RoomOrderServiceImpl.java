@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -193,29 +192,5 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         roomOrderModel.setOrderStatus(roomOrder.getOrderStatus());
 
         return roomOrderModel;
-    }
-
-    private void checkExpirationDate(RoomOrderModel roomOrderModel){
-
-        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
-
-        Date currentDate = new Date();
-
-
-        for (RoomOrder roomOrder: roomOrders){
-
-            if (currentDate.compareTo(roomOrder.getExpirationDate()) > 0){
-
-                if (roomOrder.getIsDeleted()){
-                    throw new ApiFailException("Room order is already deleted");
-                }
-
-                roomOrder.setIsDeleted(true);
-
-            }
-
-        }
-
-
     }
 }
