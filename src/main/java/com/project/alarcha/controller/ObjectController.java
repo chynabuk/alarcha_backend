@@ -84,6 +84,11 @@ public class ObjectController {
         return new ResponseMessage<List<ObjectTypeModel>>().prepareSuccessMessage(objectTypeService.getAll());
     }
 
+    @GetMapping("/type/get-for-select")
+    public ResponseMessage<List<ObjectTypeModel>> getForObjectTypeSelect(){
+        return new ResponseMessage<List<ObjectTypeModel>>().prepareSuccessMessage(objectTypeService.getForSelect());
+    }
+
     @GetMapping("/type/get/{objectTypeId}")
     public ResponseMessage<ObjectTypeModel> getById(@PathVariable Long objectTypeId){
         return new ResponseMessage<ObjectTypeModel>().prepareSuccessMessage(objectTypeService.getById(objectTypeId));
