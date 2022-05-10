@@ -8,7 +8,6 @@ import com.project.alarcha.service.RoomTypeService;
 import com.project.alarcha.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,8 +27,7 @@ public class HotelController {
     private HotelHallService hotelHallService;
 
     @PostMapping("/create")
-    public ResponseMessage<HotelModel> createArea(@RequestBody HotelModel hotelModel){
-//        hotelModel.setMultipartFile(img);
+    public ResponseMessage<HotelModel> createHotel(@RequestBody HotelModel hotelModel){
         return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.createHotel(hotelModel));
     }
 
@@ -38,13 +36,18 @@ public class HotelController {
         return new ResponseMessage<List<HotelModel>>().prepareSuccessMessage(hotelService.getAll());
     }
 
+    @GetMapping("/get-for-select")
+    public ResponseMessage<List<HotelModel>> getForList(){
+        return new ResponseMessage<List<HotelModel>>().prepareSuccessMessage(hotelService.getForList());
+    }
+
     @GetMapping("/get/{hotelId}")
     public ResponseMessage<HotelModel> getById(@PathVariable Long hotelId){
         return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.getById(hotelId));
     }
 
     @DeleteMapping("/delete/{hotelId}")
-    public ResponseMessage<HotelModel> deleteArea(@PathVariable Long hotelId){
+    public ResponseMessage<HotelModel> deleteHotel(@PathVariable Long hotelId){
         return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.deleteHotel(hotelId));
     }
 

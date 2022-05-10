@@ -103,6 +103,22 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     }
 
     @Override
+    public List<RoomTypeModel> getForList() {
+        List<RoomTypeModel> roomTypeModels = new ArrayList<>();
+
+        for (RoomType roomType : roomTypeRepository.findAll()){
+            if (!roomType.getIsDeleted()){
+                RoomTypeModel roomTypeModel = new RoomTypeModel();
+                roomTypeModel.setId(roomType.getId());
+                roomTypeModel.setType(roomType.getType());
+                roomTypeModels.add(roomTypeModel);
+            }
+        }
+
+        return roomTypeModels;
+    }
+
+    @Override
     public RoomTypeModel updateRoomType(RoomTypeModel roomTypeModel) {
         return null;
     }

@@ -83,6 +83,21 @@ public class MenuSectionServiceImpl implements MenuSectionService {
     }
 
     @Override
+    public List<MenuSectionModel> getForSelect() {
+        List<MenuSectionModel> menuSectionModels = new ArrayList<>();
+
+        for(MenuSection menuSection : menuSectionRepository.findAll()){
+            if(!menuSection.getIsDeleted()){
+                MenuSectionModel menuSectionModel = new MenuSectionModel();
+                menuSectionModel.setId(menuSection.getId());
+                menuSectionModel.setName(menuSection.getName());
+                menuSectionModels.add(menuSectionModel);
+            }
+        }
+        return menuSectionModels;
+    }
+
+    @Override
     public List<MenuSectionModel> getByObjectType(ObjectType objectType) {
         List<MenuSectionModel> menuSectionModels = new ArrayList<>();
 
