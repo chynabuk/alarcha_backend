@@ -21,4 +21,6 @@ public class RoomOrderModel extends BaseModel {
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date endDate;
     private OrderStatus orderStatus;
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    private Date expirationDate;
 }

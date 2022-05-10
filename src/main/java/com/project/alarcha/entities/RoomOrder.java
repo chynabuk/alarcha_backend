@@ -1,12 +1,11 @@
 package com.project.alarcha.entities;
 
 import com.project.alarcha.enums.OrderStatus;
-import com.project.alarcha.enums.RoomOrderStatus;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.util.Date;;
+import java.util.Date;
 
 @Entity
 @Table(name = "room_orders")
@@ -44,4 +43,10 @@ public class RoomOrder extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private OrderStatus orderStatus;
+
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @Column(name = "expiration_date", nullable = false)
+    private Date expirationDate;
+
+
 }
