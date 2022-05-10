@@ -79,11 +79,24 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         for (RoomOrder roomOrder : roomOrderRepository.findAll()){
             if (!roomOrder.getIsDeleted()){
+                if (isExpired(roomOrder.getExpirationDate())){
+                    roomOrder.setIsDeleted(true);
+                    roomOrderRepository.save(roomOrder);
+                }
+            }
+            if (!roomOrder.getIsDeleted()){
                 roomOrderModels.add(toModel(roomOrder));
             }
         }
         return roomOrderModels;
     }
+
+    private boolean isExpired(Date expiredDate){
+        Date currentDate = new Date();
+
+        return expiredDate.after(currentDate);
+    }
+
 
     @Override
     public RoomOrderModel getById(Long id) {
@@ -198,27 +211,4 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         return roomOrderModel;
     }
 
-    private void checkExpirationDate(RoomOrderModel roomOrderModel){
-
-        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
-
-        Date currentDate = new Date();
-
-
-        for (RoomOrder roomOrder: roomOrders){
-
-            if (currentDate.compareTo(roomOrder.getExpirationDate()) > 0){
-
-                if (roomOrder.getIsDeleted()){
-                    throw new ApiFailException("Room order is already deleted");
-                }
-
-                roomOrder.setIsDeleted(true);
-
-            }
-
-        }
-
-
-    }
 }

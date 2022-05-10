@@ -40,4 +40,9 @@ public class RoomOrder extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private OrderStatus orderStatus;
+
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    @Column(name = "expiration_date", nullable = false)
+    private Date expirationDate;
+
 }
