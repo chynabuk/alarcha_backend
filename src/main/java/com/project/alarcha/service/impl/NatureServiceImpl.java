@@ -56,6 +56,23 @@ public class NatureServiceImpl implements NatureService {
     }
 
     @Override
+    public List<NatureModel> getForList() {
+        List<NatureModel> natureModels = new ArrayList<>();
+        for (Nature nature : natureRepository.findAll()){
+            if (!nature.getIsDeleted()){
+                NatureModel natureModel = new NatureModel();
+                natureModel.setId(nature.getId());
+                natureModel.setName(nature.getName());
+                NatureType natureType = nature.getNatureType();
+                natureModel.setNatureTypeId(natureType.getId());
+                natureModel.setType(natureType.getType());
+                natureModels.add(natureModel);
+            }
+        }
+        return natureModels;
+    }
+
+    @Override
     public NatureModel getById(Long natureId) {
         return toModel(getNatureById(natureId));
     }
@@ -125,6 +142,7 @@ public class NatureServiceImpl implements NatureService {
         natureModel.setName(nature.getName());
         natureModel.setDescription(nature.getDescription());
         natureModel.setImg(new String(nature.getPhoto(), StandardCharsets.UTF_8));
+        natureModel.setType(nature.getNatureType().getType());
 
         return natureModel;
     }

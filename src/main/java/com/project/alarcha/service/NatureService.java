@@ -12,6 +12,7 @@ public interface NatureService {
     NatureModel updateNature(Long natureId);
     NatureModel getById(Long natureId);
     List<NatureModel> getAll();
+    List<NatureModel> getForList();
     List<NatureModel> getFaunas();
     List<NatureModel> getFloras();
     List<NatureModel> convertToModels(List<Nature> natures);

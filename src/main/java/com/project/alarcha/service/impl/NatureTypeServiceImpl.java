@@ -34,6 +34,39 @@ public class NatureTypeServiceImpl implements NatureTypeService {
     }
 
     @Override
+    public List<NatureTypeModel> createFloraAndFauna() {
+        List<NatureType> natureTypes = new ArrayList<>();
+        NatureType flora = new NatureType();
+        flora.setType("Флора");
+        flora.setIsDeleted(false);
+        natureTypes.add(flora);
+
+        NatureType fauna = new NatureType();
+        fauna.setType("Фауна");
+        fauna.setIsDeleted(false);
+        natureTypes.add(fauna);
+
+        if (natureTypeRepository.findAll().isEmpty()){
+            natureTypeRepository.saveAll(natureTypes);
+        }
+
+        return convertToModels(natureTypes);
+    }
+
+    @Override
+    public NatureTypeModel createFauna() {
+        NatureType natureType = new NatureType();
+        natureType.setType("Фауна Ала-Арчи");
+        natureType.setIsDeleted(false);
+        return null;
+    }
+
+    @Override
+    public NatureTypeModel createFlora() {
+        return null;
+    }
+
+    @Override
     public NatureTypeModel getById(Long natureTypeId) {
         NatureType natureType = getNatureType(natureTypeId);
         return toDetailedModel(natureType);
@@ -41,6 +74,19 @@ public class NatureTypeServiceImpl implements NatureTypeService {
 
     @Override
     public List<NatureTypeModel> getAll() {
+        List<NatureTypeModel> natureTypeModels = new ArrayList<>();
+
+        for (NatureType natureType : natureTypeRepository.findAll()){
+            if (!natureType.getIsDeleted()){
+                natureTypeModels.add(toDetailedModel(natureType));
+            }
+        }
+
+        return natureTypeModels;
+    }
+
+    @Override
+    public List<NatureTypeModel> getForSelect() {
         List<NatureTypeModel> natureTypeModels = new ArrayList<>();
 
         for (NatureType natureType : natureTypeRepository.findAll()){
@@ -75,7 +121,11 @@ public class NatureTypeServiceImpl implements NatureTypeService {
 
     @Override
     public List<NatureTypeModel> convertToModels(List<NatureType> natureTypes) {
-        return null;
+        List<NatureTypeModel> natureTypeModels = new ArrayList<>();
+        for (NatureType natureType : natureTypes){
+            natureTypeModels.add(toModel(natureType));
+        }
+        return natureTypeModels;
     }
 
     private NatureType initAndGet(NatureTypeModel natureTypeModel){
@@ -87,14 +137,18 @@ public class NatureTypeServiceImpl implements NatureTypeService {
 
     private NatureTypeModel toModel(NatureType natureType){
         NatureTypeModel natureTypeModel = new NatureTypeModel();
+        natureTypeModel.setId(natureType.getId());
         natureTypeModel.setType(natureType.getType());
         return natureTypeModel;
     }
 
     private NatureTypeModel toDetailedModel(NatureType natureType){
         NatureTypeModel natureTypeModel = new NatureTypeModel();
+        natureTypeModel.setId(natureType.getId());
         natureTypeModel.setType(natureType.getType());
-        natureTypeModel.setNatureModels(natureService.convertToModels(natureType.getNatures()));
+        if (natureType.getNatures() != null){
+            natureTypeModel.setNatureModels(natureService.convertToModels(natureType.getNatures()));
+        }
 
         return natureTypeModel;
     }
