@@ -22,6 +22,9 @@ public class AdditionalService extends BaseEntity {
     @Column(name = "price", nullable = false)
     private Float price;
 
+    @Column(name = "price_for_next_hours")
+    private Float priceForNextHours;
+
     @Column(name = "in_stock")
     private Integer inStock;
 

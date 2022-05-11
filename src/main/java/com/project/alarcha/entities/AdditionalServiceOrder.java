@@ -32,6 +32,9 @@ public class AdditionalServiceOrder extends BaseEntity {
     @Column(name = "full_name")
     private String fullName;
 
+    @Column(name = "total_price")
+    private Float totalPrice;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;

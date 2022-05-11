@@ -63,6 +63,17 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
+    public ObjectOrderModel updateOrder(ObjectOrderModel objectOrderModel) {
+        ObjectOrder objectOrder = getObjectOrder(objectOrderModel.getId());
+
+        setValuesOnUpdateObjectOrder(objectOrder, objectOrderModel);
+
+        objectOrderRepository.save(objectOrder);
+
+        return objectOrderModel;
+    }
+
+    @Override
     public List<ObjectOrderModel> getAll() {
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
 
@@ -72,7 +83,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                     objectOrder.setIsDeleted(true);
                     objectOrderRepository.save(objectOrder);
                 }
-
+            }
+            if(!objectOrder.getIsDeleted()){
                 objectOrderModels.add(toModel(objectOrder));
             }
         }
@@ -113,19 +125,13 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         Date expirationDate = new Date();
 
         if(objectType.getTimeType() == TimeType.TIME){
-            checkObjectOrderTime(objectOrderModel);
+            checkObjectOrderTime(objectOrderModel, objectType);
 
             Date startDate = objectOrderModel.getStartDate();
             Time startTime = objectOrderModel.getStartTime();
             Time endTime = objectOrderModel.getEndTime();
             Float price = objectType.getPrice();
             Float pricePerHour = objectType.getPricePerHour();
-            Integer minHours = objectType.getMinHours();
-            int hours = endTime.getHours() - startTime.getHours();
-
-            if(hours < minHours){
-                throw new ApiFailException("You can not order this ObjectType for less than " + minHours + " hours.");
-            }
 
             expirationDate.setDate(startDate.getDate() + 3);
 
@@ -154,13 +160,30 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         return objectOrder;
     }
 
+    private ObjectOrder getObjectOrder(Long objectOrderId){
+        ObjectOrder objectOrder = objectOrderRepository
+                .findById(objectOrderId)
+                .orElseThrow(() -> new ApiFailException("ObjectOrder is not found!"));
+
+        if(isExpired(objectOrder.getExpirationDate())){
+            objectOrder.setIsDeleted(true);
+            objectOrderRepository.save(objectOrder);
+        }
+
+        if(objectOrder.getIsDeleted()){
+            throw new ApiFailException("ObjectOrder is not found or deleted!");
+        }
+
+        return objectOrder;
+    }
+
     private boolean isExpired(Date expiredDate){
         Date currentDate = new Date();
 
-        return expiredDate.after(currentDate);
+        return currentDate.after(expiredDate);
     }
 
-    private void checkObjectOrderTime(ObjectOrderModel objectOrderModel){
+    private void checkObjectOrderTime(ObjectOrderModel objectOrderModel, ObjectType objectType){
         List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
 
         Time currentTime = Time.valueOf(LocalTime.now());
@@ -168,6 +191,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         Time startTime = objectOrderModel.getStartTime();
         Time endTime = objectOrderModel.getEndTime();
         Date registrationDate = objectOrderModel.getStartDate();
+        Integer minHours = objectType.getMinHours();
 
         if(startTime == null || endTime == null || registrationDate == null){
             throw new ApiFailException("Time or registration date must not be null!");
@@ -188,36 +212,15 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         currentDate.setMinutes(0);
         currentDate.setSeconds(0);
 
-        if(registrationDate.before(currentDate)){
-            throw new ApiFailException("RegistrationDate can not be less than currentDate");
-        }
+        compareRegistrationDateWithCurrentDate(registrationDate, currentDate);
 
-        if (endTime.compareTo(startTime) <= 0){
-            throw new ApiFailException("endTime must be greater than startTime");
-        }
+        compareEndTimeWithStartTime(startTime, endTime);
 
-        if(registrationDate.equals(currentDate) && startTime.before(currentTime)){
-            throw new ApiFailException("startTime can not be less than currentTime");
-        }
+        compareStartTimeWithCurrentTime(registrationDate, currentDate, startTime, currentTime);
 
-        for(ObjectOrder objectOrder : objectOrders){
-            if(objectOrderModel.getObjectId().equals(objectOrder.getObject().getId())){
-                if( (registrationDate.getYear() == objectOrder.getStartDate().getYear() && registrationDate.getMonth() == objectOrder.getStartDate().getMonth()
-                && registrationDate.getDay() == objectOrder.getStartDate().getDay())
-                ){
-                    if(objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
-                        Time rSTime = objectOrder.getStartTime();
-                        Time rETime = objectOrder.getEndTime();
+        checkMinHours(startTime, endTime, minHours);
 
-                        for(int i = startTime.getHours(); i < endTime.getHours(); i++){
-                            if(i >= rSTime.getHours() && i <= rETime.getHours()){
-                                throw new ApiFailException("You can't order for this period of time");
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        doTimeValidation(objectOrders, objectOrderModel, registrationDate, startTime, endTime);
     }
 
     private void checkObjectOrderDate(ObjectOrderModel objectOrderModel){
@@ -241,13 +244,83 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         startDate.setHours(12);
         endDate.setHours(12);
 
-        if (endDate.compareTo(startDate) <= 0){
-            throw new ApiFailException("endDate must be greater than startDate");
-        }
+        compareStartWithCurrentDate(startDate, currentDate);
 
+        compareEndWithStartDate(startDate, endDate);
+
+        doDatesValidation(objectOrders, objectOrderModel, startDate, endDate);
+    }
+
+    private Float getTotalPriceByTime(Float price, Float pricePerHour, Time startTime, Time endTime){
+        int hours = endTime.getHours() - startTime.getHours();
+        return (hours - 1) * pricePerHour + price;
+    }
+
+    private Float getTotalPriceByDate(Float price, Date startDate, Date endDate){
+        return (endDate.getDate() - startDate.getDate()) * price;
+    }
+
+    private void checkMinHours(Time startTime, Time endTime, Integer minHours){
+        int hours = endTime.getHours() - startTime.getHours();
+        if(hours < minHours){
+            throw new ApiFailException("You can not order this ObjectType for less than " + minHours + " hours.");
+        }
+    }
+
+    private void compareStartTimeWithCurrentTime(Date registrationDate, Date currentDate, Time startTime, Time currentTime){
+        if(registrationDate.equals(currentDate) && startTime.before(currentTime)){
+            throw new ApiFailException("startTime can not be less than currentTime");
+        }
+    }
+
+    private void compareEndTimeWithStartTime(Time startTime, Time endTime){
+        if (endTime.compareTo(startTime) <= 0){
+            throw new ApiFailException("endTime must be greater than startTime");
+        }
+    }
+
+    private void compareRegistrationDateWithCurrentDate(Date registrationDate, Date currentDate){
+        if(registrationDate.before(currentDate)){
+            throw new ApiFailException("RegistrationDate can not be less than currentDate");
+        }
+    }
+
+    private void compareStartWithCurrentDate(Date startDate, Date currentDate){
         if (startDate.compareTo(currentDate) < 0){
             throw new ApiFailException("start date can not be less than currentDate");
         }
+    }
+
+    private void compareEndWithStartDate(Date startDate, Date endDate){
+        if (endDate.compareTo(startDate) <= 0){
+            throw new ApiFailException("endDate must be greater than startDate");
+        }
+    }
+
+    private void doTimeValidation(List<ObjectOrder> objectOrders, ObjectOrderModel objectOrderModel, Date registrationDate, Time startTime, Time endTime){
+
+        for(ObjectOrder objectOrder : objectOrders){
+            if(objectOrderModel.getObjectId().equals(objectOrder.getObject().getId())){
+                if( (registrationDate.getYear() == objectOrder.getStartDate().getYear() && registrationDate.getMonth() == objectOrder.getStartDate().getMonth()
+                        && registrationDate.getDay() == objectOrder.getStartDate().getDay())
+                ){
+                    if(objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                        Time rSTime = objectOrder.getStartTime();
+                        Time rETime = objectOrder.getEndTime();
+
+                        for(int i = startTime.getHours(); i < endTime.getHours(); i++){
+                            if(i >= rSTime.getHours() && i <= rETime.getHours()){
+                                throw new ApiFailException("You can't order for this period of time");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private void doDatesValidation(List<ObjectOrder> objectOrders, ObjectOrderModel objectOrderModel, Date startDate, Date endDate){
 
         for (ObjectOrder objectOrder : objectOrders){
             if (objectOrderModel.getObjectId() == objectOrder.getObject().getId()){
@@ -268,32 +341,26 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 }
             }
         }
+
     }
 
-    private ObjectOrder getObjectOrder(Long objectOrderId){
-        ObjectOrder objectOrder = objectOrderRepository
-                .findById(objectOrderId)
-                .orElseThrow(() -> new ApiFailException("ObjectOrder is not found!"));
+    private void setValuesOnUpdateObjectOrder(ObjectOrder objectOrder, ObjectOrderModel objectOrderModel){
+        Object object = objectService.getByObjectId(objectOrderModel.getObjectId());
+        ObjectType objectType = object.getObjectType();
 
-        if(isExpired(objectOrder.getExpirationDate())){
-            objectOrder.setIsDeleted(true);
-            objectOrderRepository.save(objectOrder);
+        if (objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+            if (objectType.getTimeType() == TimeType.TIME){
+                Time startTime = objectOrderModel.getStartTime();
+                Time endTime = objectOrderModel.getEndTime();
+                Date registrationDate = objectOrderModel.getStartDate();
+
+            }
+            else if(objectType.getTimeType() == TimeType.DATE){
+                Date startDate = objectOrderModel.getStartDate();
+                Date endDate = objectOrderModel.getEndDate();
+            }
         }
 
-        if(objectOrder.getIsDeleted()){
-            throw new ApiFailException("ObjectOrder is not found or deleted!");
-        }
-
-        return objectOrder;
-    }
-
-    private Float getTotalPriceByTime(Float price, Float pricePerHour, Time startTime, Time endTime){
-        int hours = endTime.getHours() - startTime.getHours();
-        return (hours - 1) * pricePerHour + price;
-    }
-
-    private Float getTotalPriceByDate(Float price, Date startDate, Date endDate){
-        return (endDate.getDate() - startDate.getDate()) * price;
     }
 
     private ObjectOrderModel toModel(ObjectOrder objectOrder){

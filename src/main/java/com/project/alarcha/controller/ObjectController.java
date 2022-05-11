@@ -10,6 +10,7 @@ import com.project.alarcha.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -42,6 +43,11 @@ public class ObjectController {
     @GetMapping("/get/{objectId}")
     public ResponseMessage<ObjectModel> getObject(@PathVariable(name = "objectId") Long objectId){
         return new ResponseMessage<ObjectModel>().prepareSuccessMessage(objectService.getById(objectId));
+    }
+
+    @PutMapping("/update")
+    public ResponseMessage<ObjectModel> updateObject(@Valid @RequestBody ObjectModel objectModel) {
+        return new ResponseMessage<ObjectModel>().prepareSuccessMessage(objectService.updateObject(objectModel));
     }
 
     @PostMapping("/order")
@@ -97,6 +103,11 @@ public class ObjectController {
     @DeleteMapping("/type/delete/{objectTypeId}")
     public ResponseMessage<ObjectTypeModel> deleteObjectType(@PathVariable(name = "objectTypeId") Long objectTypeId) {
         return new ResponseMessage<ObjectTypeModel>().prepareSuccessMessage(objectTypeService.deleteObjectType(objectTypeId));
+    }
+
+    @PutMapping("/type/update")
+    public ResponseMessage<ObjectTypeModel> updateObjectType(@Valid @RequestBody ObjectTypeModel objectTypeModel) {
+        return new ResponseMessage<ObjectTypeModel>().prepareSuccessMessage(objectTypeService.updateObjectType(objectTypeModel));
     }
 
 }

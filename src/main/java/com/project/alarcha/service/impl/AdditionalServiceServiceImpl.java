@@ -87,6 +87,7 @@ public class AdditionalServiceServiceImpl implements AdditionalServiceService {
     private AdditionalService initAndGet(AdditionalService additionalService, AdditionalServiceModel additionalServiceModel){
         additionalService.setName(additionalServiceModel.getName());
         additionalService.setPrice(additionalServiceModel.getPrice());
+        additionalService.setPriceForNextHours(additionalServiceModel.getPriceForNextHours());
         additionalService.setDescription(additionalServiceModel.getDescription());
         additionalService.setInStock(additionalServiceModel.getInStock());
         additionalService.setIsDeleted(false);
@@ -125,6 +126,7 @@ public class AdditionalServiceServiceImpl implements AdditionalServiceService {
         additionalServiceModel.setDescription(additionalService.getDescription());
         additionalServiceModel.setInStock(additionalService.getInStock());
         additionalServiceModel.setPrice(additionalService.getPrice());
+        additionalServiceModel.setPriceForNextHours(additionalService.getPriceForNextHours());
 
         return additionalServiceModel;
     }

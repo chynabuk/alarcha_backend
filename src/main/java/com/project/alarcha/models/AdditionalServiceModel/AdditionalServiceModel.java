@@ -16,5 +16,7 @@ public class AdditionalServiceModel extends BaseModel {
 
     private Float price;
 
+    private Float priceForNextHours;
+
     private Integer inStock;
 }

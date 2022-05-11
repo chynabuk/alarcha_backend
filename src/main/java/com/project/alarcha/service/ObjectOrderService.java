@@ -8,6 +8,7 @@ public interface ObjectOrderService {
     ObjectOrderModel order(ObjectOrderModel objectOrderModel);
     ObjectOrderModel acceptOrder(Long orderId);
     ObjectOrderModel declineOrder(Long orderId);
+    ObjectOrderModel updateOrder(ObjectOrderModel objectOrderModel);
     List<ObjectOrderModel> getAll();
     ObjectOrderModel getById(Long id);
     ObjectOrderModel deleteOrder(Long orderId);
