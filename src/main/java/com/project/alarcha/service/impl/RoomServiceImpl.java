@@ -117,6 +117,25 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<RoomModel> getForList() {
+        List<RoomModel> roomModels = new ArrayList<>();
+
+        for (Room room : roomRepository.findAll()){
+            if (!room.getIsDeleted()){
+                RoomModel roomModel = new RoomModel();
+                roomModel.setId(room.getId());
+                roomModel.setRoomNumber(room.getRoomNumber());
+                roomModel.setBedNumber(room.getBedNumber());
+                roomModel.setHotelName(room.getRoomType().getHotel().getHotelName());
+                roomModel.setRoomTypeName(room.getRoomType().getType());
+                roomModels.add(roomModel);
+            }
+        }
+
+        return roomModels;
+    }
+
+    @Override
     public RoomModel updateRoom(RoomModel roomModel) {
         Room room = getRoom(roomModel.getId());
 

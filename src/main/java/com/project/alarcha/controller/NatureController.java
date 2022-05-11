@@ -25,6 +25,11 @@ public class NatureController {
         return new ResponseMessage<NatureTypeModel>().prepareSuccessMessage(natureTypeService.createNatureType(natureTypeModel));
     }
 
+    @PostMapping("/type/create-flora-and-fauna")
+    public ResponseMessage<List<NatureTypeModel>> createFloraAndFauna(){
+        return new ResponseMessage<List<NatureTypeModel>>().prepareSuccessMessage(natureTypeService.createFloraAndFauna());
+    }
+
     @DeleteMapping("/type/delete/{id}")
     public ResponseMessage<NatureTypeModel> deleteNatureType(@PathVariable Long id){
         return new ResponseMessage<NatureTypeModel>().prepareSuccessMessage(natureTypeService.deleteNatureType(id));
@@ -34,6 +39,12 @@ public class NatureController {
     public ResponseMessage<List<NatureTypeModel>> getNatureTypes(){
         return new ResponseMessage<List<NatureTypeModel>>().prepareSuccessMessage(natureTypeService.getAll());
     }
+
+    @GetMapping("/type/get-for-select")
+    public ResponseMessage<List<NatureTypeModel>> getNatureTypesForSelect(){
+        return new ResponseMessage<List<NatureTypeModel>>().prepareSuccessMessage(natureTypeService.getForSelect());
+    }
+
 
     @GetMapping("/type/get/{id}")
     public ResponseMessage<NatureTypeModel> getNatureType(@PathVariable Long id){
@@ -53,6 +64,11 @@ public class NatureController {
     @GetMapping("/get-all")
     public ResponseMessage<List<NatureModel>> getNatures(){
         return new ResponseMessage<List<NatureModel>>().prepareSuccessMessage(natureService.getAll());
+    }
+
+    @GetMapping("/get-for-list")
+    public ResponseMessage<List<NatureModel>> getNaturesForList(){
+        return new ResponseMessage<List<NatureModel>>().prepareSuccessMessage(natureService.getForList());
     }
 
     @GetMapping("/get/{id}")

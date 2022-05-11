@@ -92,6 +92,19 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    public List<MenuModel> getForList() {
+        List<MenuModel> menuModels = new ArrayList<>();
+
+        for(Menu menu : menuRepository.findAll()){
+            if(!menu.getIsDeleted()){
+                menuModels.add(toModel(menu));
+            }
+        }
+
+        return menuModels;
+    }
+
+    @Override
     public MenuModel updateMenu(MenuModel menuModel) {
         Menu menu = getMenu(menuModel.getId());
 

@@ -78,11 +78,24 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         for (RoomOrder roomOrder : roomOrderRepository.findAll()){
             if (!roomOrder.getIsDeleted()){
+                if (isExpired(roomOrder.getExpirationDate())){
+                    roomOrder.setIsDeleted(true);
+                    roomOrderRepository.save(roomOrder);
+                }
+            }
+            if (!roomOrder.getIsDeleted()){
                 roomOrderModels.add(toModel(roomOrder));
             }
         }
         return roomOrderModels;
     }
+
+    private boolean isExpired(Date expiredDate){
+        Date currentDate = new Date();
+
+        return currentDate.after(expiredDate);
+    }
+
 
     @Override
     public RoomOrderModel getById(Long id) {
@@ -123,6 +136,9 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         roomOrder.setStartDate(startDate);
         roomOrder.setEndDate(endDate);
+        Date expirationDate = new Date();
+        expirationDate.setDate(startDate.getDate() + 3);
+        roomOrder.setExpirationDate(expirationDate);
         roomOrder.setTotalPrice(getTotalPrice(price, startDate, endDate));
         roomOrder.setOrderStatus(OrderStatus.IN_PROCESS);
 
@@ -196,4 +212,5 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         return roomOrderModel;
     }
+
 }

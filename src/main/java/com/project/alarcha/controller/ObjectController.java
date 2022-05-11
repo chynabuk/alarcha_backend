@@ -40,6 +40,11 @@ public class ObjectController {
         return new ResponseMessage<List<ObjectModel>>().prepareSuccessMessage(objectService.getAll());
     }
 
+    @GetMapping("/get-for-list")
+    public ResponseMessage<List<ObjectModel>> getObjectsForList(){
+        return new ResponseMessage<List<ObjectModel>>().prepareSuccessMessage(objectService.getForList());
+    }
+
     @GetMapping("/get/{objectId}")
     public ResponseMessage<ObjectModel> getObject(@PathVariable(name = "objectId") Long objectId){
         return new ResponseMessage<ObjectModel>().prepareSuccessMessage(objectService.getById(objectId));
@@ -80,6 +85,11 @@ public class ObjectController {
         return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.getById(objectOrderId));
     }
 
+    @PutMapping("/order/update")
+    public ResponseMessage<ObjectOrderModel> updateOrder(@Valid @RequestBody ObjectOrderModel objectOrderModel) {
+        return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.updateOrder(objectOrderModel));
+    }
+
     @PostMapping("/type/create")
     public ResponseMessage<ObjectTypeModel> createObjectType(@RequestBody ObjectTypeModel objectTypeModel){
         return new ResponseMessage<ObjectTypeModel>().prepareSuccessMessage(objectTypeService.createObjectType(objectTypeModel));
@@ -93,6 +103,11 @@ public class ObjectController {
     @GetMapping("/type/get-for-select")
     public ResponseMessage<List<ObjectTypeModel>> getForObjectTypeSelect(){
         return new ResponseMessage<List<ObjectTypeModel>>().prepareSuccessMessage(objectTypeService.getForSelect());
+    }
+
+    @GetMapping("/type/get-for-list")
+    public ResponseMessage<List<ObjectTypeModel>> getForObjectTypeForList(){
+        return new ResponseMessage<List<ObjectTypeModel>>().prepareSuccessMessage(objectTypeService.getForList());
     }
 
     @GetMapping("/type/get/{objectTypeId}")

@@ -14,6 +14,7 @@ public interface ObjectService {
     Object getByObjectId(Long objectId);
     List<ObjectModel> getByObjectType(ObjectType objectType);
     List<ObjectModel> getAll();
+    List<ObjectModel> getForList();
     ObjectModel updateObject(ObjectModel objectModel);
     ObjectModel deleteObject(Long objectId);
 }

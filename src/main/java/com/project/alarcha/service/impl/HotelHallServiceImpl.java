@@ -65,6 +65,19 @@ public class HotelHallServiceImpl implements HotelHallService {
     }
 
     @Override
+    public List<HotelHallModel> convertToModels(List<HotelHall> hotelHalls) {
+        List<HotelHallModel> hotelHallModelModels = new ArrayList<>();
+
+        for (HotelHall hotelHall : hotelHalls){
+            if (!hotelHall.getIsDeleted()){
+                hotelHallModelModels.add(toModel(hotelHall));
+            }
+
+        }
+        return hotelHallModelModels;
+    }
+
+    @Override
     public HotelHallModel getById(Long id) {
         HotelHall hotelHall = getHotelHall(id);
 
@@ -82,6 +95,20 @@ public class HotelHallServiceImpl implements HotelHallService {
 
         for (HotelHall hotelHall : hotelHallsRepository.findAll()){
             if (!hotelHall.getIsDeleted()){
+                hotelHallModelModels.add(toModel(hotelHall));
+            }
+
+        }
+        return hotelHallModelModels;
+    }
+
+    @Override
+    public List<HotelHallModel> getForList() {
+        List<HotelHallModel> hotelHallModelModels = new ArrayList<>();
+
+        for (HotelHall hotelHall : hotelHallsRepository.findAll()){
+            if (!hotelHall.getIsDeleted()){
+                hotelHall.setHotelHallImages(null);
                 hotelHallModelModels.add(toModel(hotelHall));
             }
 
@@ -166,9 +193,12 @@ public class HotelHallServiceImpl implements HotelHallService {
         hotelHallModel.setId(hotelHall.getId());
         hotelHallModel.setName(hotelHall.getName());
         hotelHallModel.setPrice(hotelHall.getPrice());
-        hotelHall.setPriceForNextHours(hotelHall.getPriceForNextHours());
+        hotelHallModel.setPriceForNextHours(hotelHall.getPriceForNextHours());
         hotelHallModel.setHotelName(hotelHall.getHotel().getHotelName());
-        hotelHallModel.setHotelHall_imgModels(hotelHall_imgService.convertToModels(hotelHall.getHotelHallImages()));
+        if (hotelHall.getHotelHallImages() != null){
+            hotelHallModel.setHotelHall_imgModels(hotelHall_imgService.convertToModels(hotelHall.getHotelHallImages()));
+        }
+        hotelHallModel.setNumberOfSeats(hotelHall.getNumberOfSeats());
 
         return hotelHallModel;
     }

@@ -10,6 +10,7 @@ public interface ObjectTypeService {
     ObjectTypeModel getById(Long objectTypeId);
     List<ObjectTypeModel> getAll();
     List<ObjectTypeModel> getForSelect();
+    List<ObjectTypeModel> getForList();
     ObjectTypeModel updateObjectType(ObjectTypeModel objectTypeModel);
     ObjectTypeModel deleteObjectType(Long objectTypeId);
     List<ObjectTypeModel> convertToModels(List<ObjectType> objectTypes);

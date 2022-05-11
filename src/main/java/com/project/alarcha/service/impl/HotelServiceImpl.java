@@ -62,7 +62,7 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public List<HotelModel> getForList() {
+    public List<HotelModel> getForSelect() {
         List<HotelModel> hotelModels = new ArrayList<>();
 
         for (Hotel hotel : hotelRepository.findAll()){
@@ -71,6 +71,23 @@ public class HotelServiceImpl implements HotelService {
                 hotelModel.setId(hotel.getId());
                 hotelModel.setHotelName(hotel.getHotelName());
                 hotelModels.add(hotelModel);
+            }
+        }
+
+        return hotelModels;
+    }
+
+    @Override
+    public List<HotelModel> getForList() {
+        List<HotelModel> hotelModels = new ArrayList<>();
+
+        for (Hotel hotel : hotelRepository.findAll()){
+            if (!hotel.getIsDeleted()){
+                HotelModel hotelModel = new HotelModel();
+                hotelModel.setId(hotel.getId());
+                hotelModel.setHotelName(hotel.getHotelName());
+                hotelModel.setAreaName(hotel.getArea().getAreaName());
+                hotelModels.add(toModel(hotel));
             }
         }
 
@@ -209,9 +226,13 @@ public class HotelServiceImpl implements HotelService {
         HotelModel hotelModel = new HotelModel();
         hotelModel.setId(hotel.getId());
         hotelModel.setHotelName(hotel.getHotelName());
-        hotelModel.setRoomTypeModels(roomTypeService.convertToRoomTypeModels(hotel.getRoomTypes()));
-        hotelModel.setHotelHallModels(hotelHallService.getAll());
         hotelModel.setAreaName(hotel.getArea().getAreaName());
+        if (hotel.getRoomTypes() != null){
+            hotelModel.setRoomTypeModels(roomTypeService.convertToRoomTypeModels(hotel.getRoomTypes()));
+        }
+        if (hotel.getHotelHalls() != null){
+            hotelModel.setHotelHallModels(hotelHallService.convertToModels(hotel.getHotelHalls()));
+        }
         if (hotel.getHotelImgs() != null){
             if (hotel.getHotelImgs().size() >= 2){
                 hotelModel.setImgUrl(new String(hotel.getHotelImgs().get(1).getImg(), StandardCharsets.UTF_8));

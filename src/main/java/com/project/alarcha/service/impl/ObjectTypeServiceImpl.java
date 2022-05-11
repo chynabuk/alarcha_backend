@@ -13,6 +13,7 @@ import com.project.alarcha.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     public ObjectTypeModel getById(Long objectTypeId) {
         ObjectType objectType = getObjectType(objectTypeId);
 
-        return toModel(objectType);
+        return toDetailedModel(objectType);
     }
 
     @Override
@@ -71,6 +72,25 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
                 ObjectTypeModel objectTypeModel = new ObjectTypeModel();
                 objectTypeModel.setId(objectType.getId());
                 objectTypeModel.setName(objectType.getName());
+                objectTypeModels.add(objectTypeModel);
+            }
+        }
+
+        return objectTypeModels;
+    }
+
+    @Override
+    public List<ObjectTypeModel> getForList() {
+        List<ObjectTypeModel> objectTypeModels = new ArrayList<>();
+
+        for(ObjectType objectType : objectTypeRepository.findAll()){
+            if(!objectType.getIsDeleted()){
+                ObjectTypeModel objectTypeModel = new ObjectTypeModel();
+                objectTypeModel.setId(objectType.getId());
+                objectTypeModel.setName(objectType.getName());
+                objectTypeModel.setAreaName(objectType.getArea().getAreaName());
+                objectTypeModel.setTimeType(objectType.getTimeType());
+                objectTypeModel.setPrice(objectType.getPrice());
                 objectTypeModels.add(objectTypeModel);
             }
         }
@@ -188,7 +208,6 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     private void setValuesOnUpdateObjectType(ObjectType objectType, ObjectTypeModel objectTypeModel){
         String name = objectTypeModel.getName();
         Float price = objectTypeModel.getPrice();
-        Float pricePerHour = objectTypeModel.getPricePerHour();
 
         if(name != null){
             objectType.setName(name);
@@ -198,8 +217,17 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
             objectType.setPrice(price);
         }
 
-        if(pricePerHour != null){
-            objectType.setPricePerHour(pricePerHour);
+        if(objectType.getTimeType() == TimeType.TIME){
+            Float pricePerHour = objectTypeModel.getPricePerHour();
+            Integer minHours = objectTypeModel.getMinHours();
+
+            if(pricePerHour != null){
+                objectType.setPricePerHour(pricePerHour);
+            }
+
+            if(minHours != null){
+                objectType.setMinHours(minHours);
+            }
         }
     }
 
@@ -208,8 +236,36 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setId(objectType.getId());
         objectTypeModel.setName(objectType.getName());
         objectTypeModel.setPrice(objectType.getPrice());
+
         objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
         objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
+
+        if (!objectType.getObjectTypeImages().isEmpty()){
+            objectTypeModel.setImgUrl(new String(objectType.getObjectTypeImages().get(0).getImg(), StandardCharsets.UTF_8));
+        }
+        return objectTypeModel;
+    }
+
+    private ObjectTypeModel toDetailedModel(ObjectType objectType){
+        ObjectTypeModel objectTypeModel = new ObjectTypeModel();
+        objectTypeModel.setId(objectType.getId());
+        objectTypeModel.setName(objectType.getName());
+        objectTypeModel.setPrice(objectType.getPrice());
+        objectTypeModel.setPricePerHour(objectType.getPricePerHour());
+        if (!objectType.getMenuSections().isEmpty()){
+            objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
+        }
+        if (!objectType.getObjects().isEmpty()){
+            objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
+        }
+        if (!objectType.getObjectTypeImages().isEmpty()){
+            if (objectType.getObjectTypeImages().size() > 2){
+                objectTypeModel.setObjectTypeImgModels(objectTypeImgService
+                        .convertToModels(objectType.getObjectTypeImages()
+                        .subList(1, objectType.getObjectTypeImages().size() - 1)));
+            }
+        }
+
         objectTypeModel.setAreaName(objectType.getArea().getAreaName());
         objectTypeModel.setTimeType(objectType.getTimeType());
 

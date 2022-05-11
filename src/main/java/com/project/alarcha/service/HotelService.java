@@ -9,6 +9,7 @@ public interface HotelService {
     HotelModel createHotel(HotelModel hotelModel);
     HotelModel getById(Long hotelId);
     List<HotelModel> getAll();
+    List<HotelModel> getForSelect();
     List<HotelModel> getForList();
     HotelModel updateHotel(HotelModel hotelModel);
     HotelModel deleteHotel(Long hotelId);

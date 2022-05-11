@@ -150,7 +150,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     private boolean isExpired(Date expiredDate){
         Date currentDate = new Date();
 
-        return expiredDate.after(currentDate);
+        return currentDate.after(expiredDate);
     }
 
     private void checkHotelHallOrderTime(HotelHallOrderModel hotelHallOrderModel){
