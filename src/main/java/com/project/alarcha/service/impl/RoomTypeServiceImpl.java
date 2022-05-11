@@ -76,7 +76,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
         for (RoomType roomType : roomTypes){
             if (!roomType.getIsDeleted()){
-                roomTypeModels.add(toModel(roomType));
+                roomTypeModels.add(toModelDetailed(roomType));
             }
         }
         return roomTypeModels;

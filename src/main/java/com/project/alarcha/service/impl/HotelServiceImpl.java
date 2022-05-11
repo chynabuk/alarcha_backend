@@ -232,7 +232,7 @@ public class HotelServiceImpl implements HotelService {
         if (hotel.getHotelHalls() != null){
             hotelModel.setHotelHallModels(hotelHallService.convertToModels(hotel.getHotelHalls()));
         }
-        if (hotel.getHotelImgs() != null){
+        if (!hotel.getHotelImgs().isEmpty()){
             if (hotel.getHotelImgs().size() >= 2){
                 hotelModel.setImgUrl(new String(hotel.getHotelImgs().get(1).getImg(), StandardCharsets.UTF_8));
             }
