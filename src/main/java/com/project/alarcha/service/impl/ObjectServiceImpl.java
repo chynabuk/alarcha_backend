@@ -93,6 +93,24 @@ public class ObjectServiceImpl implements ObjectService {
     }
 
     @Override
+    public List<ObjectModel> getForList() {
+        List<ObjectModel> objectModels = new ArrayList<>();
+
+        for(Object object : objectRepository.findAll()){
+            if(!object.getIsDeleted()){
+                ObjectModel objectModel = new ObjectModel();
+                objectModel.setId(object.getId());
+                objectModel.setName(object.getName());
+                objectModel.setObjectTypeName(object.getObjectType().getName());
+                objectModel.setNumberOfSeats(object.getNumberOfSeats());
+                objectModels.add(objectModel);
+            }
+        }
+
+        return objectModels;
+    }
+
+    @Override
     public ObjectModel updateObject(ObjectModel objectModel) {
         return null;
     }

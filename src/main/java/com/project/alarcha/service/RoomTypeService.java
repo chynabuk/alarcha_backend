@@ -13,6 +13,7 @@ public interface RoomTypeService {
     List<RoomTypeModel> convertToRoomTypeModels(List<RoomType> roomTypes);
     RoomTypeModel getById(Long roomTypeId);
     List<RoomTypeModel> getAll();
+    List<RoomTypeModel> getForSelect();
     List<RoomTypeModel> getForList();
     RoomTypeModel updateRoomType(RoomTypeModel roomTypeModel);
     RoomTypeModel deleteRoomType(Long roomTypeId);

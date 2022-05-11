@@ -78,6 +78,25 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     }
 
     @Override
+    public List<ObjectTypeModel> getForList() {
+        List<ObjectTypeModel> objectTypeModels = new ArrayList<>();
+
+        for(ObjectType objectType : objectTypeRepository.findAll()){
+            if(!objectType.getIsDeleted()){
+                ObjectTypeModel objectTypeModel = new ObjectTypeModel();
+                objectTypeModel.setId(objectType.getId());
+                objectTypeModel.setName(objectType.getName());
+                objectTypeModel.setAreaName(objectType.getArea().getAreaName());
+                objectTypeModel.setTimeType(objectType.getTimeType());
+                objectTypeModel.setPrice(objectType.getPrice());
+                objectTypeModels.add(objectTypeModel);
+            }
+        }
+
+        return objectTypeModels;
+    }
+
+    @Override
     public ObjectTypeModel updateObjectType(ObjectTypeModel objectTypeModel) {
         return null;
     }
@@ -178,8 +197,12 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setName(objectType.getName());
         objectTypeModel.setPrice(objectType.getPrice());
         objectTypeModel.setPricePerHour(objectType.getPricePerHour());
-        objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
-        objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
+        if (objectType.getMenuSections() != null){
+            objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
+        }
+        if (objectType.getObjects() != null){
+            objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
+        }
         objectTypeModel.setAreaName(objectType.getArea().getAreaName());
         objectTypeModel.setTimeType(objectType.getTimeType());
 

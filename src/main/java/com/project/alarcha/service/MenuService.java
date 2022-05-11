@@ -15,6 +15,7 @@ public interface MenuService {
     MenuModel getById(Long menuId);
     List<MenuModel> getByMenuSection(MenuSection menuSection);
     List<MenuModel> getAll();
+    List<MenuModel> getForList();
     MenuModel updateMenu(MenuModel menuModel);
     MenuModel deleteMenu(Long menuId);
 }

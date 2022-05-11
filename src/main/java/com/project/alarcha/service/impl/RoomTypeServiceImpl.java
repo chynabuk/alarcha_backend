@@ -103,6 +103,22 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     }
 
     @Override
+    public List<RoomTypeModel> getForSelect() {
+        List<RoomTypeModel> roomTypeModels = new ArrayList<>();
+
+        for (RoomType roomType : roomTypeRepository.findAll()){
+            if (!roomType.getIsDeleted()){
+                RoomTypeModel roomTypeModel = new RoomTypeModel();
+                roomTypeModel.setId(roomType.getId());
+                roomTypeModel.setType(roomType.getType());
+                roomTypeModels.add(roomTypeModel);
+            }
+        }
+
+        return roomTypeModels;
+    }
+
+    @Override
     public List<RoomTypeModel> getForList() {
         List<RoomTypeModel> roomTypeModels = new ArrayList<>();
 
@@ -111,6 +127,8 @@ public class RoomTypeServiceImpl implements RoomTypeService {
                 RoomTypeModel roomTypeModel = new RoomTypeModel();
                 roomTypeModel.setId(roomType.getId());
                 roomTypeModel.setType(roomType.getType());
+                roomTypeModel.setHotelName(roomType.getHotel().getHotelName());
+                roomTypeModel.setPrice(roomType.getPrice());
                 roomTypeModels.add(roomTypeModel);
             }
         }
@@ -219,8 +237,12 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         roomTypeModel.setHotelName(roomType.getHotel().getHotelName());
         roomTypeModel.setType(roomType.getType());
         roomTypeModel.setPrice(roomType.getPrice());
-        roomTypeModel.setRoomModels(roomService.getByRoomType(roomType));
-        roomTypeModel.setRoomTypeImageModels(roomTypeImageService.convertToModels(roomType.getRoomTypeImages()));
+        if (roomType.getRooms() != null){
+            roomTypeModel.setRoomModels(roomService.getByRoomType(roomType));
+        }
+        if (roomType.getRoomTypeImages() != null){
+            roomTypeModel.setRoomTypeImageModels(roomTypeImageService.convertToModels(roomType.getRoomTypeImages()));
+        }
 
         return roomTypeModel;
     }

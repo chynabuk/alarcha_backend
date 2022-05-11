@@ -39,6 +39,11 @@ public class MenuController {
         return new ResponseMessage<List<MenuSectionModel>>().prepareSuccessMessage(menuSectionService.getForSelect());
     }
 
+    @GetMapping("/section/get-for-list")
+    public ResponseMessage<List<MenuSectionModel>> getMenuSectionsForList(){
+        return new ResponseMessage<List<MenuSectionModel>>().prepareSuccessMessage(menuSectionService.getForList());
+    }
+
     @GetMapping("/section/get/{menuSectionId}")
     public ResponseMessage<MenuSectionModel> getMenuSection(@PathVariable Long menuSectionId){
         return new ResponseMessage<MenuSectionModel>().prepareSuccessMessage(menuSectionService.getById(menuSectionId));

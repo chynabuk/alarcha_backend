@@ -34,6 +34,11 @@ public class HotelHallController {
         return new ResponseMessage<List<HotelHallModel>>().prepareSuccessMessage(hotelHallService.getAll());
     }
 
+    @GetMapping("/get-for-list")
+    public ResponseMessage<List<HotelHallModel>> getHotelHallsForList(){
+        return new ResponseMessage<List<HotelHallModel>>().prepareSuccessMessage(hotelHallService.getForList());
+    }
+
     @GetMapping("/get/{hotelHallId}")
     public ResponseMessage<HotelHallModel> getHotelHall(@PathVariable Long hotelHallId){
         return new ResponseMessage<HotelHallModel>().prepareSuccessMessage(hotelHallService.getById(hotelHallId));

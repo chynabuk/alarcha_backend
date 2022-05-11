@@ -14,6 +14,7 @@ public interface RoomService {
     Room getByRoomId(Long roomId);
     List<RoomModel> getByRoomType(RoomType roomType);
     List<RoomModel> getAll();
+    List<RoomModel> getForList();
     RoomModel updateRoom(RoomModel roomModel);
     RoomModel deleteRoom(Long roomId);
 }

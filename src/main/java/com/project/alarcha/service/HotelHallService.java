@@ -9,9 +9,11 @@ public interface HotelHallService {
     HotelHallModel createHotelHall(HotelHallModel hotelHallModel);
     List<HotelHall> createHotelHalls(List<HotelHallModel> hotelHallModelModels);
     List<HotelHall> convertToHotelHalls(List<HotelHallModel> hotelHallModelModels);
+    List<HotelHallModel> convertToModels(List<HotelHall> hotelHalls);
     HotelHallModel getById(Long id);
     HotelHall getHotelHallById(long id);
     List<HotelHallModel> getAll();
+    List<HotelHallModel> getForList();
     HotelHallModel updateHotelHall(HotelHallModel hotelHallModel);
     HotelHallModel deleteHotelHall(Long id);
 }
