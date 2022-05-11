@@ -221,6 +221,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setName(objectType.getName());
         objectTypeModel.setPrice(objectType.getPrice());
         objectTypeModel.setPricePerHour(objectType.getPricePerHour());
+        System.out.println(objectType.getMenuSections());
         if (!objectType.getMenuSections().isEmpty()){
             objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
         }
