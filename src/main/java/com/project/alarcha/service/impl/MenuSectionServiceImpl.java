@@ -178,7 +178,7 @@ public class MenuSectionServiceImpl implements MenuSectionService {
         menuSectionModel.setId(menuSection.getId());
         menuSectionModel.setName(menuSection.getName());
         menuSectionModel.setObjectTypeName(menuSection.getObjectType().getName());
-        if (menuSectionModel.getMenuModels() != null){
+        if (!menuSection.getMenus().isEmpty()){
             menuSectionModel.setMenuModels(menuService.getByMenuSection(menuSection));
         }
 
