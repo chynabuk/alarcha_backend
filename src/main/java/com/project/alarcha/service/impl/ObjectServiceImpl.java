@@ -143,6 +143,8 @@ public class ObjectServiceImpl implements ObjectService {
         objectModel.setId(object.getId());
         objectModel.setName(object.getName());
         objectModel.setObjectTypeName(object.getObjectType().getName());
+        objectModel.setNumberOfSeats(object.getNumberOfSeats());
+        objectModel.setObjectTypeId(object.getObjectType().getId());
 
         return objectModel;
     }

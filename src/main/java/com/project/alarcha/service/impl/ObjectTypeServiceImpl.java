@@ -13,6 +13,7 @@ import com.project.alarcha.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +45,8 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
 
     @Override
     public ObjectTypeModel getById(Long objectTypeId) {
-        ObjectType objectType = objectTypeRepository.getById(objectTypeId);
-        return toModel(objectType);
+        ObjectType objectType = getObjectType(objectTypeId);
+        return toDetailedModel(objectType);
     }
 
     @Override
@@ -142,6 +143,18 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         return objectTypeModels;
     }
 
+    private ObjectType getObjectType(Long id){
+        ObjectType objectType = objectTypeRepository.findById(id)
+                .orElseThrow(() -> new ApiFailException("ObjectType not found"));
+
+        if (objectType.getIsDeleted()){
+            throw new ApiFailException("ObjectType is deleted");
+        }
+
+        return objectType;
+
+    }
+
     private ObjectType initAndGet(ObjectType objectType, ObjectTypeModel objectTypeModel){
         objectType.setName(objectTypeModel.getName());
         objectType.setPrice(objectTypeModel.getPrice());
@@ -196,12 +209,28 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setId(objectType.getId());
         objectTypeModel.setName(objectType.getName());
         objectTypeModel.setPrice(objectType.getPrice());
+        if (!objectType.getObjectTypeImages().isEmpty()){
+            objectTypeModel.setImgUrl(new String(objectType.getObjectTypeImages().get(0).getImg(), StandardCharsets.UTF_8));
+        }
+        return objectTypeModel;
+    }
+
+    private ObjectTypeModel toDetailedModel(ObjectType objectType){
+        ObjectTypeModel objectTypeModel = new ObjectTypeModel();
+        objectTypeModel.setId(objectType.getId());
+        objectTypeModel.setName(objectType.getName());
+        objectTypeModel.setPrice(objectType.getPrice());
         objectTypeModel.setPricePerHour(objectType.getPricePerHour());
-        if (objectType.getMenuSections() != null){
+        if (!objectType.getMenuSections().isEmpty()){
             objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
         }
-        if (objectType.getObjects() != null){
+        if (!objectType.getObjects().isEmpty()){
             objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
+        }
+        if (!objectType.getObjectTypeImages().isEmpty()){
+            if (objectType.getObjectTypeImages().size() > 2){
+                objectTypeModel.setObjectTypeImgModels(objectTypeImgService.convertToModels(objectType.getObjectTypeImages().subList(1, 3)));
+            }
         }
         objectTypeModel.setAreaName(objectType.getArea().getAreaName());
         objectTypeModel.setTimeType(objectType.getTimeType());
