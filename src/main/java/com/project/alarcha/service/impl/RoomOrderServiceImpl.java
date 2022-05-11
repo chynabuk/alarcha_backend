@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -94,7 +93,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     private boolean isExpired(Date expiredDate){
         Date currentDate = new Date();
 
-        return expiredDate.after(currentDate);
+        return currentDate.after(expiredDate);
     }
 
 
@@ -137,6 +136,9 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         roomOrder.setStartDate(startDate);
         roomOrder.setEndDate(endDate);
+        Date expirationDate = new Date();
+        expirationDate.setDate(startDate.getDate() + 3);
+        roomOrder.setExpirationDate(expirationDate);
         roomOrder.setTotalPrice(getTotalPrice(price, startDate, endDate));
         roomOrder.setOrderStatus(OrderStatus.IN_PROCESS);
 
