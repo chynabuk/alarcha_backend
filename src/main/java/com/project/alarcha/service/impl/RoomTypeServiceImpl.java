@@ -243,7 +243,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         if (!roomType.getRoomTypeImages().isEmpty()){
             if(roomType.getRoomTypeImages().size() > 2){
                 roomTypeModel.setRoomTypeImageModels(roomTypeImageService
-                        .convertToModels(roomType.getRoomTypeImages();
+                        .convertToModels(roomType.getRoomTypeImages()));
             }
         }
 
