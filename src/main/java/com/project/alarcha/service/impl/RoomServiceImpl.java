@@ -164,11 +164,9 @@ public class RoomServiceImpl implements RoomService {
     }
 
     private Room getRoom(Long id){
-        Room room = roomRepository.getById(id);
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new ApiFailException("Room is not found"));
 
-        if (room != null){
-            throw new ApiFailException("Room is not found");
-        }
         if (room.getIsDeleted()){
             throw new ApiFailException("Room is not found or deleted");
         }
