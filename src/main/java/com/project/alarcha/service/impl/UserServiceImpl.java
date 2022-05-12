@@ -221,6 +221,7 @@ public class UserServiceImpl implements UserService {
 
     private UserTokenModel initUserTokenDTO(UserSecurityModel userDetails, String accessToken, RefreshToken refreshToken) {
         UserTokenModel userTokenModel = new UserTokenModel();
+        userTokenModel.setUserId(userDetails.getId());
         userTokenModel.setFirstName(userDetails.getFirstName());
         userTokenModel.setLastName(userDetails.getLastName());
         userTokenModel.setEmail(userDetails.getUsername());
