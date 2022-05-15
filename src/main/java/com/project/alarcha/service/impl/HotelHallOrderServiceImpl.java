@@ -264,6 +264,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
     private HotelHallOrderModel toModel(HotelHallOrder hotelHallOrder){
         HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+        hotelHallOrderModel.setId(hotelHallOrder.getId());
         hotelHallOrderModel.setHotelHallId(hotelHallOrder.getId());
         hotelHallOrderModel.setStartTime(hotelHallOrder.getStartTime());
         hotelHallOrderModel.setEndTime(hotelHallOrder.getEndTime());
