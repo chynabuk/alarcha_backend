@@ -19,4 +19,5 @@ public class HotelModel extends BaseModel {
     private List<Hotel_ImgModel> hotelImgModels;
     private Long areaId;
     private String areaName;
+    private Float minPrice;
 }
