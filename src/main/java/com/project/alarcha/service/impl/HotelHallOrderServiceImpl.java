@@ -271,6 +271,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrderModel.setUserId(hotelHallOrder.getUser().getId());
         hotelHallOrderModel.setUserFullName(hotelHallOrder.getUserFullName());
         hotelHallOrderModel.setOrderStatus(hotelHallOrder.getOrderStatus());
+        hotelHallOrderModel.setHotelName(hotelHallOrder.getHotelHall().getHotel().getHotelName());
 
         return hotelHallOrderModel;
     }
