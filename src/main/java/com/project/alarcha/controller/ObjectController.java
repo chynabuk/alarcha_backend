@@ -74,6 +74,16 @@ public class ObjectController {
         return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getAll());
     }
 
+    @GetMapping("/order/get-in-process")
+    public ResponseMessage<List<ObjectOrderModel>> getInProcessOrders(){
+        return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getInProcessOrders());
+    }
+
+    @GetMapping("/order/get-confirmed-or-declined")
+    public ResponseMessage<List<ObjectOrderModel>> getConfirmedOrDeclinedOrders(){
+        return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getConfirmedOrDeclinedOrders());
+    }
+
     @GetMapping("/order/get/{objectOrderId}")
     public ResponseMessage<ObjectOrderModel> getOrder(@PathVariable Long objectOrderId){
         return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.getById(objectOrderId));

@@ -1,13 +1,12 @@
 package com.project.alarcha.service.impl;
 
+import com.project.alarcha.entities.*;
 import com.project.alarcha.entities.Object;
-import com.project.alarcha.entities.ObjectOrder;
-import com.project.alarcha.entities.ObjectType;
-import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
+import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.ObjectOrderRepository;
 import com.project.alarcha.repositories.ObjectRepository;
 import com.project.alarcha.service.ObjectOrderService;
@@ -77,12 +76,32 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     @Override
     public List<ObjectOrderModel> getInProcessOrders() {
-        return null;
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+
+        for (ObjectOrder objectOrder : objectOrderRepository.findAll()){
+            if (!objectOrder.getIsDeleted()){
+                if (objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+                    objectOrderModels.add(toModel(objectOrder));
+                }
+            }
+        }
+
+        return objectOrderModels;
     }
 
     @Override
     public List<ObjectOrderModel> getConfirmedOrDeclinedOrders() {
-        return null;
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+
+        for (ObjectOrder objectOrder : objectOrderRepository.findAll()){
+            if (!objectOrder.getIsDeleted()){
+                if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED || objectOrder.getOrderStatus() == OrderStatus.DECLINED){
+                    objectOrderModels.add(toModel(objectOrder));
+                }
+            }
+        }
+
+        return objectOrderModels;
     }
 
     @Override
