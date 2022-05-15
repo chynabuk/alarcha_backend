@@ -311,9 +311,12 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     private ObjectOrderModel toModel(ObjectOrder objectOrder){
         ObjectOrderModel objectOrderModel = new ObjectOrderModel();
+        objectOrderModel.setId(objectOrder.getId());
         objectOrderModel.setUserId(objectOrder.getUser().getId());
         objectOrderModel.setFullName(objectOrder.getFullName());
         objectOrderModel.setObjectId(objectOrder.getObject().getId());
+        objectOrderModel.setObjectName(objectOrder.getObject().getName());
+        objectOrderModel.setObjectTypeName(objectOrder.getObject().getObjectType().getName());
         objectOrderModel.setStartDate(objectOrder.getStartDate());
         objectOrderModel.setEndDate(objectOrder.getEndDate());
 

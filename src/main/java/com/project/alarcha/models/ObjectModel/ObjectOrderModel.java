@@ -17,7 +17,8 @@ public class ObjectOrderModel extends BaseModel {
     private Long objectId;
     private Float totalPrice;
     private String fullName;
-
+    private String objectName;
+    private String objectTypeName;
     private Time startTime;
     private Time endTime;
 
