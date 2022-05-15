@@ -7,6 +7,7 @@ import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallModel;
 import com.project.alarcha.repositories.HotelHallsRepository;
 import com.project.alarcha.repositories.HotelRepository;
+import com.project.alarcha.service.HotelHallOrderService;
 import com.project.alarcha.service.HotelHallService;
 import com.project.alarcha.service.HotelHall_ImgService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,9 @@ public class HotelHallServiceImpl implements HotelHallService {
 
     @Autowired
     private HotelHall_ImgService hotelHall_imgService;
+
+    @Autowired
+    private HotelHallOrderService hotelHallOrderService;
 
     @Override
     public List<HotelHall> createHotelHalls(List<HotelHallModel> hotelHallModelModels) {
@@ -195,6 +199,9 @@ public class HotelHallServiceImpl implements HotelHallService {
         hotelHallModel.setPrice(hotelHall.getPrice());
         hotelHallModel.setPriceForNextHours(hotelHall.getPriceForNextHours());
         hotelHallModel.setHotelName(hotelHall.getHotel().getHotelName());
+        if (!hotelHall.getHotelHallOrders().isEmpty()){
+            hotelHallModel.setHotelHallOrders(hotelHallOrderService.convertToModels(hotelHall.getHotelHallOrders()));
+        }
         if (hotelHall.getHotelHallImages() != null){
             hotelHallModel.setHotelHall_imgModels(hotelHall_imgService.convertToModels(hotelHall.getHotelHallImages()));
         }

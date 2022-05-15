@@ -7,6 +7,7 @@ import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.repositories.HotelHallOrderRepository;
+import com.project.alarcha.repositories.HotelHallsRepository;
 import com.project.alarcha.service.HotelHallOrderService;
 import com.project.alarcha.service.HotelHallService;
 import com.project.alarcha.service.UserService;
@@ -27,7 +28,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     private HotelHallOrderRepository hotelHallOrderRepository;
 
     @Autowired
-    private HotelHallService hotelHallService;
+    private HotelHallsRepository hotelHallsRepository;
 
     @Autowired
     private UserService userService;
@@ -127,6 +128,18 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         return toModel(hotelHallOrder);
     }
 
+    @Override
+    public List<HotelHallOrderModel> convertToModels(List<HotelHallOrder> hotelHallOrders) {
+        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
+        hotelHallOrders.forEach(hotelHallOrder -> {
+            if (!hotelHallOrder.getIsDeleted()) {
+                hotelHallOrderModels.add(toModel(hotelHallOrder));
+            }
+        });
+
+        return hotelHallOrderModels;
+    }
+
     private HotelHallOrder getHotelHallOrder(Long id){
         HotelHallOrder hotelHallOrder = hotelHallOrderRepository
                 .findById(id)
@@ -152,7 +165,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         User user = userService.getById(hotelHallOrderModel.getUserId());
         hotelHallOrder.setUser(user);
 
-        HotelHall hotelHall = hotelHallService.getHotelHallById(hotelHallOrderModel.getHotelHallId());
+        HotelHall hotelHall = hotelHallsRepository.findById(hotelHallOrderModel.getHotelHallId())
+                .orElseThrow(() -> new ApiFailException("HotelHall is not found"));
         Float price = hotelHall.getPrice();
         Float priceForNextHours = hotelHall.getPriceForNextHours();
 

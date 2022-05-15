@@ -1,5 +1,6 @@
 package com.project.alarcha.service;
 
+import com.project.alarcha.entities.HotelHallOrder;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 
 import java.util.List;
@@ -11,6 +12,7 @@ public interface HotelHallOrderService {
     List<HotelHallOrderModel> getAll();
     List<HotelHallOrderModel> getInProcessOrders();
     List<HotelHallOrderModel> getConfirmedOrDeclinedOrders();
+    List<HotelHallOrderModel> convertToModels(List<HotelHallOrder> hotelHallOrders);
     HotelHallOrderModel getById(Long id);
     HotelHallOrderModel deleteOrder(Long id);
 }
