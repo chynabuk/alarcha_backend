@@ -8,6 +8,7 @@ import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.repositories.RoomRepository;
 import com.project.alarcha.repositories.RoomTypeRepository;
+import com.project.alarcha.service.RoomOrderService;
 import com.project.alarcha.service.RoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Autowired
     private RoomTypeRepository roomTypeRepository;
+
+    @Autowired
+    private RoomOrderService roomOrderService;
 
     @Override
     public RoomModel createRoom(RoomModel roomModel) {
@@ -192,6 +196,9 @@ public class RoomServiceImpl implements RoomService {
         roomModel.setBedNumber(room.getBedNumber());
         roomModel.setHotelName(room.getRoomType().getHotel().getHotelName());
         roomModel.setRoomTypeName(room.getRoomType().getType());
+        if (!room.getRoomOrders().isEmpty()){
+            roomModel.setRoomOrderModels(roomOrderService.convertToModels(room.getRoomOrders()));
+        }
 
         return roomModel;
     }

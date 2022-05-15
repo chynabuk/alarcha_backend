@@ -7,6 +7,7 @@ import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.RoomOrderRepository;
+import com.project.alarcha.repositories.RoomRepository;
 import com.project.alarcha.service.RoomOrderService;
 import com.project.alarcha.service.RoomService;
 import com.project.alarcha.service.UserService;
@@ -25,7 +26,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     private RoomOrderRepository roomOrderRepository;
 
     @Autowired
-    private RoomService roomService;
+    private RoomRepository roomRepository;
 
     @Autowired
     private UserService userService;
@@ -90,6 +91,18 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         return roomOrderModels;
     }
 
+    @Override
+    public List<RoomOrderModel> convertToModels(List<RoomOrder> roomOrders) {
+        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
+        roomOrders.forEach(roomOrder -> {
+            if (!roomOrder.getIsDeleted()) {
+                if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED)
+                    roomOrderModels.add(toModel(roomOrder));
+            }
+        });
+        return roomOrderModels;
+    }
+
     private boolean isExpired(Date expiredDate){
         Date currentDate = new Date();
 
@@ -105,11 +118,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     }
 
     private RoomOrder getRoomOrder(Long id){
-        RoomOrder roomOrder = roomOrderRepository.getById(id);
-
-        if (roomOrder == null){
-            throw new ApiFailException("Room order not found");
-        }
+        RoomOrder roomOrder = roomOrderRepository.findById(id)
+                .orElseThrow(() -> new ApiFailException("Room order not found"));
 
         if (roomOrder.getIsDeleted()){
             throw new ApiFailException("Room order is not found or deleted");
@@ -125,7 +135,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         User user = userService.getById(roomOrderModel.getUserId());
         roomOrder.setUser(user);
-        Room room = roomService.getByRoomId(roomOrderModel.getRoomId());
+        Room room = roomRepository.findById(roomOrderModel.getRoomId())
+                .orElseThrow(() -> new ApiFailException("room is not found"));
         roomOrder.setIsDeleted(false);
         roomOrder.setRoom(room);
         roomOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
