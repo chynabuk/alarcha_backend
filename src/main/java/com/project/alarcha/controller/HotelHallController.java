@@ -64,22 +64,22 @@ public class HotelHallController {
         return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.deleteOrder(hotelHallOrderId));
     }
 
-    @PostMapping("/order/get-all")
+    @GetMapping("/order/get-all")
     public ResponseMessage<List<HotelHallOrderModel>> getOrders(){
         return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getAll());
     }
 
-    @PostMapping("/order/get-in-process")
+    @GetMapping("/order/get-in-process")
     public ResponseMessage<List<HotelHallOrderModel>> getInProcessOrders(){
         return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getInProcessOrders());
     }
 
-    @PostMapping("/order/get-confirmed-or-declined")
+    @GetMapping("/order/get-confirmed-or-declined")
     public ResponseMessage<List<HotelHallOrderModel>> getConfirmedOrDeclinedOrders(){
         return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getConfirmedOrDeclinedOrders());
     }
 
-    @PostMapping("/order/get/{hotelHallOrderId}")
+    @GetMapping("/order/get/{hotelHallOrderId}")
     public ResponseMessage<HotelHallOrderModel> getOrder(@PathVariable Long hotelHallOrderId){
         return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.getById(hotelHallOrderId));
     }
