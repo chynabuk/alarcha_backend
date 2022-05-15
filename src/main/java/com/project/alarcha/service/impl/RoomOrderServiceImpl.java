@@ -245,6 +245,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     private RoomOrderModel toModel(RoomOrder roomOrder){
         RoomOrderModel roomOrderModel = new RoomOrderModel();
+        roomOrderModel.setId(roomOrder.getId());
         roomOrderModel.setUserId(roomOrder.getUser().getId());
         roomOrderModel.setRoomId(roomOrder.getId());
         roomOrderModel.setStartDate(roomOrder.getStartDate());
