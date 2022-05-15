@@ -203,7 +203,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
             throw new ApiFailException("Time or registration date must not be null!");
         }
 
-        registrationDate.setHours(0);
+        registrationDate.setHours(12);
         registrationDate.setMinutes(0);
         registrationDate.setSeconds(0);
 
@@ -214,7 +214,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         currentDate.setYear(tempDate.getYear());
         currentDate.setMonth(tempDate.getMonth());
         currentDate.setDate(tempDate.getDate());
-        currentDate.setHours(0);
+        currentDate.setHours(12);
         currentDate.setMinutes(0);
         currentDate.setSeconds(0);
 
