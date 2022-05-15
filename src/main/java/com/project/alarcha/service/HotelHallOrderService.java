@@ -9,6 +9,8 @@ public interface HotelHallOrderService {
     HotelHallOrderModel acceptOrder(Long orderId);
     HotelHallOrderModel declineOrder(Long orderId);
     List<HotelHallOrderModel> getAll();
+    List<HotelHallOrderModel> getInProcessOrders();
+    List<HotelHallOrderModel> getConfirmedOrDeclinedOrders();
     HotelHallOrderModel getById(Long id);
     HotelHallOrderModel deleteOrder(Long id);
 }

@@ -91,6 +91,36 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     }
 
     @Override
+    public List<HotelHallOrderModel> getInProcessOrders() {
+        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
+
+        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
+            if (!hotelHallOrder.getIsDeleted()){
+                if (hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+                    hotelHallOrderModels.add(toModel(hotelHallOrder));
+                }
+            }
+        }
+
+        return hotelHallOrderModels;
+    }
+
+    @Override
+    public List<HotelHallOrderModel> getConfirmedOrDeclinedOrders() {
+        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
+
+        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
+            if (!hotelHallOrder.getIsDeleted()){
+                if (hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED || hotelHallOrder.getOrderStatus() == OrderStatus.DECLINED){
+                    hotelHallOrderModels.add(toModel(hotelHallOrder));
+                }
+            }
+        }
+
+        return hotelHallOrderModels;
+    }
+
+    @Override
     public HotelHallOrderModel getById(Long id) {
         HotelHallOrder hotelHallOrder = getHotelHallOrder(id);
 
