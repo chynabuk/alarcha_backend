@@ -215,14 +215,8 @@ public class HotelServiceImpl implements HotelService {
         float minPrice = 0;
 
         if (!roomTypes.isEmpty()){
-            minPrice = roomTypes.get(0).getPrice();
-            for (RoomType roomType : roomTypes){
-                if (!roomType.getIsDeleted()){
-                    if (minPrice > roomType.getPrice()){
-                        minPrice = roomType.getPrice();
-                    }
-                }
-            }
+            RoomType roomType = roomTypes.stream().min((o1, o2) -> o1.getPrice().compareTo(o2.getPrice())).get();
+            minPrice = roomType.getPrice();
         }
 
         return minPrice;
@@ -237,6 +231,7 @@ public class HotelServiceImpl implements HotelService {
             hotelModel.setImgUrl(new String(hotel.getHotelImgs().get(0).getImg(), StandardCharsets.UTF_8));
         }
 
+        hotelModel.setMinPrice(getMinPrice(hotel));
         return hotelModel;
     }
 
@@ -256,8 +251,6 @@ public class HotelServiceImpl implements HotelService {
                 hotelModel.setImgUrl(new String(hotel.getHotelImgs().get(1).getImg(), StandardCharsets.UTF_8));
             }
         }
-
-        hotelModel.setMinPrice(getMinPrice(hotel));
 
         return hotelModel;
     }
