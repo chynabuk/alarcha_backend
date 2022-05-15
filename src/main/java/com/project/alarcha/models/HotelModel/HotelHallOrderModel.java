@@ -22,4 +22,5 @@ public class HotelHallOrderModel {
     private Time endTime;
     private OrderStatus orderStatus;
     private String hotelName;
+    private String hotelHallName;
 }
