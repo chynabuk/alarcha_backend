@@ -7,6 +7,7 @@ import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.repositories.ObjectRepository;
 import com.project.alarcha.repositories.ObjectTypeRepository;
+import com.project.alarcha.service.ObjectOrderService;
 import com.project.alarcha.service.ObjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ public class ObjectServiceImpl implements ObjectService {
 
     @Autowired
     private ObjectTypeRepository objectTypeRepository;
+
+    @Autowired
+    private ObjectOrderService objectOrderService;
 
     @Override
     public ObjectModel createObject(ObjectModel objectModel) {
@@ -145,6 +149,9 @@ public class ObjectServiceImpl implements ObjectService {
         objectModel.setObjectTypeName(object.getObjectType().getName());
         objectModel.setNumberOfSeats(object.getNumberOfSeats());
         objectModel.setObjectTypeId(object.getObjectType().getId());
+        if (!object.getObjectOrders().isEmpty()){
+            objectModel.setObjectOrderModels(objectOrderService.convertToModels(object.getObjectOrders()));
+        }
 
         return objectModel;
     }

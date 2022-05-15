@@ -9,6 +9,7 @@ import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
 import com.project.alarcha.repositories.ObjectOrderRepository;
+import com.project.alarcha.repositories.ObjectRepository;
 import com.project.alarcha.service.ObjectOrderService;
 import com.project.alarcha.service.ObjectService;
 import com.project.alarcha.service.UserService;
@@ -27,7 +28,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     private ObjectOrderRepository objectOrderRepository;
 
     @Autowired
-    private ObjectService objectService;
+    private ObjectRepository objectRepository;
 
     @Autowired
     private UserService userService;
@@ -75,6 +76,19 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
+    public List<ObjectOrderModel> convertToModels(List<ObjectOrder> objectOrders) {
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+        objectOrders.forEach(objectOrder -> {
+            if (!objectOrder.getIsDeleted()) {
+                if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                    objectOrderModels.add(toModel(objectOrder));
+                }
+            }
+        });
+        return objectOrderModels;
+    }
+
+    @Override
     public ObjectOrderModel getById(Long id) {
         ObjectOrder objectOrder = objectOrderRepository.getById(id);
 
@@ -107,7 +121,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         ObjectOrder objectOrder = new ObjectOrder();
 
         User user = userService.getById(objectOrderModel.getUserId());
-        Object object = objectService.getByObjectId(objectOrderModel.getObjectId());
+        Object object = objectRepository.findById(objectOrderModel.getObjectId())
+                .orElseThrow(() -> new ApiFailException("object is not found"));
         ObjectType objectType = object.getObjectType();
 
         objectOrder.setUser(user);

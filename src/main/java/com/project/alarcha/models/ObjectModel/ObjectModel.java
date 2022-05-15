@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,4 +15,5 @@ public class ObjectModel extends BaseEntity {
     private Integer numberOfSeats;
     private Long objectTypeId;
     private String objectTypeName;
+    private List<ObjectOrderModel> objectOrderModels;
 }
