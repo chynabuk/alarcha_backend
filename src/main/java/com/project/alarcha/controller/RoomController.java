@@ -104,6 +104,16 @@ public class RoomController {
         return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getAll());
     }
 
+    @GetMapping("/order/get-confirmed-or-declined")
+    public ResponseMessage<List<RoomOrderModel>> getConfirmedOrDeclinedOrders(){
+        return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getConfirmedOrDeclinedOrders());
+    }
+
+    @GetMapping("/order/get-in-process")
+    public ResponseMessage<List<RoomOrderModel>> getInProcessOrders(){
+        return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getInProcessOrders());
+    }
+
     @GetMapping("/order/get/{roomOrderId}")
     public ResponseMessage<RoomOrderModel> getOrder(@PathVariable Long roomOrderId){
         return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.getById(roomOrderId));

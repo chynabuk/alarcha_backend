@@ -1,10 +1,12 @@
 package com.project.alarcha.service.impl;
 
+import com.project.alarcha.entities.HotelHallOrder;
 import com.project.alarcha.entities.Room;
 import com.project.alarcha.entities.RoomOrder;
 import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
+import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.RoomOrderRepository;
 import com.project.alarcha.repositories.RoomRepository;
@@ -88,6 +90,36 @@ public class RoomOrderServiceImpl implements RoomOrderService {
                 roomOrderModels.add(toModel(roomOrder));
             }
         }
+        return roomOrderModels;
+    }
+
+    @Override
+    public List<RoomOrderModel> getInProcessOrders() {
+        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
+
+        for (RoomOrder roomOrder : roomOrderRepository.findAll()){
+            if (!roomOrder.getIsDeleted()){
+                if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+                    roomOrderModels.add(toModel(roomOrder));
+                }
+            }
+        }
+
+        return roomOrderModels;
+    }
+
+    @Override
+    public List<RoomOrderModel> getConfirmedOrDeclinedOrders() {
+        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
+
+        for (RoomOrder roomOrder : roomOrderRepository.findAll()){
+            if (!roomOrder.getIsDeleted()){
+                if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED || roomOrder.getOrderStatus() == OrderStatus.DECLINED){
+                    roomOrderModels.add(toModel(roomOrder));
+                }
+            }
+        }
+
         return roomOrderModels;
     }
 
