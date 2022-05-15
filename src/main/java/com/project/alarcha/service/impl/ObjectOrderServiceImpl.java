@@ -76,6 +76,16 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
+    public List<ObjectOrderModel> getInProcessOrders() {
+        return null;
+    }
+
+    @Override
+    public List<ObjectOrderModel> getConfirmedOrDeclinedOrders() {
+        return null;
+    }
+
+    @Override
     public List<ObjectOrderModel> convertToModels(List<ObjectOrder> objectOrders) {
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
         objectOrders.forEach(objectOrder -> {

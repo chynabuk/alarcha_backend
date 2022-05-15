@@ -16,6 +16,8 @@ public class RoomOrderModel extends BaseModel {
     private Long roomId;
     private Long userId;
     private String userFullName;
+    private int roomNumber;
+    private String roomType;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date startDate;
     @DateTimeFormat(pattern = "yyyy-mm-dd")

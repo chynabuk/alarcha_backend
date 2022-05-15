@@ -10,6 +10,8 @@ public interface ObjectOrderService {
     ObjectOrderModel acceptOrder(Long orderId);
     ObjectOrderModel declineOrder(Long orderId);
     List<ObjectOrderModel> getAll();
+    List<ObjectOrderModel> getInProcessOrders();
+    List<ObjectOrderModel> getConfirmedOrDeclinedOrders();
     List<ObjectOrderModel> convertToModels(List<ObjectOrder> objectOrders);
     ObjectOrderModel getById(Long id);
     ObjectOrderModel deleteOrder(Long orderId);
