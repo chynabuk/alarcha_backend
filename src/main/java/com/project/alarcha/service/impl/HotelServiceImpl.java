@@ -215,8 +215,14 @@ public class HotelServiceImpl implements HotelService {
         float minPrice = 0;
 
         if (!roomTypes.isEmpty()){
-            RoomType roomType = roomTypes.stream().min((o1, o2) -> o1.getPrice().compareTo(o2.getPrice())).get();
-            minPrice = roomType.getPrice();
+            minPrice = roomTypes.get(0).getPrice();
+            for (RoomType roomType : roomTypes){
+                if (!roomType.getIsDeleted()){
+                    if (minPrice > roomType.getPrice()){
+                        minPrice = roomType.getPrice();
+                    }
+                }
+            }
         }
 
         return minPrice;
