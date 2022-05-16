@@ -21,7 +21,7 @@ public class ObjectOrderModel extends BaseModel {
     private String objectTypeName;
     private Time startTime;
     private Time endTime;
-
+    private String userPhone;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date startDate;
     @DateTimeFormat(pattern = "yyyy-mm-dd")

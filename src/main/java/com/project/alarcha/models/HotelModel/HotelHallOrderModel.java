@@ -24,4 +24,5 @@ public class HotelHallOrderModel extends BaseModel {
     private OrderStatus orderStatus;
     private String hotelName;
     private String hotelHallName;
+    private String userPhone;
 }

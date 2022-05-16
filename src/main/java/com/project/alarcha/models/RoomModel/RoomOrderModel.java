@@ -26,4 +26,5 @@ public class RoomOrderModel extends BaseModel {
     private String hotelName;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date expirationDate;
+    private String userPhone;
 }
