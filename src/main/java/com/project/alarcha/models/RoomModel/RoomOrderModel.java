@@ -27,4 +27,5 @@ public class RoomOrderModel extends BaseModel {
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date expirationDate;
     private String userPhone;
+    private Float totalPrice;
 }

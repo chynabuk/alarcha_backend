@@ -321,6 +321,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         objectOrderModel.setEndDate(objectOrder.getEndDate());
         objectOrderModel.setUserPhone(objectOrder.getUser().getPhone());
         objectOrderModel.setOrderStatus(objectOrder.getOrderStatus());
+        objectOrderModel.setTotalPrice(objectOrder.getTotalPrice());
 
         ObjectType objectType = objectOrder.getObject().getObjectType();
 

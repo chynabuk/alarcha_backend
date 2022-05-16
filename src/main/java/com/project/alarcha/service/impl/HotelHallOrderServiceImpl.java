@@ -291,6 +291,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrderModel.setHotelName(hotelHallOrder.getHotelHall().getHotel().getHotelName());
         hotelHallOrderModel.setHotelHallName(hotelHallOrder.getHotelHall().getName());
         hotelHallOrderModel.setUserPhone(hotelHallOrder.getUser().getPhone());
+        hotelHallOrderModel.setTotalPrice(hotelHallOrder.getTotalPrice());
         return hotelHallOrderModel;
     }
 }

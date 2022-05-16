@@ -256,6 +256,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         roomOrderModel.setRoomNumber(roomOrder.getRoom().getRoomNumber());
         roomOrderModel.setRoomType(roomOrder.getRoom().getRoomType().getType());
         roomOrderModel.setUserPhone(roomOrder.getUser().getPhone());
+        roomOrderModel.setTotalPrice(roomOrder.getTotalPrice());
 
         return roomOrderModel;
     }
