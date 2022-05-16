@@ -269,10 +269,6 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         if (hours <= 0){
             throw new ApiFailException("can not get totalPrice");
         }
-
-        if (hours > 5){
-            return 6000F;
-        }
         else {
             return price + (hours - 1) * priceForNextHours;
         }
