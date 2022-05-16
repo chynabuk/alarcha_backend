@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class HotelHallModel extends BaseModel {
-    private String hotelHallName;
+    private String name;
     private Float price;
     private Float priceForNextHours;
     private Integer numberOfSeats;

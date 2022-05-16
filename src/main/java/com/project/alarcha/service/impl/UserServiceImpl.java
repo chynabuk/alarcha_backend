@@ -9,7 +9,6 @@ import com.project.alarcha.enums.UserStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallOrderBasketModel;
 import com.project.alarcha.models.ObjectModel.ObjectOrderBasketModel;
-import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderBasketModel;
 import com.project.alarcha.models.SecurityModel.UserSecurityModel;
 import com.project.alarcha.models.TokenModel.UserTokenModel;
@@ -326,7 +325,7 @@ public class UserServiceImpl implements UserService {
             orderBasketModel.setPrice(hotelHall.getPrice());
             orderBasketModel.setPriceForNextHours(hotelHall.getPriceForNextHours());
             orderBasketModel.setTotalPrice(hotelHallOrder.getTotalPrice());
-            orderBasketModel.setName(hotelHall.getName());
+            orderBasketModel.setHotelHallName(hotelHall.getName());
             orderBasketModel.setHours(hotelHallOrder.getEndTime().getHours() - hotelHallOrder.getStartTime().getHours());
             orderBasketModel.setOrderStatus(hotelHallOrder.getOrderStatus());
             orderBasketModel.setCreatedDate(hotelHallOrder.getCreateDate());

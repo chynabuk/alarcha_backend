@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class HotelHallOrderBasketModel extends BaseModel {
     private String hotelName;
-    private String name;
+    private String hotelHallName;
     private int hours;
     private float price;
     private float priceForNextHours;
