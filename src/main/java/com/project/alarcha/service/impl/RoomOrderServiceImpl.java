@@ -10,6 +10,7 @@ import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.RoomOrderRepository;
 import com.project.alarcha.repositories.RoomRepository;
+import com.project.alarcha.service.EmailSenderService;
 import com.project.alarcha.service.RoomOrderService;
 import com.project.alarcha.service.RoomService;
 import com.project.alarcha.service.UserService;
@@ -32,6 +33,9 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Override
     public RoomOrderModel order(RoomOrderModel roomOrderModel) {
@@ -184,6 +188,13 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         roomOrder.setExpirationDate(expirationDate);
         roomOrder.setTotalPrice(getTotalPrice(price, startDate, endDate));
         roomOrder.setOrderStatus(OrderStatus.IN_PROCESS);
+
+
+        emailSenderService.sendEmail(
+                room.getRoomType().getHotel().getArea().getUser().getEmail(),
+                "Новая бронь комнаты",
+                "от " + roomOrder.getUserFullName() + " поступил запрос на бронирование \n" +
+                        "http://localhost:8080/admin/book-room%22");
 
         return roomOrder;
     }
