@@ -2,10 +2,7 @@ package com.project.alarcha.controller;
 
 import com.project.alarcha.models.TokenModel.RefreshTokenRequest;
 import com.project.alarcha.models.TokenModel.UserTokenModel;
-import com.project.alarcha.models.UserModel.UserAuthModel;
-import com.project.alarcha.models.UserModel.UserRegistrationModel;
-import com.project.alarcha.models.UserModel.UserToSendModel;
-import com.project.alarcha.models.UserModel.UserUpdateModel;
+import com.project.alarcha.models.UserModel.*;
 import com.project.alarcha.service.RefreshTokenService;
 import com.project.alarcha.service.UserService;
 import com.project.alarcha.util.ResponseMessage;
@@ -54,6 +51,11 @@ public class UserController {
     @GetMapping("/get-admins")
     public ResponseMessage<List<UserToSendModel>> getAdmins() {
         return new ResponseMessage<List<UserToSendModel>>().prepareSuccessMessage(userService.getAdmins());
+    }
+
+    @GetMapping("/get/my-orders/{id}")
+    public ResponseMessage<UserOrdersModel> getMyOrders(@PathVariable Long id){
+        return new ResponseMessage<UserOrdersModel>().prepareSuccessMessage(userService.getUserOrdersModel(id));
     }
 
 }

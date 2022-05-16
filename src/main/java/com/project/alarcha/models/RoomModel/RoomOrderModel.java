@@ -28,4 +28,5 @@ public class RoomOrderModel extends BaseModel {
     private Date expirationDate;
     private String userPhone;
     private Float totalPrice;
+
 }
