@@ -194,7 +194,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
                 room.getRoomType().getHotel().getArea().getUser().getEmail(),
                 "Новая бронь комнаты",
                 "от " + roomOrder.getUserFullName() + " поступил запрос на бронирование \n" +
-                        "http://localhost:8080/admin/book-room%22");
+                        "http://localhost:8080/admin/book-room");
 
         return roomOrder;
     }

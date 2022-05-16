@@ -8,6 +8,7 @@ import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.repositories.HotelHallOrderRepository;
 import com.project.alarcha.repositories.HotelHallsRepository;
+import com.project.alarcha.service.EmailSenderService;
 import com.project.alarcha.service.HotelHallOrderService;
 import com.project.alarcha.service.HotelHallService;
 import com.project.alarcha.service.UserService;
@@ -32,6 +33,9 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Override
     public HotelHallOrderModel order(HotelHallOrderModel hotelHallOrderModel) {
@@ -187,6 +191,12 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrder.setTotalPrice(getTotalPrice(price, priceForNextHours, hotelHallOrderModel));
         hotelHallOrder.setOrderStatus(OrderStatus.IN_PROCESS);
         hotelHallOrder.setIsDeleted(false);
+
+        emailSenderService.sendEmail(
+                hotelHall.getHotel().getArea().getUser().getEmail(),
+                "Новая бронь доп комнаты",
+                "от " + hotelHallOrder.getUserFullName() + " поступил запрос на бронирование \n" +
+                        "http://localhost:8080/admin/book-hall");
 
         return hotelHallOrder;
     }

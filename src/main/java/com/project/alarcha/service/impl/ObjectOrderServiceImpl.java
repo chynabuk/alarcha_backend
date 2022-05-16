@@ -9,6 +9,7 @@ import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.ObjectOrderRepository;
 import com.project.alarcha.repositories.ObjectRepository;
+import com.project.alarcha.service.EmailSenderService;
 import com.project.alarcha.service.ObjectOrderService;
 import com.project.alarcha.service.ObjectService;
 import com.project.alarcha.service.UserService;
@@ -31,6 +32,9 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Override
     public ObjectOrderModel order(ObjectOrderModel objectOrderModel) {
@@ -186,6 +190,12 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
             objectOrder.setEndDate(endDate);
             objectOrder.setTotalPrice(getTotalPriceByDate(price, startDate, endDate));
         }
+
+        emailSenderService.sendEmail(
+                object.getObjectType().getArea().getUser().getEmail(),
+                "Новая бронь объекта",
+                "от " + objectOrder.getFullName() + " поступил запрос на бронирование \n" +
+                        "http://localhost:8080/admin/book-object");
 
         return objectOrder;
     }
