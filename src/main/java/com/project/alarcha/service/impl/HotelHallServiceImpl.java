@@ -38,7 +38,7 @@ public class HotelHallServiceImpl implements HotelHallService {
 
         for (HotelHallModel hotelHallModel : hotelHallModelModels){
             HotelHall hotelHall = new HotelHall();
-            hotelHall.setName(hotelHallModel.getName());
+            hotelHall.setName(hotelHallModel.getHotelHallName());
             hotelHall.setPrice(hotelHallModel.getPrice());
             hotelHall.setIsDeleted(false);
 
@@ -168,7 +168,7 @@ public class HotelHallServiceImpl implements HotelHallService {
 
     private HotelHall initAndGet(HotelHallModel hotelHallModel){
         HotelHall hotelHall = new HotelHall();
-        hotelHall.setName(hotelHallModel.getName());
+        hotelHall.setName(hotelHallModel.getHotelHallName());
         hotelHall.setPrice(hotelHallModel.getPrice());
         hotelHall.setPriceForNextHours(hotelHallModel.getPriceForNextHours());
         hotelHall.setNumberOfSeats(hotelHallModel.getNumberOfSeats());
@@ -188,14 +188,14 @@ public class HotelHallServiceImpl implements HotelHallService {
     }
 
     private void setValuesOnUpdateHotelHall(HotelHall hotelHall, HotelHallModel hotelHallModel){
-        hotelHall.setName(hotelHallModel.getName());
+        hotelHall.setName(hotelHallModel.getHotelHallName());
         hotelHall.setPrice(hotelHallModel.getPrice());
     }
 
     private HotelHallModel toModel(HotelHall hotelHall){
         HotelHallModel hotelHallModel = new HotelHallModel();
         hotelHallModel.setId(hotelHall.getId());
-        hotelHallModel.setName(hotelHall.getName());
+        hotelHallModel.setHotelHallName(hotelHall.getName());
         hotelHallModel.setPrice(hotelHall.getPrice());
         hotelHallModel.setPriceForNextHours(hotelHall.getPriceForNextHours());
         hotelHallModel.setHotelName(hotelHall.getHotel().getHotelName());
