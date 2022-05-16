@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,5 +19,6 @@ public class HotelHallOrderBasketModel extends BaseModel {
     private float priceForNextHours;
     private float totalPrice;
     private OrderStatus orderStatus;
+    private Date createdDate;
     private String img;
 }

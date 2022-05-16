@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,5 +20,6 @@ public class ObjectOrderBasketModel extends BaseModel {
     private int days;
     private int hours;
     private OrderStatus orderStatus;
+    private Date createdDate;
     private String img;
 }

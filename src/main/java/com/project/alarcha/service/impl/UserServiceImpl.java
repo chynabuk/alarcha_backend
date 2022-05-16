@@ -273,6 +273,8 @@ public class UserServiceImpl implements UserService {
             roomOrderBasketModel.setTotalPrice(roomOrder.getTotalPrice());
             roomOrderBasketModel.setPrice(roomType.getPrice());
             roomOrderBasketModel.setOrderStatus(roomOrder.getOrderStatus());
+            roomOrderBasketModel.setCreatedDate(roomOrder.getCreateDate());
+
             roomOrderBasketModel.setImg(new String(roomType.getRoomTypeImages().get(0).getImg(), StandardCharsets.UTF_8));
 
             roomOrderBasketModels.add(roomOrderBasketModel);
@@ -302,6 +304,8 @@ public class UserServiceImpl implements UserService {
             }
             
             orderBasketModel.setOrderStatus(objectOrder.getOrderStatus());
+
+            orderBasketModel.setCreatedDate(objectOrder.getCreateDate());
             
             orderBasketModel.setImg(new String(objectType.getObjectTypeImages().get(0).getImg(), StandardCharsets.UTF_8));
 
@@ -325,6 +329,7 @@ public class UserServiceImpl implements UserService {
             orderBasketModel.setName(hotelHall.getName());
             orderBasketModel.setHours(hotelHallOrder.getEndTime().getHours() - hotelHallOrder.getStartTime().getHours());
             orderBasketModel.setOrderStatus(hotelHallOrder.getOrderStatus());
+            orderBasketModel.setCreatedDate(hotelHallOrder.getCreateDate());
 
             orderBasketModel.setImg(new String(hotelHall.getHotelHallImages().get(0).getImg(), StandardCharsets.UTF_8));
 
