@@ -53,6 +53,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED){
             if (!roomOrderPayModel.getImg().isEmpty() || roomOrderPayModel.getImg() != null){
                 roomOrder.setImgOfCheck(roomOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
+                roomOrder.setOrderStatus(OrderStatus.CHECK_CHECK);
                 roomOrderRepository.save(roomOrder);
             }
         }
@@ -88,7 +89,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     public RoomOrderModel acceptPayOrder(Long orderId) {
         RoomOrder roomOrder = getRoomOrder(orderId);
 
-        if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+        if (roomOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
             roomOrder.setOrderStatus(OrderStatus.PAID);
             roomOrderRepository.save(roomOrder);
         }

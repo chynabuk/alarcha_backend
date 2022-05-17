@@ -51,6 +51,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
             if (!objectOrderPayModel.getImg().isEmpty() || objectOrderPayModel.getImg() != null){
                 objectOrder.setImgOfCheck(objectOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
+                objectOrder.setOrderStatus(OrderStatus.CHECK_CHECK);
                 objectOrderRepository.save(objectOrder);
             }
         }
@@ -85,8 +86,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     public ObjectOrderModel acceptPayOrder(Long orderId) {
         ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
 
-        if (objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
-            objectOrder.setOrderStatus(OrderStatus.CONFIRMED);
+        if (objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
+            objectOrder.setOrderStatus(OrderStatus.PAID);
             objectOrderRepository.save(objectOrder);
         }
 

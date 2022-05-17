@@ -53,6 +53,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         if (hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED){
             if (!hotelHallOrderPayModel.getImg().isEmpty() || hotelHallOrderPayModel.getImg() != null){
                 hotelHallOrder.setImgOfCheck(hotelHallOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
+                hotelHallOrder.setOrderStatus(OrderStatus.CHECK_CHECK);
                 hotelHallOrderRepository.save(hotelHallOrder);
             }
         }
@@ -87,8 +88,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     public HotelHallOrderModel acceptPayOrder(Long orderId) {
         HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
 
-        if (hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
-            hotelHallOrder.setOrderStatus(OrderStatus.CONFIRMED);
+        if (hotelHallOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
+            hotelHallOrder.setOrderStatus(OrderStatus.PAID);
             hotelHallOrderRepository.save(hotelHallOrder);
         }
 
