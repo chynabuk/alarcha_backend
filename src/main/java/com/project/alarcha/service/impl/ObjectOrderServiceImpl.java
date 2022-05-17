@@ -333,7 +333,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 if( (registrationDate.getYear() == objectOrder.getStartDate().getYear() && registrationDate.getMonth() == objectOrder.getStartDate().getMonth()
                 && registrationDate.getDay() == objectOrder.getStartDate().getDay())
                 ){
-                    if(objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                    OrderStatus orderStatus = objectOrder.getOrderStatus();
+                    if(orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                         Time rSTime = objectOrder.getStartTime();
                         Time rETime = objectOrder.getEndTime();
 
@@ -379,7 +380,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         for (ObjectOrder objectOrder : objectOrders){
             if (objectOrderModel.getObjectId() == objectOrder.getObject().getId()){
-                if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                OrderStatus orderStatus = objectOrder.getOrderStatus();
+                if (orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                     Date rSDate = objectOrder.getStartDate();
                     Date rEDate = objectOrder.getEndDate();
                     if (

@@ -345,7 +345,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 if( (startDate.getYear() == hotelHallOrder.getStartDate().getYear() && startDate.getMonth() == hotelHallOrder.getStartDate().getMonth()
                         && startDate.getDate() == hotelHallOrder.getStartDate().getDate())
                 ){
-                    if(hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                    OrderStatus orderStatus = hotelHallOrder.getOrderStatus();
+                    if(orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                         Time rSTime = hotelHallOrder.getStartTime();
                         Time rETime = hotelHallOrder.getEndTime();
 

@@ -325,7 +325,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         for (RoomOrder roomOrder : roomOrders){
             if (roomOrderModel.getRoomId() == roomOrder.getRoom().getId()){
-                if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                OrderStatus orderStatus = roomOrder.getOrderStatus();
+                if (orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                     Date rSDate = roomOrder.getStartDate();
                     Date rEDate = roomOrder.getEndDate();
                     if (
