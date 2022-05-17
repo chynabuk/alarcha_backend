@@ -74,7 +74,12 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     public RoomOrderModel declineOrder(Long orderId) {
         RoomOrder roomOrder = getRoomOrder(orderId);
 
-        if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+        if (
+                roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS
+                || roomOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                || roomOrder.getOrderStatus() == OrderStatus.CHECK_CHECK
+                || roomOrder.getOrderStatus() == OrderStatus.PAID
+        ){
             roomOrder.setOrderStatus(OrderStatus.DECLINED);
             roomOrderRepository.save(roomOrder);
         }

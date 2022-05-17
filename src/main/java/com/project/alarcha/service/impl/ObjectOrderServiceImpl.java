@@ -74,7 +74,12 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     public ObjectOrderModel declineOrder(Long orderId) {
         ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
 
-        if(objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+        if(
+                objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS
+                || objectOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                || objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK
+                || objectOrder.getOrderStatus() == OrderStatus.PAID
+        ){
             objectOrder.setOrderStatus(OrderStatus.DECLINED);
         }
 

@@ -76,7 +76,12 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     public HotelHallOrderModel declineOrder(Long orderId) {
         HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
 
-        if(hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+        if(
+                hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS
+                || hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                || hotelHallOrder.getOrderStatus() == OrderStatus.CHECK_CHECK
+                || hotelHallOrder.getOrderStatus() == OrderStatus.PAID
+        ){
             hotelHallOrder.setOrderStatus(OrderStatus.DECLINED);
         }
 
