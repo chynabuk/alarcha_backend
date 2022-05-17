@@ -2,6 +2,7 @@ package com.project.alarcha.controller;
 
 import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
+import com.project.alarcha.models.RoomModel.RoomOrderPayModel;
 import com.project.alarcha.models.RoomModel.RoomTypeModel;
 import com.project.alarcha.service.RoomOrderService;
 import com.project.alarcha.service.RoomService;
@@ -84,6 +85,11 @@ public class RoomController {
         return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.order(roomOrderModel));
     }
 
+    @PostMapping("/order/pay")
+    public ResponseMessage<RoomOrderPayModel> payOrderRoom(@RequestBody RoomOrderPayModel roomOrderPayModel){
+        return new ResponseMessage<RoomOrderPayModel>().prepareSuccessMessage(roomOrderService.pay(roomOrderPayModel));
+    }
+
     @PostMapping("/order/{roomOrderId}/accept")
     public ResponseMessage<RoomOrderModel> acceptOrder(@PathVariable Long roomOrderId){
         return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.acceptOrder(roomOrderId));
@@ -92,6 +98,11 @@ public class RoomController {
     @PostMapping("/order/{roomOrderId}/decline")
     public ResponseMessage<RoomOrderModel> declineOrder(@PathVariable Long roomOrderId){
         return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.declineOrder(roomOrderId));
+    }
+
+    @PostMapping("/order/{roomOrderId}/accept-pay")
+    public ResponseMessage<RoomOrderModel> acceptPay(@PathVariable Long roomOrderId){
+        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.acceptOrder(roomOrderId));
     }
 
     @DeleteMapping("/order/delete/{roomOrderId}")

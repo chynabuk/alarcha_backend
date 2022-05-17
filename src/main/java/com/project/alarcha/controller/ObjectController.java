@@ -2,6 +2,7 @@ package com.project.alarcha.controller;
 
 import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
+import com.project.alarcha.models.ObjectModel.ObjectOrderPayModel;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
 import com.project.alarcha.service.ObjectOrderService;
 import com.project.alarcha.service.ObjectService;
@@ -54,6 +55,11 @@ public class ObjectController {
         return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.order(objectOrderModel));
     }
 
+    @PostMapping("/order/pay")
+    public ResponseMessage<ObjectOrderPayModel> orderObject(@RequestBody ObjectOrderPayModel objectOrderPayModel){
+        return new ResponseMessage<ObjectOrderPayModel>().prepareSuccessMessage(objectOrderService.pay(objectOrderPayModel));
+    }
+
     @PostMapping("/order/{objectOrderId}/accept")
     public ResponseMessage<ObjectOrderModel> acceptOrder(@PathVariable Long objectOrderId){
         return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.acceptOrder(objectOrderId));
@@ -62,6 +68,11 @@ public class ObjectController {
     @PostMapping("/order/{objectOrderId}/decline")
     public ResponseMessage<ObjectOrderModel> declineOrder(@PathVariable Long objectOrderId){
         return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.declineOrder(objectOrderId));
+    }
+
+    @PostMapping("/order/{objectOrderId}/accept-pay")
+    public ResponseMessage<ObjectOrderModel> acceptPay(@PathVariable Long objectOrderId){
+        return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.acceptPayOrder(objectOrderId));
     }
 
     @DeleteMapping("/order/delete/{objectOrderId}")

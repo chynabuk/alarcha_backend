@@ -2,10 +2,12 @@ package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.HotelHall;
 import com.project.alarcha.entities.HotelHallOrder;
+import com.project.alarcha.entities.ObjectOrder;
 import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
+import com.project.alarcha.models.HotelModel.HotelHallOrderPayModel;
 import com.project.alarcha.repositories.HotelHallOrderRepository;
 import com.project.alarcha.repositories.HotelHallsRepository;
 import com.project.alarcha.service.EmailSenderService;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -45,8 +48,20 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     }
 
     @Override
+    public HotelHallOrderPayModel pay(HotelHallOrderPayModel hotelHallOrderPayModel) {
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(hotelHallOrderPayModel.getHotelHallOrderId());
+        if (hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+            if (!hotelHallOrderPayModel.getImg().isEmpty() || hotelHallOrderPayModel.getImg() != null){
+                hotelHallOrder.setImgOfCheck(hotelHallOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
+                hotelHallOrderRepository.save(hotelHallOrder);
+            }
+        }
+        return hotelHallOrderPayModel;
+    }
+
+    @Override
     public HotelHallOrderModel acceptOrder(Long orderId) {
-        HotelHallOrder hotelHallOrder = hotelHallOrderRepository.getById(orderId);
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
 
         if(hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             hotelHallOrder.setOrderStatus(OrderStatus.CONFIRMED);
@@ -58,13 +73,25 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
     @Override
     public HotelHallOrderModel declineOrder(Long orderId) {
-        HotelHallOrder hotelHallOrder = hotelHallOrderRepository.getById(orderId);
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
 
         if(hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             hotelHallOrder.setOrderStatus(OrderStatus.DECLINED);
         }
 
         hotelHallOrderRepository.save(hotelHallOrder);
+        return toModel(hotelHallOrder);
+    }
+
+    @Override
+    public HotelHallOrderModel acceptPayOrder(Long orderId) {
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
+
+        if (hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+            hotelHallOrder.setOrderStatus(OrderStatus.CONFIRMED);
+            hotelHallOrderRepository.save(hotelHallOrder);
+        }
+
         return toModel(hotelHallOrder);
     }
 
@@ -298,6 +325,9 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrderModel.setHotelHallName(hotelHallOrder.getHotelHall().getName());
         hotelHallOrderModel.setUserPhone(hotelHallOrder.getUser().getPhone());
         hotelHallOrderModel.setTotalPrice(hotelHallOrder.getTotalPrice());
+        if (hotelHallOrder.getImgOfCheck() != null){
+            hotelHallOrderModel.setImg(new String(hotelHallOrder.getImgOfCheck(), StandardCharsets.UTF_8));
+        }
         return hotelHallOrderModel;
     }
 }

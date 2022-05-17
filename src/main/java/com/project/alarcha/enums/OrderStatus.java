@@ -4,7 +4,8 @@ public enum OrderStatus {
     IN_PROCESS,
     CONFIRMED,
     CANCELLED,
-    DECLINED;
+    DECLINED,
+    PAID;
 
     OrderStatus(){
     }

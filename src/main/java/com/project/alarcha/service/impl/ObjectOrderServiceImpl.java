@@ -6,6 +6,7 @@ import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
+import com.project.alarcha.models.ObjectModel.ObjectOrderPayModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.ObjectOrderRepository;
 import com.project.alarcha.repositories.ObjectRepository;
@@ -16,6 +17,7 @@ import com.project.alarcha.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -43,6 +45,19 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
+    public ObjectOrderPayModel pay(ObjectOrderPayModel objectOrderPayModel) {
+        ObjectOrder objectOrder = objectOrderRepository.getById(objectOrderPayModel.getObjectOrderId());
+
+        if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+            if (!objectOrderPayModel.getImg().isEmpty() || objectOrderPayModel.getImg() != null){
+                objectOrder.setImgOfCheck(objectOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
+                objectOrderRepository.save(objectOrder);
+            }
+        }
+        return objectOrderPayModel;
+    }
+
+    @Override
     public ObjectOrderModel acceptOrder(Long orderId) {
         ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
 
@@ -63,6 +78,18 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         }
 
         objectOrderRepository.save(objectOrder);
+        return toModel(objectOrder);
+    }
+
+    @Override
+    public ObjectOrderModel acceptPayOrder(Long orderId) {
+        ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
+
+        if (objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+            objectOrder.setOrderStatus(OrderStatus.CONFIRMED);
+            objectOrderRepository.save(objectOrder);
+        }
+
         return toModel(objectOrder);
     }
 
@@ -338,6 +365,10 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         if(objectType.getTimeType() == TimeType.TIME){
             objectOrderModel.setStartTime(objectOrder.getStartTime());
             objectOrderModel.setEndTime(objectOrder.getEndTime());
+        }
+
+        if (objectOrder.getImgOfCheck() != null){
+            objectOrderModel.setImg(new String(objectOrder.getImgOfCheck(), StandardCharsets.UTF_8));
         }
 
         return objectOrderModel;

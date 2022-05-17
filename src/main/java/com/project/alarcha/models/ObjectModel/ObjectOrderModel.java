@@ -28,4 +28,5 @@ public class ObjectOrderModel extends BaseModel {
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date endDate;
     private OrderStatus orderStatus;
+    private String img;
 }

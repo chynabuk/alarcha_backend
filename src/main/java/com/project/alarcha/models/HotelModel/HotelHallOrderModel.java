@@ -26,4 +26,5 @@ public class HotelHallOrderModel extends BaseModel {
     private String hotelHallName;
     private String userPhone;
     private Float totalPrice;
+    private String img;
 }

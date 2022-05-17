@@ -8,6 +8,7 @@ import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
+import com.project.alarcha.models.RoomModel.RoomOrderPayModel;
 import com.project.alarcha.repositories.RoomOrderRepository;
 import com.project.alarcha.repositories.RoomRepository;
 import com.project.alarcha.service.EmailSenderService;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,14 +47,28 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     }
 
     @Override
+    public RoomOrderPayModel pay(RoomOrderPayModel roomOrderPayModel) {
+        RoomOrder roomOrder = getRoomOrder(roomOrderPayModel.getRoomOrderId());
+
+        if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+            if (!roomOrderPayModel.getImg().isEmpty() || roomOrderPayModel.getImg() != null){
+                roomOrder.setImgOfCheck(roomOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
+                roomOrderRepository.save(roomOrder);
+            }
+        }
+
+        return roomOrderPayModel;
+    }
+
+    @Override
     public RoomOrderModel acceptOrder(Long orderId) {
         RoomOrder roomOrder = getRoomOrder(orderId);
 
         if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             roomOrder.setOrderStatus(OrderStatus.CONFIRMED);
+            roomOrderRepository.save(roomOrder);
         }
 
-        roomOrderRepository.save(roomOrder);
         return toModel(roomOrder);
     }
 
@@ -62,9 +78,21 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             roomOrder.setOrderStatus(OrderStatus.DECLINED);
+            roomOrderRepository.save(roomOrder);
         }
 
-        roomOrderRepository.save(roomOrder);
+        return toModel(roomOrder);
+    }
+
+    @Override
+    public RoomOrderModel acceptPayOrder(Long orderId) {
+        RoomOrder roomOrder = getRoomOrder(orderId);
+
+        if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+            roomOrder.setOrderStatus(OrderStatus.PAID);
+            roomOrderRepository.save(roomOrder);
+        }
+
         return toModel(roomOrder);
     }
 
@@ -268,6 +296,10 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         roomOrderModel.setRoomType(roomOrder.getRoom().getRoomType().getType());
         roomOrderModel.setUserPhone(roomOrder.getUser().getPhone());
         roomOrderModel.setTotalPrice(roomOrder.getTotalPrice());
+
+        if (roomOrder.getImgOfCheck() != null){
+            roomOrderModel.setImg(new String(roomOrder.getImgOfCheck(), StandardCharsets.UTF_8));
+        }
 
         return roomOrderModel;
     }
