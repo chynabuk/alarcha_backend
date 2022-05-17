@@ -149,7 +149,11 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
         for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
             if (!hotelHallOrder.getIsDeleted()){
-                if (hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED || hotelHallOrder.getOrderStatus() == OrderStatus.DECLINED){
+                if (
+                        hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                        || hotelHallOrder.getOrderStatus() == OrderStatus.DECLINED
+                        || hotelHallOrder.getOrderStatus() == OrderStatus.PAID
+                ){
                     hotelHallOrderModels.add(toModel(hotelHallOrder));
                 }
             }

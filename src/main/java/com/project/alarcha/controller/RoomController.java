@@ -102,7 +102,7 @@ public class RoomController {
 
     @PostMapping("/order/{roomOrderId}/accept-pay")
     public ResponseMessage<RoomOrderModel> acceptPay(@PathVariable Long roomOrderId){
-        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.acceptOrder(roomOrderId));
+        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.acceptPayOrder(roomOrderId));
     }
 
     @DeleteMapping("/order/delete/{roomOrderId}")

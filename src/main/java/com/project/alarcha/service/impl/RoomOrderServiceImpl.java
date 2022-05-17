@@ -149,7 +149,11 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         for (RoomOrder roomOrder : roomOrderRepository.findAll()){
             if (!roomOrder.getIsDeleted()){
-                if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED || roomOrder.getOrderStatus() == OrderStatus.DECLINED){
+                if (
+                        roomOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                        || roomOrder.getOrderStatus() == OrderStatus.DECLINED
+                        || roomOrder.getOrderStatus() == OrderStatus.PAID
+                ){
                     roomOrderModels.add(toModel(roomOrder));
                 }
             }

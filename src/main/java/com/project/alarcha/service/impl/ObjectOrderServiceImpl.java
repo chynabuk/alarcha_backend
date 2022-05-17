@@ -132,7 +132,11 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         for (ObjectOrder objectOrder : objectOrderRepository.findAll()){
             if (!objectOrder.getIsDeleted()){
-                if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED || objectOrder.getOrderStatus() == OrderStatus.DECLINED){
+                if (
+                        objectOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                        || objectOrder.getOrderStatus() == OrderStatus.DECLINED
+                        || objectOrder.getOrderStatus() == OrderStatus.PAID
+                ){
                     objectOrderModels.add(toModel(objectOrder));
                 }
             }
