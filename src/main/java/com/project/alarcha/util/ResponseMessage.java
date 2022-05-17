@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,11 +15,19 @@ public class ResponseMessage<T> {
     private T value;
     private String status;
     private T details;
+    private int valueAmount;
 
     public ResponseMessage<T> prepareSuccessMessage(T value) {
         ResponseMessage<T> successMessage = new ResponseMessage<>();
         successMessage.setValue(value);
         successMessage.setStatus("OK");
+        try {
+            List<T> values = (List<T>) value;
+            valueAmount = values.size();
+        }
+        catch (Exception e){
+
+        }
         successMessage.setDetails(null);
         return successMessage;
     }

@@ -12,11 +12,11 @@ public interface RoomOrderService {
     RoomOrderModel acceptOrder(Long orderId);
     RoomOrderModel declineOrder(Long orderId);
     RoomOrderModel acceptPayOrder(Long orderId);
-    List<RoomOrderModel> getAll();
-    List<RoomOrderModel> getInProcessOrders();
-    List<RoomOrderModel> getConfirmedOrDeclinedOrders();
-    List<RoomOrderModel> getInCheckPay();
-    List<RoomOrderModel> getCheckedPay();
+    List<RoomOrderModel> getAll(int page);
+    List<RoomOrderModel> getInProcessOrders(int page);
+    List<RoomOrderModel> getConfirmedOrDeclinedOrders(int page);
+    List<RoomOrderModel> getInCheckPay(int page);
+    List<RoomOrderModel> getCheckedPay(int page);
     List<RoomOrderModel> convertToModels(List<RoomOrder> roomOrders);
     RoomOrderModel getById(Long id);
     RoomOrderModel deleteOrder(Long id);

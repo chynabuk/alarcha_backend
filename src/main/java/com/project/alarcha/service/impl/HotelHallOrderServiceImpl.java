@@ -16,6 +16,8 @@ import com.project.alarcha.service.HotelHallService;
 import com.project.alarcha.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -111,10 +113,11 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     }
 
     @Override
-    public List<HotelHallOrderModel> getAll() {
+    public List<HotelHallOrderModel> getAll(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll(PageRequest.of(page, 10));
         List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
 
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
+        for (HotelHallOrder hotelHallOrder : hotelHallOrders){
             if (!hotelHallOrder.getIsDeleted()){
                 if (isExpired(hotelHallOrder.getExpirationDate())){
                     hotelHallOrder.setIsDeleted(true);
@@ -125,29 +128,38 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 hotelHallOrderModels.add(toModel(hotelHallOrder));
             }
         }
+        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+        hotelHallOrderModels.add(hotelHallOrderModel);
+
         return hotelHallOrderModels;
     }
 
     @Override
-    public List<HotelHallOrderModel> getInProcessOrders() {
+    public List<HotelHallOrderModel> getInProcessOrders(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll(PageRequest.of(page, 10));
         List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
 
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
+        for (HotelHallOrder hotelHallOrder : hotelHallOrders){
             if (!hotelHallOrder.getIsDeleted()){
                 if (hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
                     hotelHallOrderModels.add(toModel(hotelHallOrder));
                 }
             }
         }
+        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+        hotelHallOrderModels.add(hotelHallOrderModel);
 
         return hotelHallOrderModels;
     }
 
     @Override
-    public List<HotelHallOrderModel> getConfirmedOrDeclinedOrders() {
+    public List<HotelHallOrderModel> getConfirmedOrDeclinedOrders(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll(PageRequest.of(page, 10));
         List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
 
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
+        for (HotelHallOrder hotelHallOrder : hotelHallOrders){
             if (!hotelHallOrder.getIsDeleted()){
                 if (
                         hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED
@@ -158,36 +170,47 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 }
             }
         }
+        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+        hotelHallOrderModels.add(hotelHallOrderModel);
 
         return hotelHallOrderModels;
     }
 
     @Override
-    public List<HotelHallOrderModel> getInCheckPay() {
+    public List<HotelHallOrderModel> getInCheckPay(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll(PageRequest.of(page, 10));
         List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
 
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
+        for (HotelHallOrder hotelHallOrder : hotelHallOrders){
             if (!hotelHallOrder.getIsDeleted()){
                 if (hotelHallOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
                     hotelHallOrderModels.add(toModel(hotelHallOrder));
                 }
             }
         }
+        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+        hotelHallOrderModels.add(hotelHallOrderModel);
 
         return hotelHallOrderModels;
     }
 
     @Override
-    public List<HotelHallOrderModel> getCheckedPay() {
+    public List<HotelHallOrderModel> getCheckedPay(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll(PageRequest.of(page, 10));
         List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
 
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
+        for (HotelHallOrder hotelHallOrder : hotelHallOrders){
             if (!hotelHallOrder.getIsDeleted()){
                 if (hotelHallOrder.getOrderStatus() == OrderStatus.PAID){
                     hotelHallOrderModels.add(toModel(hotelHallOrder));
                 }
             }
         }
+        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+        hotelHallOrderModels.add(hotelHallOrderModel);
 
         return hotelHallOrderModels;
     }

@@ -76,28 +76,28 @@ public class HotelHallController {
     }
 
     @GetMapping("/order/get-all")
-    public ResponseMessage<List<HotelHallOrderModel>> getOrders(){
-        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getAll());
+    public ResponseMessage<List<HotelHallOrderModel>> getOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getAll(page));
     }
 
     @GetMapping("/order/get-in-process")
-    public ResponseMessage<List<HotelHallOrderModel>> getInProcessOrders(){
-        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getInProcessOrders());
+    public ResponseMessage<List<HotelHallOrderModel>> getInProcessOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getInProcessOrders(page));
     }
 
     @GetMapping("/order/get-confirmed-or-declined")
-    public ResponseMessage<List<HotelHallOrderModel>> getConfirmedOrDeclinedOrders(){
-        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getConfirmedOrDeclinedOrders());
+    public ResponseMessage<List<HotelHallOrderModel>> getConfirmedOrDeclinedOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getConfirmedOrDeclinedOrders(page));
     }
 
     @GetMapping("/order/get-in-pay-check")
-    public ResponseMessage<List<HotelHallOrderModel>> getInPayCheck(){
-        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getInCheckPay());
+    public ResponseMessage<List<HotelHallOrderModel>> getInPayCheck(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getInCheckPay(page));
     }
 
     @GetMapping("/order/get-paid")
-    public ResponseMessage<List<HotelHallOrderModel>> getPaid(){
-        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getCheckedPay());
+    public ResponseMessage<List<HotelHallOrderModel>> getPaid(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getCheckedPay(page));
     }
 
     @GetMapping("/order/get/{hotelHallOrderId}")

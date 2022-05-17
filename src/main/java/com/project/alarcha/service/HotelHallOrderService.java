@@ -12,11 +12,11 @@ public interface HotelHallOrderService {
     HotelHallOrderModel acceptOrder(Long orderId);
     HotelHallOrderModel declineOrder(Long orderId);
     HotelHallOrderModel acceptPayOrder(Long orderId);
-    List<HotelHallOrderModel> getAll();
-    List<HotelHallOrderModel> getInProcessOrders();
-    List<HotelHallOrderModel> getConfirmedOrDeclinedOrders();
-    List<HotelHallOrderModel> getInCheckPay();
-    List<HotelHallOrderModel> getCheckedPay();
+    List<HotelHallOrderModel> getAll(int page);
+    List<HotelHallOrderModel> getInProcessOrders(int page);
+    List<HotelHallOrderModel> getConfirmedOrDeclinedOrders(int page);
+    List<HotelHallOrderModel> getInCheckPay(int page);
+    List<HotelHallOrderModel> getCheckedPay(int page);
     List<HotelHallOrderModel> convertToModels(List<HotelHallOrder> hotelHallOrders);
     HotelHallOrderModel getById(Long id);
     HotelHallOrderModel deleteOrder(Long id);

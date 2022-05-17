@@ -12,11 +12,11 @@ public interface ObjectOrderService {
     ObjectOrderModel acceptOrder(Long orderId);
     ObjectOrderModel declineOrder(Long orderId);
     ObjectOrderModel acceptPayOrder(Long orderId);
-    List<ObjectOrderModel> getAll();
-    List<ObjectOrderModel> getInProcessOrders();
-    List<ObjectOrderModel> getConfirmedOrDeclinedOrders();
-    List<ObjectOrderModel> getInCheckPay();
-    List<ObjectOrderModel> getCheckedPay();
+    List<ObjectOrderModel> getAll(int page);
+    List<ObjectOrderModel> getInProcessOrders(int page);
+    List<ObjectOrderModel> getConfirmedOrDeclinedOrders(int page);
+    List<ObjectOrderModel> getInCheckPay(int page);
+    List<ObjectOrderModel> getCheckedPay(int page);
     List<ObjectOrderModel> convertToModels(List<ObjectOrder> objectOrders);
     ObjectOrderModel getById(Long id);
     ObjectOrderModel deleteOrder(Long orderId);
