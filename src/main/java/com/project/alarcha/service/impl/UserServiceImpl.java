@@ -249,8 +249,8 @@ public class UserServiceImpl implements UserService {
         userTokenModel.setFirstName(userDetails.getFirstName());
         userTokenModel.setLastName(userDetails.getLastName());
         userTokenModel.setEmail(userDetails.getUsername());
-        userTokenModel.setPhone(userTokenModel.getPhone());
-        userTokenModel.setRole(userTokenModel.getRole());
+        userTokenModel.setPhone(userDetails.getPhone());
+        userTokenModel.setRole(userDetails.getUserRole().getRoleName());
         userTokenModel.setToken(accessToken);
         userTokenModel.setRefreshtoken(refreshToken.getToken());
         return userTokenModel;
