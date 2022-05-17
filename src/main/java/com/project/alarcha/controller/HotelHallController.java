@@ -90,6 +90,16 @@ public class HotelHallController {
         return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getConfirmedOrDeclinedOrders());
     }
 
+    @GetMapping("/order/get-in-pay-check")
+    public ResponseMessage<List<HotelHallOrderModel>> getInPayCheck(){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getInCheckPay());
+    }
+
+    @GetMapping("/order/get-paid")
+    public ResponseMessage<List<HotelHallOrderModel>> getPaid(){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getCheckedPay());
+    }
+
     @GetMapping("/order/get/{hotelHallOrderId}")
     public ResponseMessage<HotelHallOrderModel> getOrder(@PathVariable Long hotelHallOrderId){
         return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.getById(hotelHallOrderId));

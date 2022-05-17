@@ -15,6 +15,8 @@ public interface HotelHallOrderService {
     List<HotelHallOrderModel> getAll();
     List<HotelHallOrderModel> getInProcessOrders();
     List<HotelHallOrderModel> getConfirmedOrDeclinedOrders();
+    List<HotelHallOrderModel> getInCheckPay();
+    List<HotelHallOrderModel> getCheckedPay();
     List<HotelHallOrderModel> convertToModels(List<HotelHallOrder> hotelHallOrders);
     HotelHallOrderModel getById(Long id);
     HotelHallOrderModel deleteOrder(Long id);

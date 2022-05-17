@@ -1,19 +1,16 @@
 package com.project.alarcha.service.impl;
 
-import com.project.alarcha.entities.HotelHallOrder;
 import com.project.alarcha.entities.Room;
 import com.project.alarcha.entities.RoomOrder;
 import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
-import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderPayModel;
 import com.project.alarcha.repositories.RoomOrderRepository;
 import com.project.alarcha.repositories.RoomRepository;
 import com.project.alarcha.service.EmailSenderService;
 import com.project.alarcha.service.RoomOrderService;
-import com.project.alarcha.service.RoomService;
 import com.project.alarcha.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,6 +145,36 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         for (RoomOrder roomOrder : roomOrderRepository.findAll()){
             if (!roomOrder.getIsDeleted()){
                 if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED || roomOrder.getOrderStatus() == OrderStatus.DECLINED){
+                    roomOrderModels.add(toModel(roomOrder));
+                }
+            }
+        }
+
+        return roomOrderModels;
+    }
+
+    @Override
+    public List<RoomOrderModel> getInCheckPay() {
+        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
+
+        for (RoomOrder roomOrder : roomOrderRepository.findAll()){
+            if (!roomOrder.getIsDeleted()){
+                if (roomOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
+                    roomOrderModels.add(toModel(roomOrder));
+                }
+            }
+        }
+
+        return roomOrderModels;
+    }
+
+    @Override
+    public List<RoomOrderModel> getCheckedPay() {
+        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
+
+        for (RoomOrder roomOrder : roomOrderRepository.findAll()){
+            if (!roomOrder.getIsDeleted()){
+                if (roomOrder.getOrderStatus() == OrderStatus.PAID){
                     roomOrderModels.add(toModel(roomOrder));
                 }
             }

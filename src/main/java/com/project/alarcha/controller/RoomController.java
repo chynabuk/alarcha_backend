@@ -125,6 +125,16 @@ public class RoomController {
         return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getInProcessOrders());
     }
 
+    @GetMapping("/order/get-in-pay-check")
+    public ResponseMessage<List<RoomOrderModel>> getInPayCheck(){
+        return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getInCheckPay());
+    }
+
+    @GetMapping("/order/get-paid")
+    public ResponseMessage<List<RoomOrderModel>> getPaid(){
+        return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getCheckedPay());
+    }
+
     @GetMapping("/order/get/{roomOrderId}")
     public ResponseMessage<RoomOrderModel> getOrder(@PathVariable Long roomOrderId){
         return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.getById(roomOrderId));

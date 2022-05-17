@@ -15,6 +15,8 @@ public interface ObjectOrderService {
     List<ObjectOrderModel> getAll();
     List<ObjectOrderModel> getInProcessOrders();
     List<ObjectOrderModel> getConfirmedOrDeclinedOrders();
+    List<ObjectOrderModel> getInCheckPay();
+    List<ObjectOrderModel> getCheckedPay();
     List<ObjectOrderModel> convertToModels(List<ObjectOrder> objectOrders);
     ObjectOrderModel getById(Long id);
     ObjectOrderModel deleteOrder(Long orderId);

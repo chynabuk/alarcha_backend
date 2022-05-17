@@ -15,6 +15,8 @@ public interface RoomOrderService {
     List<RoomOrderModel> getAll();
     List<RoomOrderModel> getInProcessOrders();
     List<RoomOrderModel> getConfirmedOrDeclinedOrders();
+    List<RoomOrderModel> getInCheckPay();
+    List<RoomOrderModel> getCheckedPay();
     List<RoomOrderModel> convertToModels(List<RoomOrder> roomOrders);
     RoomOrderModel getById(Long id);
     RoomOrderModel deleteOrder(Long id);

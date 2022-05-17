@@ -137,6 +137,36 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
+    public List<ObjectOrderModel> getInCheckPay() {
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+
+        for (ObjectOrder objectOrder : objectOrderRepository.findAll()){
+            if (!objectOrder.getIsDeleted()){
+                if (objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
+                    objectOrderModels.add(toModel(objectOrder));
+                }
+            }
+        }
+
+        return objectOrderModels;
+    }
+
+    @Override
+    public List<ObjectOrderModel> getCheckedPay() {
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+
+        for (ObjectOrder objectOrder : objectOrderRepository.findAll()){
+            if (!objectOrder.getIsDeleted()){
+                if (objectOrder.getOrderStatus() == OrderStatus.PAID){
+                    objectOrderModels.add(toModel(objectOrder));
+                }
+            }
+        }
+
+        return objectOrderModels;
+    }
+
+    @Override
     public List<ObjectOrderModel> convertToModels(List<ObjectOrder> objectOrders) {
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
         objectOrders.forEach(objectOrder -> {

@@ -90,6 +90,16 @@ public class ObjectController {
         return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getInProcessOrders());
     }
 
+    @GetMapping("/order/get-in-pay-check")
+    public ResponseMessage<List<ObjectOrderModel>> getInPayCheck(){
+        return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getInCheckPay());
+    }
+
+    @GetMapping("/order/get-paid")
+    public ResponseMessage<List<ObjectOrderModel>> getPaid(){
+        return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getCheckedPay());
+    }
+
     @GetMapping("/order/get-confirmed-or-declined")
     public ResponseMessage<List<ObjectOrderModel>> getConfirmedOrDeclinedOrders(){
         return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getConfirmedOrDeclinedOrders());
