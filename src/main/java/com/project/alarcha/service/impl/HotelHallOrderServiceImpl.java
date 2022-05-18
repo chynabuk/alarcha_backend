@@ -114,7 +114,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
     @Override
     public List<HotelHallOrderModel> getAll(int page) {
-        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll(PageRequest.of(page, 10));
+        List<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll();
         List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
 
         for (HotelHallOrder hotelHallOrder : hotelHallOrders){
@@ -128,16 +128,16 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 hotelHallOrderModels.add(toModel(hotelHallOrder));
             }
         }
-        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
-        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
-        hotelHallOrderModels.add(hotelHallOrderModel);
+//        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+//        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+//        hotelHallOrderModels.add(hotelHallOrderModel);
 
         return hotelHallOrderModels;
     }
 
     @Override
     public List<HotelHallOrderModel> getInProcessOrders(int page) {
-        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll(PageRequest.of(page, 10));
+        List<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll();
         List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
 
         for (HotelHallOrder hotelHallOrder : hotelHallOrders){
@@ -147,9 +147,9 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 }
             }
         }
-        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
-        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
-        hotelHallOrderModels.add(hotelHallOrderModel);
+//        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+//        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+//        hotelHallOrderModels.add(hotelHallOrderModel);
 
         return hotelHallOrderModels;
     }
@@ -179,7 +179,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
     @Override
     public List<HotelHallOrderModel> getInCheckPay(int page) {
-        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll(PageRequest.of(page, 10));
+        List<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll();
         List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
 
         for (HotelHallOrder hotelHallOrder : hotelHallOrders){
@@ -189,16 +189,16 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 }
             }
         }
-        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
-        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
-        hotelHallOrderModels.add(hotelHallOrderModel);
+//        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+//        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+//        hotelHallOrderModels.add(hotelHallOrderModel);
 
         return hotelHallOrderModels;
     }
 
     @Override
     public List<HotelHallOrderModel> getCheckedPay(int page) {
-        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll(PageRequest.of(page, 10));
+        List<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.findAll();
         List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
 
         for (HotelHallOrder hotelHallOrder : hotelHallOrders){
@@ -208,9 +208,9 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 }
             }
         }
-        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
-        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
-        hotelHallOrderModels.add(hotelHallOrderModel);
+//        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+//        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+//        hotelHallOrderModels.add(hotelHallOrderModel);
 
         return hotelHallOrderModels;
     }

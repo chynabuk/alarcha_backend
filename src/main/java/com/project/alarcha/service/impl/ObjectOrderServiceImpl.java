@@ -117,7 +117,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     @Override
     public List<ObjectOrderModel> getInProcessOrders(int page) {
-        Page<ObjectOrder> objectOrders = objectOrderRepository.findAll(PageRequest.of(page, 10));
+        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
 
         for (ObjectOrder objectOrder : objectOrders){
@@ -127,10 +127,6 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 }
             }
         }
-
-        ObjectOrderModel objectOrderModel = new ObjectOrderModel();
-        objectOrderModel.setTotalPage(objectOrders.getTotalPages());
-        objectOrderModels.add(objectOrderModel);
 
         return objectOrderModels;
     }
@@ -160,7 +156,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     @Override
     public List<ObjectOrderModel> getInCheckPay(int page) {
-        Page<ObjectOrder> objectOrders = objectOrderRepository.findAll(PageRequest.of(page, 10));
+        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
 
         for (ObjectOrder objectOrder : objectOrders){
@@ -170,16 +166,13 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 }
             }
         }
-        ObjectOrderModel objectOrderModel = new ObjectOrderModel();
-        objectOrderModel.setTotalPage(objectOrders.getTotalPages());
-        objectOrderModels.add(objectOrderModel);
 
         return objectOrderModels;
     }
 
     @Override
     public List<ObjectOrderModel> getCheckedPay(int page) {
-        Page<ObjectOrder> objectOrders = objectOrderRepository.findAll(PageRequest.of(page, 10));
+        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
 
         for (ObjectOrder objectOrder : objectOrders){
@@ -189,9 +182,6 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 }
             }
         }
-        ObjectOrderModel objectOrderModel = new ObjectOrderModel();
-        objectOrderModel.setTotalPage(objectOrders.getTotalPages());
-        objectOrderModels.add(objectOrderModel);
 
         return objectOrderModels;
     }

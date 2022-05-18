@@ -114,7 +114,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     @Override
     public List<RoomOrderModel> getAll(int page) {
-        Page<RoomOrder> roomOrders = roomOrderRepository.findAll(PageRequest.of(page, 10));
+        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
         List<RoomOrderModel> roomOrderModels = new ArrayList<>();
 
         for (RoomOrder roomOrder : roomOrders){
@@ -128,15 +128,13 @@ public class RoomOrderServiceImpl implements RoomOrderService {
                 roomOrderModels.add(toModel(roomOrder));
             }
         }
-        RoomOrderModel roomOrderModel = new RoomOrderModel();
-        roomOrderModel.setTotalPage(roomOrders.getTotalPages());
 
         return roomOrderModels;
     }
 
     @Override
     public List<RoomOrderModel> getInProcessOrders(int page) {
-        Page<RoomOrder> roomOrders = roomOrderRepository.findAll(PageRequest.of(page, 10));
+        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
 
         List<RoomOrderModel> roomOrderModels = new ArrayList<>();
 
@@ -147,10 +145,6 @@ public class RoomOrderServiceImpl implements RoomOrderService {
                 }
             }
         }
-        RoomOrderModel roomOrderModel = new RoomOrderModel();
-        roomOrderModel.setTotalPage(roomOrders.getTotalPages());
-
-        roomOrderModels.add(roomOrderModel);
 
         return roomOrderModels;
     }
@@ -181,7 +175,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     @Override
     public List<RoomOrderModel> getInCheckPay(int page) {
-        Page<RoomOrder> roomOrders = roomOrderRepository.findAll(PageRequest.of(page, 10));
+        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
         List<RoomOrderModel> roomOrderModels = new ArrayList<>();
 
         for (RoomOrder roomOrder : roomOrders){
@@ -192,15 +186,12 @@ public class RoomOrderServiceImpl implements RoomOrderService {
             }
         }
 
-        RoomOrderModel roomOrderModel = new RoomOrderModel();
-        roomOrderModel.setTotalPage(roomOrders.getTotalPages());
-
         return roomOrderModels;
     }
 
     @Override
     public List<RoomOrderModel> getCheckedPay(int page) {
-        Page<RoomOrder> roomOrders = roomOrderRepository.findAll(PageRequest.of(page, 10));
+        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
         List<RoomOrderModel> roomOrderModels = new ArrayList<>();
 
         for (RoomOrder roomOrder : roomOrders){
@@ -210,9 +201,6 @@ public class RoomOrderServiceImpl implements RoomOrderService {
                 }
             }
         }
-
-        RoomOrderModel roomOrderModel = new RoomOrderModel();
-        roomOrderModel.setTotalPage(roomOrders.getTotalPages());
 
         return roomOrderModels;
     }
