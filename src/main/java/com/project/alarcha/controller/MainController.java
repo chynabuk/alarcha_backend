@@ -3,6 +3,7 @@ package com.project.alarcha.controller;
 import com.project.alarcha.entities.Counter;
 import com.project.alarcha.repositories.CounterRepository;
 import com.project.alarcha.service.CounterService;
+import com.project.alarcha.service.Population;
 import com.project.alarcha.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,9 @@ public class MainController {
     @Autowired
     private CounterRepository counterRepository;
 
+    @Autowired
+    private Population population;
+
     @GetMapping("/")
     public void countUser(){
         Counter counter = counterService.getById(1L);
@@ -38,6 +42,11 @@ public class MainController {
     @PostMapping("/")
     public void createUser(){
         userService.createSuperAdmin();
+    }
+
+    @PostMapping("/populate")
+    public void populate(){
+        population.create();
     }
 
 }
