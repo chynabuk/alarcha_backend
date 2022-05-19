@@ -219,7 +219,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     }
 
     private void checkRoomOrderDate(RoomOrderModel roomOrderModel){
-        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
+        List<RoomOrder> roomOrders = roomOrderRepository.getAllRoomOrders();
 
         Date currentDate = new Date();
         Date tempDate = new Date();

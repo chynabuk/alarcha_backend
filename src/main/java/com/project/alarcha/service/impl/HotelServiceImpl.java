@@ -189,8 +189,8 @@ public class HotelServiceImpl implements HotelService {
 
     private void setValuesOnUpdateHotel(Hotel hotel, HotelModel hotelModel){
         String hotelName = hotelModel.getHotelName();
-        List<RoomTypeModel> roomTypeModels = hotelModel.getRoomTypeModels();
-        List<HotelHallModel> hotelHallModels = hotelModel.getHotelHallModels();
+//        List<RoomTypeModel> roomTypeModels = hotelModel.getRoomTypeModels();
+//        List<HotelHallModel> hotelHallModels = hotelModel.getHotelHallModels();
 
         if (hotelName != null){
             hotel.setHotelName(hotelName);
