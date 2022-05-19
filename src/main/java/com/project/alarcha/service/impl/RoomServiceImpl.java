@@ -98,9 +98,11 @@ public class RoomServiceImpl implements RoomService {
     public List<RoomModel> getByRoomType(RoomType roomType) {
         List<RoomModel> roomModels = new ArrayList<>();
 
-        for (Room room : roomType.getRooms()){
-            if (!room.getIsDeleted()){
-                roomModels.add(toModel(room));
+        if (roomType != null){
+            for (Room room : roomType.getRooms()){
+                if (!room.getIsDeleted()){
+                    roomModels.add(toModel(room));
+                }
             }
         }
 
@@ -194,9 +196,11 @@ public class RoomServiceImpl implements RoomService {
         roomModel.setBedNumber(room.getBedNumber());
         roomModel.setHotelName(room.getRoomType().getHotel().getHotelName());
         roomModel.setRoomTypeName(room.getRoomType().getType());
-        if (room.getRoomOrders() != null){
-            if(!room.getRoomOrders().isEmpty()){
-                roomModel.setRoomOrderModels(roomOrderService.convertToModels(room.getRoomOrders()));
+
+        List<RoomOrder> roomOrders = room.getRoomOrders();
+        if (roomOrders != null){
+            if(!roomOrders.isEmpty()){
+                roomModel.setRoomOrderModels(roomOrderService.convertToModels(roomOrders));
             }
         }
         return roomModel;

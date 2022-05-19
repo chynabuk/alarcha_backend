@@ -191,8 +191,16 @@ public class AreaServiceImpl implements AreaService {
             areaModel.setId(area.getId());
             areaModel.setAreaName(area.getAreaName());
             areaModel.setEmail(area.getUser().getEmail());
-            areaModel.setHotelModels(hotelService.convertToModel(area.getHotels()));
-            areaModel.setObjectTypeModels(objectTypeService.convertToModels(area.getObjectTypes()));
+
+            List<Hotel> hotels = area.getHotels();
+            if (hotels != null){
+                areaModel.setHotelModels(hotelService.convertToModel(area.getHotels()));
+            }
+
+            List<ObjectType> objectTypes = area.getObjectTypes();
+            if (objectTypes != null){
+                areaModel.setObjectTypeModels(objectTypeService.convertToModels(objectTypes));
+            }
         }
 
         return areaModel;

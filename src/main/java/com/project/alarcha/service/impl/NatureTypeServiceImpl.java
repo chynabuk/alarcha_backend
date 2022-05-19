@@ -149,8 +149,10 @@ public class NatureTypeServiceImpl implements NatureTypeService {
         NatureTypeModel natureTypeModel = new NatureTypeModel();
         natureTypeModel.setId(natureType.getId());
         natureTypeModel.setType(natureType.getType());
-        if (natureType.getNatures() != null){
-            natureTypeModel.setNatureModels(natureService.convertToModels(natureType.getNatures()));
+
+        List<Nature> natures = natureType.getNatures();
+        if (natures != null){
+            natureTypeModel.setNatureModels(natureService.convertToModels(natures));
         }
 
         return natureTypeModel;

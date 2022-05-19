@@ -238,8 +238,11 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
         objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
 
-        if (!objectType.getObjectTypeImages().isEmpty()){
-            objectTypeModel.setImgUrl(new String(objectType.getObjectTypeImages().get(0).getImg(), StandardCharsets.UTF_8));
+        List<ObjectTypeImage> objectTypeImages = objectType.getObjectTypeImages();
+        if (objectTypeImages != null){
+            if (!objectTypeImages.isEmpty()){
+                objectTypeModel.setImgUrl(new String(objectTypeImages.get(0).getImg(), StandardCharsets.UTF_8));
+            }
         }
         return objectTypeModel;
     }
@@ -251,17 +254,29 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setPrice(objectType.getPrice());
         objectTypeModel.setPricePerHour(objectType.getPricePerHour());
         objectTypeModel.setMinHours(objectType.getMinHours());
-        if (!objectType.getMenuSections().isEmpty()){
-            objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
+
+        List<MenuSection> menuSections = objectType.getMenuSections();
+        if (menuSections != null){
+            if (!menuSections.isEmpty()){
+                objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
+            }
         }
-        if (!objectType.getObjects().isEmpty()){
-            objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
+
+        List<Object> objects = objectType.getObjects();
+        if (objects != null){
+            if (!objects.isEmpty()){
+                objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
+            }
         }
-        if (!objectType.getObjectTypeImages().isEmpty()){
-            if (objectType.getObjectTypeImages().size() > 2){
-                objectTypeModel.setObjectTypeImgModels(objectTypeImgService
-                        .convertToModels(objectType.getObjectTypeImages()
-                        .subList(1, objectType.getObjectTypeImages().size())));
+
+        List<ObjectTypeImage> objectTypeImages = objectType.getObjectTypeImages();
+        if (objectTypeImages != null){
+            if (!objectTypeImages.isEmpty()){
+                if (objectType.getObjectTypeImages().size() > 2){
+                    objectTypeModel.setObjectTypeImgModels(objectTypeImgService
+                            .convertToModels(objectTypeImages
+                                    .subList(1, objectTypeImages.size())));
+                }
             }
         }
 

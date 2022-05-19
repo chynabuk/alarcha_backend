@@ -241,13 +241,16 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         roomTypeModel.setHotelName(roomType.getHotel().getHotelName());
         roomTypeModel.setType(roomType.getType());
         roomTypeModel.setPrice(roomType.getPrice());
+
         if (roomType.getRooms() != null){
             roomTypeModel.setRoomModels(roomService.getByRoomType(roomType));
         }
-        if (!roomType.getRoomTypeImages().isEmpty()){
-            if(roomType.getRoomTypeImages().size() > 2){
+
+        List<RoomTypeImage> roomTypeImages = roomType.getRoomTypeImages();
+        if (roomTypeImages != null){
+            if (!roomTypeImages.isEmpty()){
                 roomTypeModel.setRoomTypeImageModels(roomTypeImageService
-                        .convertToModels(roomType.getRoomTypeImages()));
+                        .convertToModels(roomTypeImages));
             }
         }
 

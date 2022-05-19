@@ -205,11 +205,19 @@ public class HotelHallServiceImpl implements HotelHallService {
         hotelHallModel.setPrice(hotelHall.getPrice());
         hotelHallModel.setPriceForNextHours(hotelHall.getPriceForNextHours());
         hotelHallModel.setHotelName(hotelHall.getHotel().getHotelName());
-        if (!hotelHall.getHotelHallOrders().isEmpty()){
-            hotelHallModel.setHotelHallOrders(hotelHallOrderService.convertToModels(hotelHall.getHotelHallOrders()));
+
+        List<HotelHallOrder> hotelHallOrders = hotelHall.getHotelHallOrders();
+        if (hotelHallOrders != null){
+            if (!hotelHallOrders.isEmpty()){
+                hotelHallModel.setHotelHallOrders(hotelHallOrderService.convertToModels(hotelHallOrders));
+            }
         }
-        if (hotelHall.getHotelHallImages() != null){
-            hotelHallModel.setHotelHall_imgModels(hotelHall_imgService.convertToModels(hotelHall.getHotelHallImages()));
+
+        List<HotelHall_IMG> hotelHall_imgs = hotelHall.getHotelHallImages();
+        if (hotelHall_imgs != null){
+            if (!hotelHall_imgs.isEmpty()){
+                hotelHallModel.setHotelHall_imgModels(hotelHall_imgService.convertToModels(hotelHall_imgs));
+            }
         }
         hotelHallModel.setNumberOfSeats(hotelHall.getNumberOfSeats());
 

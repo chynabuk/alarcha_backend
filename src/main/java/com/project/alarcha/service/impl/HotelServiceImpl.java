@@ -226,8 +226,12 @@ public class HotelServiceImpl implements HotelService {
         hotelModel.setId(hotel.getId());
         hotelModel.setHotelName(hotel.getHotelName());
         hotelModel.setAreaName(hotel.getArea().getAreaName());
-        if (hotel.getHotelImgs() != null){
-            hotelModel.setImgUrl(new String(hotel.getHotelImgs().get(0).getImg(), StandardCharsets.UTF_8));
+
+        List<Hotel_Img> hotelImgs = hotel.getHotelImgs();
+        if (hotelImgs != null){
+            if (!hotelImgs.isEmpty()){
+                hotelModel.setImgUrl(new String(hotelImgs.get(0).getImg(), StandardCharsets.UTF_8));
+            }
         }
 
         hotelModel.setMinPrice(getMinPrice(hotel));
@@ -239,15 +243,27 @@ public class HotelServiceImpl implements HotelService {
         hotelModel.setId(hotel.getId());
         hotelModel.setHotelName(hotel.getHotelName());
         hotelModel.setAreaName(hotel.getArea().getAreaName());
-        if (hotel.getRoomTypes() != null){
-            hotelModel.setRoomTypeModels(roomTypeService.convertToRoomTypeModels(hotel.getRoomTypes()));
+
+        List<RoomType> roomTypes = hotel.getRoomTypes();
+        if (roomTypes != null){
+            if (!roomTypes.isEmpty()){
+                hotelModel.setRoomTypeModels(roomTypeService.convertToRoomTypeModels(roomTypes));
+            }
         }
-        if (hotel.getHotelHalls() != null){
-            hotelModel.setHotelHallModels(hotelHallService.convertToModels(hotel.getHotelHalls()));
+
+        List<HotelHall> hotelHalls = hotel.getHotelHalls();
+        if (hotelHalls != null){
+            if (!hotelHalls.isEmpty()){
+                hotelModel.setHotelHallModels(hotelHallService.convertToModels(hotelHalls));
+            }
         }
-        if (!hotel.getHotelImgs().isEmpty()){
-            if (hotel.getHotelImgs().size() >= 2){
-                hotelModel.setImgUrl(new String(hotel.getHotelImgs().get(1).getImg(), StandardCharsets.UTF_8));
+
+        List<Hotel_Img> hotelImgs = hotel.getHotelImgs();
+        if (hotelImgs != null){
+            if (!hotelImgs.isEmpty()){
+                if (hotel.getHotelImgs().size() >= 2){
+                    hotelModel.setImgUrl(new String(hotel.getHotelImgs().get(1).getImg(), StandardCharsets.UTF_8));
+                }
             }
         }
 

@@ -38,8 +38,10 @@ public class RoomTypeImageServiceImpl implements RoomTypeImageService {
     public List<RoomTypeImageModel> convertToModels(List<RoomTypeImage> roomTypeImages) {
         List<RoomTypeImageModel> roomTypeImageModels = new ArrayList<>();
 
-        roomTypeImages.forEach(roomTypeImage ->
-                roomTypeImageModels.add(toModel(roomTypeImage)));
+        if (roomTypeImages != null){
+            roomTypeImages.forEach(roomTypeImage ->
+                    roomTypeImageModels.add(toModel(roomTypeImage)));
+        }
 
         return roomTypeImageModels;
     }

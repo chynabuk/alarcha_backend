@@ -110,9 +110,12 @@ public class MenuSectionServiceImpl implements MenuSectionService {
     public List<MenuSectionModel> getByObjectType(ObjectType objectType) {
         List<MenuSectionModel> menuSectionModels = new ArrayList<>();
 
-        for(MenuSection menuSection : objectType.getMenuSections()){
-            if(!menuSection.getIsDeleted()){
-                menuSectionModels.add(toModel(menuSection));
+        List<MenuSection> menuSections = objectType.getMenuSections();
+        if (menuSections != null){
+            for(MenuSection menuSection : objectType.getMenuSections()){
+                if(!menuSection.getIsDeleted()){
+                    menuSectionModels.add(toModel(menuSection));
+                }
             }
         }
 
@@ -192,8 +195,13 @@ public class MenuSectionServiceImpl implements MenuSectionService {
         menuSectionModel.setId(menuSection.getId());
         menuSectionModel.setName(menuSection.getName());
         menuSectionModel.setObjectTypeName(menuSection.getObjectType().getName());
-        if (!menuSection.getMenus().isEmpty()){
-            menuSectionModel.setMenuModels(menuService.getByMenuSection(menuSection));
+
+        List<Menu> menus = menuSection.getMenus();
+
+        if (menus != null){
+            if (!menus.isEmpty()){
+                menuSectionModel.setMenuModels(menuService.getByMenuSection(menuSection));
+            }
         }
 
         return menuSectionModel;

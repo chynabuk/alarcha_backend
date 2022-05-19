@@ -23,12 +23,14 @@ public class HotelHall_ImgServiceImpl implements HotelHall_ImgService {
     public List<HotelHall_IMG> uploadImages(List<HotelHall_ImgModel> hotelHall_ImgModels) {
         List<HotelHall_IMG> hotelHall_imgs = new ArrayList<>();
 
-        for (HotelHall_ImgModel hotelHall_imgModel : hotelHall_ImgModels){
-            HotelHall_IMG hotelHall_img = new HotelHall_IMG();
-            hotelHall_img.setImg(hotelHall_imgModel.getImg().getBytes(StandardCharsets.UTF_8));
-            hotelHall_img.setIsDeleted(false);
+        if (hotelHall_ImgModels != null){
+            for (HotelHall_ImgModel hotelHall_imgModel : hotelHall_ImgModels){
+                HotelHall_IMG hotelHall_img = new HotelHall_IMG();
+                hotelHall_img.setImg(hotelHall_imgModel.getImg().getBytes(StandardCharsets.UTF_8));
+                hotelHall_img.setIsDeleted(false);
 
-            hotelHall_imgs.add(hotelHall_img);
+                hotelHall_imgs.add(hotelHall_img);
+            }
         }
 
         return hotelHall_imgs;
@@ -38,7 +40,9 @@ public class HotelHall_ImgServiceImpl implements HotelHall_ImgService {
     public List<HotelHall_ImgModel> convertToModels(List<HotelHall_IMG> hotelHall_imgs) {
         List<HotelHall_ImgModel> hotelHall_imgModels = new ArrayList<>();
 
-        hotelHall_imgs.forEach(hotelHall_img -> hotelHall_imgModels.add(toModel(hotelHall_img)));
+        if (hotelHall_imgs != null){
+            hotelHall_imgs.forEach(hotelHall_img -> hotelHall_imgModels.add(toModel(hotelHall_img)));
+        }
 
         return hotelHall_imgModels;
     }
@@ -68,9 +72,11 @@ public class HotelHall_ImgServiceImpl implements HotelHall_ImgService {
 
     private HotelHall_ImgModel toModel(HotelHall_IMG hotelHall_img){
         HotelHall_ImgModel hotelHall_imgModel = new HotelHall_ImgModel();
-        hotelHall_imgModel.setId(hotelHall_img.getId());
-        hotelHall_imgModel.setImg(new String(hotelHall_img.getImg(), StandardCharsets.UTF_8));
-        hotelHall_imgModel.setHotelHallId(hotelHall_img.getHotelHall().getId());
+        if (hotelHall_img != null){
+            hotelHall_imgModel.setId(hotelHall_img.getId());
+            hotelHall_imgModel.setImg(new String(hotelHall_img.getImg(), StandardCharsets.UTF_8));
+            hotelHall_imgModel.setHotelHallId(hotelHall_img.getHotelHall().getId());
+        }
 
         return hotelHall_imgModel;
     }

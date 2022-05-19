@@ -75,9 +75,12 @@ public class ObjectServiceImpl implements ObjectService {
     public List<ObjectModel> getByObjectType(ObjectType objectType) {
         List<ObjectModel> objectModels = new ArrayList<>();
 
-        for(Object object : objectType.getObjects()){
-            if(!object.getIsDeleted()){
-                objectModels.add(toModel(object));
+        List<Object> objects = objectType.getObjects();
+        if (objects != null){
+            for(Object object : objectType.getObjects()){
+                if(!object.getIsDeleted()){
+                    objectModels.add(toModel(object));
+                }
             }
         }
 
@@ -171,8 +174,12 @@ public class ObjectServiceImpl implements ObjectService {
         objectModel.setObjectTypeName(object.getObjectType().getName());
         objectModel.setNumberOfSeats(object.getNumberOfSeats());
         objectModel.setObjectTypeId(object.getObjectType().getId());
-        if (!object.getObjectOrders().isEmpty()){
-            objectModel.setObjectOrderModels(objectOrderService.convertToModels(object.getObjectOrders()));
+
+        List<ObjectOrder> objectOrders = object.getObjectOrders();
+        if (objectOrders != null){
+            if (!objectOrders.isEmpty()){
+                objectModel.setObjectOrderModels(objectOrderService.convertToModels(objectOrders));
+            }
         }
 
         return objectModel;

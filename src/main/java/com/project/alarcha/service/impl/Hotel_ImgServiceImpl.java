@@ -23,12 +23,14 @@ public class Hotel_ImgServiceImpl implements Hotel_ImgService {
     public List<Hotel_Img> uploadImages(List<Hotel_ImgModel> hotelImgModels) {
         List<Hotel_Img> hotelImgs = new ArrayList<>();
 
-        for (Hotel_ImgModel hotelImgModel : hotelImgModels){
-            Hotel_Img hallImg = new Hotel_Img();
-            hallImg.setImg(hotelImgModel.getImg().getBytes(StandardCharsets.UTF_8));
-            hallImg.setIsDeleted(false);
+        if (hotelImgModels != null){
+            for (Hotel_ImgModel hotelImgModel : hotelImgModels){
+                Hotel_Img hallImg = new Hotel_Img();
+                hallImg.setImg(hotelImgModel.getImg().getBytes(StandardCharsets.UTF_8));
+                hallImg.setIsDeleted(false);
 
-            hotelImgs.add(hallImg);
+                hotelImgs.add(hallImg);
+            }
         }
 
         return hotelImgs;
@@ -38,7 +40,11 @@ public class Hotel_ImgServiceImpl implements Hotel_ImgService {
     public List<Hotel_ImgModel> convertToModels(List<Hotel_Img> hotelImgs) {
         List<Hotel_ImgModel> hotelImgModels = new ArrayList<>();
 
-        hotelImgs.forEach(hotelImg -> hotelImgModels.add(toModel(hotelImg)));
+        if (hotelImgs != null){
+            if (!hotelImgs.isEmpty()){
+                hotelImgs.forEach(hotelImg -> hotelImgModels.add(toModel(hotelImg)));
+            }
+        }
 
         return hotelImgModels;
     }
@@ -69,9 +75,12 @@ public class Hotel_ImgServiceImpl implements Hotel_ImgService {
 
     private Hotel_ImgModel toModel(Hotel_Img hotelImg){
         Hotel_ImgModel hallImgModel = new Hotel_ImgModel();
-        hallImgModel.setId(hotelImg.getId());
-        hallImgModel.setImg(new String(hotelImg.getImg(), StandardCharsets.UTF_8));
-        hallImgModel.setHotelId(hotelImg.getId());
+
+        if (hotelImg != null){
+            hallImgModel.setId(hotelImg.getId());
+            hallImgModel.setImg(new String(hotelImg.getImg(), StandardCharsets.UTF_8));
+            hallImgModel.setHotelId(hotelImg.getId());
+        }
 
         return hallImgModel;
     }
