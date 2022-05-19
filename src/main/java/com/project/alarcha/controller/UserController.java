@@ -53,6 +53,11 @@ public class UserController {
         return new ResponseMessage<List<UserToSendModel>>().prepareSuccessMessage(userService.getAdmins());
     }
 
+    @GetMapping("/get-all")
+    public ResponseMessage<List<UserToSendModel>> getAllUsers(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
+        return new ResponseMessage<List<UserToSendModel>>().prepareSuccessMessage(userService.getAllUsersToSendModel(page));
+    }
+
     @GetMapping("/get/my-orders/{id}")
     public ResponseMessage<UserOrdersModel> getMyOrders(@PathVariable Long id){
         return new ResponseMessage<UserOrdersModel>().prepareSuccessMessage(userService.getUserOrdersModel(id));

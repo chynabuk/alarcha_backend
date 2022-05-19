@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserService {
     UserTokenModel authorization(UserAuthModel userAuthModel);
     UserToSendModel createUser(UserRegistrationModel userRegistrationModel);
-    List<UserToSendModel> getAllUsersToSendModel();
+    List<UserToSendModel> getAllUsersToSendModel(int page);
     User getByEmail(String email);
     User getCurrentUser();
     User getById(Long id);

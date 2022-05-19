@@ -111,27 +111,27 @@ public class RoomController {
     }
 
     @GetMapping("/order/get-all")
-    public ResponseMessage<List<RoomOrderModel>> getOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+    public ResponseMessage<List<RoomOrderModel>> getOrders(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
         return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getAll(page));
     }
 
     @GetMapping("/order/get-confirmed-or-declined")
-    public ResponseMessage<List<RoomOrderModel>> getConfirmedOrDeclinedOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+    public ResponseMessage<List<RoomOrderModel>> getConfirmedOrDeclinedOrders(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
         return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getConfirmedOrDeclinedOrders(page));
     }
 
     @GetMapping("/order/get-in-process")
-    public ResponseMessage<List<RoomOrderModel>> getInProcessOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+    public ResponseMessage<List<RoomOrderModel>> getInProcessOrders(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
         return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getInProcessOrders(page));
     }
 
     @GetMapping("/order/get-in-pay-check")
-    public ResponseMessage<List<RoomOrderModel>> getInPayCheck(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+    public ResponseMessage<List<RoomOrderModel>> getInPayCheck(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
         return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getInCheckPay(page));
     }
 
     @GetMapping("/order/get-paid")
-    public ResponseMessage<List<RoomOrderModel>> getPaid(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+    public ResponseMessage<List<RoomOrderModel>> getPaid(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
         return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getCheckedPay(page));
     }
 

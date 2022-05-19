@@ -18,6 +18,8 @@ import com.project.alarcha.service.RefreshTokenService;
 import com.project.alarcha.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -90,17 +92,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserToSendModel> getAllUsersToSendModel() {
-        List<User> users = userRepository.findAll()
-                .stream()
-                .filter(user -> !user.getIsDeleted())
-                .collect(Collectors.toList());
-
+    public List<UserToSendModel> getAllUsersToSendModel(int page) {
+        Page<User> users = userRepository.getAll(PageRequest.of(page, 10));
         List<UserToSendModel> userToSendModels = new ArrayList<>();
 
-        for (User user : users){
-            userToSendModels.add(initUserToSendModel(user));
-        }
+        users.forEach(user -> userToSendModels.add(initUserToSendModel(user)));
 
         return userToSendModels;
     }
@@ -117,19 +113,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(Long id) {
-        return userRepository.getById(id);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ApiFailException("User is not found"));
     }
 
     @Override
     public List<UserToSendModel> getAdmins() {
         List<UserToSendModel> userToSendModels = new ArrayList<>();
 
-        userRepository.findAll()
-                .stream()
-                .filter(user ->  !user.getIsDeleted() && user.getUserRole() == UserRole.ADMIN)
-                .collect(Collectors.toList())
-                    .forEach(user -> userToSendModels.add(initUserToSendModel(user)));
-
+        userRepository.getAdmins()
+                .forEach(user -> userToSendModels.add(initUserToSendModel(user)));
 
         return userToSendModels;
     }
