@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.sql.Time;
 import java.util.Date;
 
@@ -22,6 +24,8 @@ public class ObjectOrderModel extends BaseModel {
     private String objectTypeName;
     private Time startTime;
     private Time endTime;
+    @NotEmpty(message = "Обязательное поле для заполнения")
+    @Pattern(regexp = "^\\+\\d+ \\d+$", message = "Неправильный формат номера телефона")
     private String userPhone;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date startDate;

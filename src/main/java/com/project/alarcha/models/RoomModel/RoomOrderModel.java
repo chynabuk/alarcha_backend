@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @Getter
@@ -15,6 +17,7 @@ import java.util.Date;
 public class RoomOrderModel extends BaseModel {
     private Long roomId;
     private Long userId;
+    @NotEmpty(message = "Обязательное для заполнение поле")
     private String userFullName;
     private int roomNumber;
     private String roomType;
@@ -26,6 +29,7 @@ public class RoomOrderModel extends BaseModel {
     private String hotelName;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date expirationDate;
+    @Pattern(regexp = "^\\+\\d+ \\d+$", message = "Неправильный формат номера телефона")
     private String userPhone;
     private Float totalPrice;
     private String img;
