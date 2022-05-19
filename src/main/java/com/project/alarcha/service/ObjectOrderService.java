@@ -11,6 +11,7 @@ public interface ObjectOrderService {
     ObjectOrderPayModel pay(ObjectOrderPayModel objectOrderPayModel);
     ObjectOrderModel acceptOrder(Long orderId);
     ObjectOrderModel declineOrder(Long orderId);
+    ObjectOrderModel updateOrder(ObjectOrderModel objectOrderModel);
     ObjectOrderModel acceptPayOrder(Long orderId);
     List<ObjectOrderModel> getAll(int page);
     List<ObjectOrderModel> getInProcessOrders(int page);

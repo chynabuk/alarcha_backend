@@ -20,6 +20,9 @@ public class AdditionalServiceOrder extends BaseEntity {
     @Column(name = "registration_date", nullable = false)
     private Date registrationDate;
 
+    @Column(name = "expiration_date")
+    private Date expirationDate;
+
     @Column(name = "start_time", nullable = false)
     private Time startTime;
 
@@ -28,6 +31,9 @@ public class AdditionalServiceOrder extends BaseEntity {
 
     @Column(name = "full_name")
     private String fullName;
+
+    @Column(name = "total_price")
+    private Float totalPrice;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

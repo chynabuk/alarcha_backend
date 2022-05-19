@@ -30,6 +30,9 @@ public class ObjectOrder extends BaseEntity {
     @Column(name = "end_date")
     private Date endDate;
 
+    @Column(name = "expiration_date")
+    private Date expirationDate;
+
     @Column(name = "total_price")
     private Float totalPrice;
 

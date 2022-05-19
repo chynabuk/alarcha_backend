@@ -23,6 +23,9 @@ public class ObjectType extends BaseEntity {
     @Column(name = "price_per_hour")
     private Float pricePerHour;
 
+    @Column(name = "min_hours")
+    private Integer minHours;
+
     @OneToMany(mappedBy = "objectType", cascade = CascadeType.ALL)
     private List<MenuSection> menuSections;
 

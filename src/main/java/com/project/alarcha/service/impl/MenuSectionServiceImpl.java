@@ -64,7 +64,8 @@ public class MenuSectionServiceImpl implements MenuSectionService {
 
     @Override
     public MenuSectionModel getById(Long menuSectionId) {
-        MenuSection menuSection = menuSectionRepository.getById(menuSectionId);
+        MenuSection menuSection = getMenuSection(menuSectionId);
+
         return toModel(menuSection);
     }
 
@@ -77,6 +78,7 @@ public class MenuSectionServiceImpl implements MenuSectionService {
                 menuSectionModels.add(toModel(menuSection));
             }
         }
+
         return menuSectionModels;
     }
 
@@ -125,20 +127,18 @@ public class MenuSectionServiceImpl implements MenuSectionService {
 
     @Override
     public MenuSectionModel updateMenuSection(MenuSectionModel menuSectionModel) {
-        return null;
+        MenuSection menuSection = getMenuSection(menuSectionModel.getId());
+
+        setValuesOnUpdateMenuSection(menuSection, menuSectionModel);
+
+        menuSectionRepository.save(menuSection);
+
+        return menuSectionModel;
     }
 
     @Override
     public MenuSectionModel deleteMenuSection(Long menuSectionId) {
-        MenuSection menuSection = menuSectionRepository.getById(menuSectionId);
-
-        if(menuSection == null){
-            throw new ApiFailException("MenuSection is not found!");
-        }
-
-        if(menuSection.getIsDeleted()){
-            throw new ApiFailException("MenuSection is already deleted!");
-        }
+        MenuSection menuSection = getMenuSection(menuSectionId);
 
         for(Menu menu : menuSection.getMenus()){
             if(!menu.getIsDeleted()){
@@ -171,6 +171,26 @@ public class MenuSectionServiceImpl implements MenuSectionService {
         }
 
         return menuSection;
+    }
+
+    private MenuSection getMenuSection(Long menuSectionId){
+        MenuSection menuSection = menuSectionRepository
+                .findById(menuSectionId)
+                .orElseThrow(() -> new ApiFailException("MenuSection is not found!"));
+
+        if(menuSection.getIsDeleted()){
+            throw new ApiFailException("MenuSection is not found or deleted!");
+        }
+
+        return menuSection;
+    }
+
+    private void setValuesOnUpdateMenuSection(MenuSection menuSection, MenuSectionModel menuSectionModel){
+        String name = menuSectionModel.getName();
+
+        if(name != null){
+            menuSection.setName(name);
+        }
     }
 
     private MenuSectionModel toModel(MenuSection menuSection){

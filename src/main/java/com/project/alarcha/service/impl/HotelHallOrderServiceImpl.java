@@ -105,6 +105,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     public HotelHallOrderModel deleteOrder(Long id) {
         HotelHallOrder hotelHallOrder = getHotelHallOrder(id);
 
+        hotelHallOrder.setIsDeleted(true);
+
         hotelHallOrderRepository.save(hotelHallOrder);
 
         return toModel(hotelHallOrder);

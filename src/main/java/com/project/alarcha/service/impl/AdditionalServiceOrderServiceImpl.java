@@ -38,7 +38,7 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
 
     @Override
     public AdditionalServiceOrderModel acceptOrder(Long orderId) {
-        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(orderId);
+        AdditionalServiceOrder additionalServiceOrder = getAdditionalServiceOrder(orderId);
 
         if(additionalServiceOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             additionalServiceOrder.setOrderStatus(OrderStatus.CONFIRMED);
@@ -50,7 +50,7 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
 
     @Override
     public AdditionalServiceOrderModel declineOrder(Long orderId) {
-        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(orderId);
+        AdditionalServiceOrder additionalServiceOrder = getAdditionalServiceOrder(orderId);
 
         if(additionalServiceOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             additionalServiceOrder.setOrderStatus(OrderStatus.DECLINED);
@@ -66,40 +66,58 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
 
         for(AdditionalServiceOrder additionalServiceOrder : additionalServiceOrderRepository.findAll()){
             if(!additionalServiceOrder.getIsDeleted()){
+                if(isExpired(additionalServiceOrder.getExpirationDate())){
+                    additionalServiceOrder.setIsDeleted(true);
+                    additionalServiceOrderRepository.save(additionalServiceOrder);
+                }
+            }
+            if(!additionalServiceOrder.getIsDeleted()){
                 additionalServiceOrderModels.add(toModel(additionalServiceOrder));
             }
         }
+
         return additionalServiceOrderModels;
     }
 
     @Override
     public AdditionalServiceOrderModel getById(Long id) {
-        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(id);
-
-        if(additionalServiceOrder == null){
-            throw new ApiFailException("Additional service order is not found!");
-        }
-
-        if(additionalServiceOrder.getIsDeleted()){
-            throw new ApiFailException("Additional service order is deleted!");
-        }
+        AdditionalServiceOrder additionalServiceOrder = getAdditionalServiceOrder(id);
 
         return toModel(additionalServiceOrder);
     }
 
     @Override
     public AdditionalServiceOrderModel deleteOrder(Long orderId) {
-        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository.getById(orderId);
+        AdditionalServiceOrder additionalServiceOrder = getAdditionalServiceOrder(orderId);
 
-        if(additionalServiceOrder != null){
-            if(additionalServiceOrder.getIsDeleted()){
-                throw new ApiFailException("Additional service is already deleted!");
-            }
-            additionalServiceOrder.setIsDeleted(true);
-        }
+        additionalServiceOrder.setIsDeleted(true);
 
         additionalServiceOrderRepository.save(additionalServiceOrder);
+
         return toModel(additionalServiceOrder);
+    }
+
+    private AdditionalServiceOrder getAdditionalServiceOrder(Long id){
+        AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository
+                .findById(id)
+                .orElseThrow(() -> new ApiFailException("Additional service order is not found!"));
+
+        if(isExpired(additionalServiceOrder.getExpirationDate())){
+            additionalServiceOrder.setIsDeleted(true);
+            additionalServiceOrderRepository.save(additionalServiceOrder);
+        }
+
+        if(additionalServiceOrder.getIsDeleted()){
+            throw new ApiFailException("Additional service order is not found or deleted!");
+        }
+
+        return additionalServiceOrder;
+    }
+
+    private boolean isExpired(Date expiredDate){
+        Date currentDate = new Date();
+
+        return currentDate.after(expiredDate);
     }
 
     private AdditionalServiceOrder initAndGetAdditionalServiceOrder(AdditionalServiceOrderModel additionalServiceOrderModel){
@@ -111,43 +129,28 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
         checkStock(additionalService);
         checkAdditionalServiceOrderTime(additionalServiceOrderModel);
 
+        Float price = additionalService.getPrice();
+        Float priceForNextHours = additionalService.getPriceForNextHours();
+        Time startTime = additionalServiceOrderModel.getStartTime();
+        Time endTime = additionalServiceOrderModel.getEndTime();
+
         additionalServiceOrder.setUser(user);
         additionalServiceOrder.setFullName(user.getFirstName() + " " + user.getLastName());
-        additionalServiceOrder.setIsDeleted(false);
         additionalServiceOrder.setAdditionalService(additionalService);
         additionalServiceOrder.setRegistrationDate(additionalServiceOrderModel.getRegistrationDate());
-        additionalServiceOrder.setStartTime(additionalServiceOrderModel.getStartTime());
-        additionalServiceOrder.setEndTime(additionalServiceOrderModel.getEndTime());
+        additionalServiceOrder.setStartTime(startTime);
+        additionalServiceOrder.setEndTime(endTime);
 
-        checkTime(additionalServiceOrder);
+        Date expirationDate = new Date();
+        Date registrationDate = additionalServiceOrder.getRegistrationDate();
+        expirationDate.setDate(registrationDate.getDate() + 3);
+        additionalServiceOrder.setExpirationDate(expirationDate);
 
+        additionalServiceOrder.setTotalPrice(getTotalPrice(price, priceForNextHours, startTime, endTime));
         additionalServiceOrder.setOrderStatus(OrderStatus.IN_PROCESS);
+        additionalServiceOrder.setIsDeleted(false);
 
         return additionalServiceOrder;
-    }
-
-    private void checkTime(AdditionalServiceOrder additionalServiceOrder){
-        Time startTime = additionalServiceOrder.getStartTime();
-        Time endTime = additionalServiceOrder.getEndTime();
-
-        if(endTime == null){
-            Time eTime;
-            Time tempTime = new Time(0);
-            tempTime.setHours(startTime.getHours() + 4);
-            eTime = tempTime;
-            additionalServiceOrder.setEndTime(eTime);
-        }
-        else if(endTime != null){
-            if (endTime.compareTo(startTime) <= 0){
-                throw new ApiFailException("endTime must be greater than startTime");
-            }
-
-            int hours = endTime.getHours() - startTime.getHours();
-
-            if(hours < 4){
-                throw new ApiFailException("You can't order additional service for less than 4 hours!");
-            }
-        }
     }
 
     private void checkStock(AdditionalService additionalService){
@@ -162,10 +165,17 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
         }
     }
 
+    private Float getTotalPrice(Float price, Float priceForNextHours, Time startTime, Time endTime){
+        int hours = endTime.getHours() - startTime.getHours();
+
+        return (hours - 1) * priceForNextHours + price;
+    }
+
     private void checkAdditionalServiceOrderTime(AdditionalServiceOrderModel additionalServiceOrderModel){
         Time currentTime = Time.valueOf(LocalTime.now());
 
         Time startTime = additionalServiceOrderModel.getStartTime();
+        Time endTime = additionalServiceOrderModel.getEndTime();
         Date registrationDate = additionalServiceOrderModel.getRegistrationDate();
 
         if(startTime == null || registrationDate == null){
@@ -193,6 +203,25 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
 
         if(registrationDate.equals(currentDate) && startTime.before(currentTime)){
             throw new ApiFailException("startTime can not be less than currentTime");
+        }
+
+        if(endTime == null){
+            Time eTime;
+            Time tempTime = new Time(0);
+            tempTime.setHours(startTime.getHours() + 4);
+            eTime = tempTime;
+            additionalServiceOrderModel.setEndTime(eTime);
+        }
+        else if(endTime != null){
+            if (endTime.compareTo(startTime) <= 0){
+                throw new ApiFailException("endTime must be greater than startTime");
+            }
+
+            int hours = endTime.getHours() - startTime.getHours();
+
+            if(hours < 4){
+                throw new ApiFailException("You can't order additional service for less than 4 hours!");
+            }
         }
     }
 

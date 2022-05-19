@@ -2,12 +2,14 @@ package com.project.alarcha.controller;
 
 import com.project.alarcha.models.MenuModel.MenuModel;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
+import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.service.MenuSectionService;
 import com.project.alarcha.service.MenuService;
 import com.project.alarcha.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -49,6 +51,11 @@ public class MenuController {
         return new ResponseMessage<MenuSectionModel>().prepareSuccessMessage(menuSectionService.getById(menuSectionId));
     }
 
+    @PutMapping("/section/update")
+    public ResponseMessage<MenuSectionModel> updateMenuSection(@Valid @RequestBody MenuSectionModel menuSectionModel) {
+        return new ResponseMessage<MenuSectionModel>().prepareSuccessMessage(menuSectionService.updateMenuSection(menuSectionModel));
+    }
+
     @PostMapping("/create")
     public ResponseMessage<MenuModel> createMenu(@RequestBody MenuModel menuModel){
         return new ResponseMessage<MenuModel>().prepareSuccessMessage(menuService.createMenu(menuModel));
@@ -67,5 +74,10 @@ public class MenuController {
     @GetMapping("/get/{menuId}")
     public ResponseMessage<MenuModel> getMenu(@PathVariable Long menuId){
         return new ResponseMessage<MenuModel>().prepareSuccessMessage(menuService.getById(menuId));
+    }
+
+    @PutMapping("/update")
+    public ResponseMessage<MenuModel> updateMenu(@Valid @RequestBody MenuModel menuModel) {
+        return new ResponseMessage<MenuModel>().prepareSuccessMessage(menuService.updateMenu(menuModel));
     }
 }
