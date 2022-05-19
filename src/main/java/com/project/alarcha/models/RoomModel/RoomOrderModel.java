@@ -29,4 +29,5 @@ public class RoomOrderModel extends BaseModel {
     private String userPhone;
     private Float totalPrice;
     private String img;
+    private int totalPage;
 }

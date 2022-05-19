@@ -7,14 +7,14 @@ import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
 import com.project.alarcha.models.ObjectModel.ObjectOrderPayModel;
-import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.ObjectOrderRepository;
 import com.project.alarcha.repositories.ObjectRepository;
 import com.project.alarcha.service.EmailSenderService;
 import com.project.alarcha.service.ObjectOrderService;
-import com.project.alarcha.service.ObjectService;
 import com.project.alarcha.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -100,22 +100,27 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
-    public List<ObjectOrderModel> getAll() {
+    public List<ObjectOrderModel> getAll(int page) {
+        Page<ObjectOrder> objectOrders = objectOrderRepository.findAll(PageRequest.of(page, 10));
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
 
-        for(ObjectOrder objectOrder : objectOrderRepository.findAll()){
+        for(ObjectOrder objectOrder : objectOrders){
             if(!objectOrder.getIsDeleted()){
                 objectOrderModels.add(toModel(objectOrder));
             }
         }
+        ObjectOrderModel objectOrderModel = new ObjectOrderModel();
+        objectOrderModel.setTotalPage(objectOrders.getTotalPages());
+        objectOrderModels.add(objectOrderModel);
         return objectOrderModels;
     }
 
     @Override
-    public List<ObjectOrderModel> getInProcessOrders() {
+    public List<ObjectOrderModel> getInProcessOrders(int page) {
+        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
 
-        for (ObjectOrder objectOrder : objectOrderRepository.findAll()){
+        for (ObjectOrder objectOrder : objectOrders){
             if (!objectOrder.getIsDeleted()){
                 if (objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
                     objectOrderModels.add(toModel(objectOrder));
@@ -127,10 +132,11 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
-    public List<ObjectOrderModel> getConfirmedOrDeclinedOrders() {
+    public List<ObjectOrderModel> getConfirmedOrDeclinedOrders(int page) {
+        Page<ObjectOrder> objectOrders = objectOrderRepository.findAll(PageRequest.of(page, 10));
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
 
-        for (ObjectOrder objectOrder : objectOrderRepository.findAll()){
+        for (ObjectOrder objectOrder : objectOrders){
             if (!objectOrder.getIsDeleted()){
                 if (
                         objectOrder.getOrderStatus() == OrderStatus.CONFIRMED
@@ -141,15 +147,19 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 }
             }
         }
+        ObjectOrderModel objectOrderModel = new ObjectOrderModel();
+        objectOrderModel.setTotalPage(objectOrders.getTotalPages());
+        objectOrderModels.add(objectOrderModel);
 
         return objectOrderModels;
     }
 
     @Override
-    public List<ObjectOrderModel> getInCheckPay() {
+    public List<ObjectOrderModel> getInCheckPay(int page) {
+        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
 
-        for (ObjectOrder objectOrder : objectOrderRepository.findAll()){
+        for (ObjectOrder objectOrder : objectOrders){
             if (!objectOrder.getIsDeleted()){
                 if (objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
                     objectOrderModels.add(toModel(objectOrder));
@@ -161,10 +171,11 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
-    public List<ObjectOrderModel> getCheckedPay() {
+    public List<ObjectOrderModel> getCheckedPay(int page) {
+        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
 
-        for (ObjectOrder objectOrder : objectOrderRepository.findAll()){
+        for (ObjectOrder objectOrder : objectOrders){
             if (!objectOrder.getIsDeleted()){
                 if (objectOrder.getOrderStatus() == OrderStatus.PAID){
                     objectOrderModels.add(toModel(objectOrder));
@@ -312,7 +323,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 if( (registrationDate.getYear() == objectOrder.getStartDate().getYear() && registrationDate.getMonth() == objectOrder.getStartDate().getMonth()
                 && registrationDate.getDay() == objectOrder.getStartDate().getDay())
                 ){
-                    if(objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                    OrderStatus orderStatus = objectOrder.getOrderStatus();
+                    if(orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                         Time rSTime = objectOrder.getStartTime();
                         Time rETime = objectOrder.getEndTime();
 
@@ -358,7 +370,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         for (ObjectOrder objectOrder : objectOrders){
             if (objectOrderModel.getObjectId() == objectOrder.getObject().getId()){
-                if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                OrderStatus orderStatus = objectOrder.getOrderStatus();
+                if (orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                     Date rSDate = objectOrder.getStartDate();
                     Date rEDate = objectOrder.getEndDate();
                     if (

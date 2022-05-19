@@ -1,13 +1,11 @@
 package com.project.alarcha.service.impl;
 
-import com.project.alarcha.entities.HotelHall;
-import com.project.alarcha.entities.HotelHallOrder;
-import com.project.alarcha.entities.ObjectOrder;
-import com.project.alarcha.entities.User;
+import com.project.alarcha.entities.*;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.models.HotelModel.HotelHallOrderPayModel;
+import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.HotelHallOrderRepository;
 import com.project.alarcha.repositories.HotelHallsRepository;
 import com.project.alarcha.service.EmailSenderService;
@@ -16,6 +14,8 @@ import com.project.alarcha.service.HotelHallService;
 import com.project.alarcha.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -111,85 +111,33 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     }
 
     @Override
-    public List<HotelHallOrderModel> getAll() {
-        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
-
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
-            if (!hotelHallOrder.getIsDeleted()){
-                if (isExpired(hotelHallOrder.getExpirationDate())){
-                    hotelHallOrder.setIsDeleted(true);
-                    hotelHallOrderRepository.save(hotelHallOrder);
-                }
-            }
-            if (!hotelHallOrder.getIsDeleted()){
-                hotelHallOrderModels.add(toModel(hotelHallOrder));
-            }
-        }
-        return hotelHallOrderModels;
+    public List<HotelHallOrderModel> getAll(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getAll(PageRequest.of(page, 10));
+        return getModelListFrom(hotelHallOrders);
     }
 
     @Override
-    public List<HotelHallOrderModel> getInProcessOrders() {
-        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
-
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
-            if (!hotelHallOrder.getIsDeleted()){
-                if (hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
-                    hotelHallOrderModels.add(toModel(hotelHallOrder));
-                }
-            }
-        }
-
-        return hotelHallOrderModels;
+    public List<HotelHallOrderModel> getInProcessOrders(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getInProcessOrders(PageRequest.of(page, 10));
+        return getModelListFrom(hotelHallOrders);
     }
 
     @Override
-    public List<HotelHallOrderModel> getConfirmedOrDeclinedOrders() {
-        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
-
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
-            if (!hotelHallOrder.getIsDeleted()){
-                if (
-                        hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED
-                        || hotelHallOrder.getOrderStatus() == OrderStatus.DECLINED
-                        || hotelHallOrder.getOrderStatus() == OrderStatus.PAID
-                ){
-                    hotelHallOrderModels.add(toModel(hotelHallOrder));
-                }
-            }
-        }
-
-        return hotelHallOrderModels;
+    public List<HotelHallOrderModel> getConfirmedOrDeclinedOrders(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getConfirmedOrDeclinedOrders(PageRequest.of(page, 10));
+        return getModelListFrom(hotelHallOrders);
     }
 
     @Override
-    public List<HotelHallOrderModel> getInCheckPay() {
-        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
-
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
-            if (!hotelHallOrder.getIsDeleted()){
-                if (hotelHallOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
-                    hotelHallOrderModels.add(toModel(hotelHallOrder));
-                }
-            }
-        }
-
-        return hotelHallOrderModels;
+    public List<HotelHallOrderModel> getInCheckPay(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getInCheckPay(PageRequest.of(page, 10));
+        return getModelListFrom(hotelHallOrders);
     }
 
     @Override
-    public List<HotelHallOrderModel> getCheckedPay() {
-        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
-
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
-            if (!hotelHallOrder.getIsDeleted()){
-                if (hotelHallOrder.getOrderStatus() == OrderStatus.PAID){
-                    hotelHallOrderModels.add(toModel(hotelHallOrder));
-                }
-            }
-        }
-
-        return hotelHallOrderModels;
+    public List<HotelHallOrderModel> getCheckedPay(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getCheckedPay(PageRequest.of(page, 10));
+        return getModelListFrom(hotelHallOrders);
     }
 
     @Override
@@ -322,7 +270,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 if( (startDate.getYear() == hotelHallOrder.getStartDate().getYear() && startDate.getMonth() == hotelHallOrder.getStartDate().getMonth()
                         && startDate.getDate() == hotelHallOrder.getStartDate().getDate())
                 ){
-                    if(hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                    OrderStatus orderStatus = hotelHallOrder.getOrderStatus();
+                    if(orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                         Time rSTime = hotelHallOrder.getStartTime();
                         Time rETime = hotelHallOrder.getEndTime();
 
@@ -369,5 +318,29 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
             hotelHallOrderModel.setImg(new String(hotelHallOrder.getImgOfCheck(), StandardCharsets.UTF_8));
         }
         return hotelHallOrderModel;
+    }
+
+    private List<HotelHallOrderModel> getModelListFrom(Page<HotelHallOrder> hotelHallOrders){
+        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
+
+        int countExpiredOrder = 0;
+        for (HotelHallOrder hotelHallOrder : hotelHallOrders){
+            if (isExpired(hotelHallOrder.getExpirationDate())){
+                hotelHallOrder.setIsDeleted(true);
+                hotelHallOrderRepository.save(hotelHallOrder);
+                countExpiredOrder++;
+            }
+            hotelHallOrderModels.add(toModel(hotelHallOrder));
+        }
+
+        if (countExpiredOrder > 0){
+            throw new ApiFailException("Обновите страницу");
+        }
+
+        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+        hotelHallOrderModels.add(hotelHallOrderModel);
+
+        return hotelHallOrderModels;
     }
 }

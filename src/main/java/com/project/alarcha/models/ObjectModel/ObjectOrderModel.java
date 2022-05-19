@@ -29,4 +29,5 @@ public class ObjectOrderModel extends BaseModel {
     private Date endDate;
     private OrderStatus orderStatus;
     private String img;
+    private int totalPage;
 }
