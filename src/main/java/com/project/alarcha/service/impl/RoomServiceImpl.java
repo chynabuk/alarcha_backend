@@ -195,7 +195,9 @@ public class RoomServiceImpl implements RoomService {
         roomModel.setHotelName(room.getRoomType().getHotel().getHotelName());
         roomModel.setRoomTypeName(room.getRoomType().getType());
         if (room.getRoomOrders() != null){
-            roomModel.setRoomOrderModels(roomOrderService.convertToModels(room.getRoomOrders()));
+            if(!room.getRoomOrders().isEmpty()){
+                roomModel.setRoomOrderModels(roomOrderService.convertToModels(room.getRoomOrders()));
+            }
         }
         return roomModel;
     }
