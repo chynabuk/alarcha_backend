@@ -145,7 +145,11 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
         objectOrders.forEach(objectOrder -> {
             if (!objectOrder.getIsDeleted()) {
-                if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                if (
+                        objectOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                        ||objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK
+                        ||objectOrder.getOrderStatus() == OrderStatus.PAID
+                ){
                     objectOrderModels.add(toModel(objectOrder));
                 }
             }

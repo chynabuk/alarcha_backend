@@ -154,7 +154,11 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         List<RoomOrderModel> roomOrderModels = new ArrayList<>();
         roomOrders.forEach(roomOrder -> {
             if (!roomOrder.getIsDeleted()) {
-                if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED)
+                if (
+                        roomOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                        || roomOrder.getOrderStatus() == OrderStatus.CHECK_CHECK
+                        || roomOrder.getOrderStatus() == OrderStatus.PAID
+                )
                     roomOrderModels.add(toModel(roomOrder));
             }
         });

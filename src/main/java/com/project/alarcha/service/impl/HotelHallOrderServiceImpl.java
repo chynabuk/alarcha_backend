@@ -154,7 +154,11 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
         hotelHallOrders.forEach(hotelHallOrder -> {
             if (!hotelHallOrder.getIsDeleted()) {
-                if (hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                if (
+                        hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                        ||hotelHallOrder.getOrderStatus() == OrderStatus.CHECK_CHECK
+                        ||hotelHallOrder.getOrderStatus() == OrderStatus.PAID
+                ){
                     hotelHallOrderModels.add(toModel(hotelHallOrder));
                 }
             }
