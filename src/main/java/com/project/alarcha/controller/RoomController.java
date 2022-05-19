@@ -30,6 +30,11 @@ public class RoomController {
         return new ResponseMessage<RoomTypeModel>().prepareSuccessMessage(roomTypeService.createRoomType(roomTypeModel));
     }
 
+    @PutMapping("/type/update")
+    public ResponseMessage<RoomTypeModel> updateRoomType(@RequestBody RoomTypeModel roomTypeModel){
+        return new ResponseMessage<RoomTypeModel>().prepareSuccessMessage(roomTypeService.updateRoomType(roomTypeModel));
+    }
+
     @DeleteMapping("/type/delete/{roomTypeId}")
     public ResponseMessage<RoomTypeModel> deleteRoomType(@PathVariable Long roomTypeId){
         return new ResponseMessage<RoomTypeModel>().prepareSuccessMessage(roomTypeService.deleteRoomType(roomTypeId));
@@ -58,6 +63,11 @@ public class RoomController {
     @PostMapping("/create")
     public ResponseMessage<RoomModel> createRoom(@RequestBody RoomModel roomModel){
         return new ResponseMessage<RoomModel>().prepareSuccessMessage(roomService.createRoom(roomModel));
+    }
+
+    @PutMapping("/update")
+    public ResponseMessage<RoomModel> updateRoom(@RequestBody RoomModel roomModel){
+        return new ResponseMessage<RoomModel>().prepareSuccessMessage(roomService.updateRoom(roomModel));
     }
 
     @DeleteMapping("/delete/{roomId}")

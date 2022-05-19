@@ -9,7 +9,7 @@ import java.util.List;
 public interface NatureService {
     NatureModel createNature(NatureModel natureModel);
     NatureModel deleteNature(Long natureId);
-    NatureModel updateNature(Long natureId);
+    NatureModel updateNature(NatureModel natureModel);
     NatureModel getById(Long natureId);
     List<NatureModel> getAll();
     List<NatureModel> getForList();

@@ -25,6 +25,11 @@ public class NatureController {
         return new ResponseMessage<NatureTypeModel>().prepareSuccessMessage(natureTypeService.createNatureType(natureTypeModel));
     }
 
+    @PutMapping("/type/update")
+    public ResponseMessage<NatureTypeModel> updateNatureType(@RequestBody NatureTypeModel natureTypeModel){
+        return new ResponseMessage<NatureTypeModel>().prepareSuccessMessage(natureTypeService.updateNatureType(natureTypeModel));
+    }
+
     @PostMapping("/type/create-flora-and-fauna")
     public ResponseMessage<List<NatureTypeModel>> createFloraAndFauna(){
         return new ResponseMessage<List<NatureTypeModel>>().prepareSuccessMessage(natureTypeService.createFloraAndFauna());
@@ -54,6 +59,11 @@ public class NatureController {
     @PostMapping("/create")
     public ResponseMessage<NatureModel> createNature(@RequestBody NatureModel natureModel){
         return new ResponseMessage<NatureModel>().prepareSuccessMessage(natureService.createNature(natureModel));
+    }
+
+    @PutMapping("/update")
+    public ResponseMessage<NatureModel> updateNature(@RequestBody NatureModel natureModel){
+        return new ResponseMessage<NatureModel>().prepareSuccessMessage(natureService.updateNature(natureModel));
     }
 
     @DeleteMapping("/delete/{id}")

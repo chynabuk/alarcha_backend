@@ -132,7 +132,19 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     @Override
     public RoomTypeModel updateRoomType(RoomTypeModel roomTypeModel) {
-        return null;
+        RoomType roomType = getRoomType(roomTypeModel.getId());
+        String type = roomTypeModel.getType();
+        Float price = roomTypeModel.getPrice();
+
+        if (type != null || !type.isEmpty()){
+            roomType.setType(type);
+        }
+        if (price != null){
+            roomType.setPrice(price);
+        }
+
+        roomTypeRepository.save(roomType);
+        return roomTypeModel;
     }
 
     @Override

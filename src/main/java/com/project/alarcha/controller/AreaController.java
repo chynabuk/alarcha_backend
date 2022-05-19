@@ -19,6 +19,11 @@ public class AreaController {
         return new ResponseMessage<AreaModel>().prepareSuccessMessage(areaService.createArea(areaCreateModel));
     }
 
+    @PutMapping("/update")
+    public ResponseMessage<AreaModel> updateArea(@RequestBody AreaModel areaCreateModel){
+        return new ResponseMessage<AreaModel>().prepareSuccessMessage(areaService.updateArea(areaCreateModel));
+    }
+
     @GetMapping("/get-all")
     public ResponseMessage<List<AreaModel>> getAll(){
         return new ResponseMessage<List<AreaModel>>().prepareSuccessMessage(areaService.getAll());

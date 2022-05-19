@@ -175,13 +175,15 @@ public class RoomServiceImpl implements RoomService {
     }
 
     private void setValuesOnUpdateRoom(Room room, RoomModel roomModel){
-//        RoomType roomType = roomModel.getRoomType();
-//        if (roomType != null){
-//            room.setRoomType(roomModel.getRoomType());
-//        }
-//        if (price != null){
-//            room.setPrice(roomModel.getPrice());
-//        }
+        Integer roomNumber = roomModel.getRoomNumber();
+        Integer bedNumber = roomModel.getBedNumber();
+
+        if (roomNumber != null){
+            room.setRoomNumber(roomNumber);
+        }
+        if (bedNumber != null){
+            room.setBedNumber(bedNumber);
+        }
     }
 
     private RoomModel toModel(Room room){

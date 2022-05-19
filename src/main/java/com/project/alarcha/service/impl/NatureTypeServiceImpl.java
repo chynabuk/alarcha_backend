@@ -93,7 +93,17 @@ public class NatureTypeServiceImpl implements NatureTypeService {
 
     @Override
     public NatureTypeModel updateNatureType(NatureTypeModel natureTypeModel) {
-        return null;
+        NatureType natureType = getNatureType(natureTypeModel.getId());
+
+        String type = natureTypeModel.getType();
+
+        if (type != null){
+            natureType.setType(type);
+        }
+
+        natureTypeRepository.save(natureType);
+
+        return natureTypeModel;
     }
 
     @Override

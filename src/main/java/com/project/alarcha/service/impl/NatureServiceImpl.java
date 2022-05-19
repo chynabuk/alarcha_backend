@@ -46,8 +46,26 @@ public class NatureServiceImpl implements NatureService {
     }
 
     @Override
-    public NatureModel updateNature(Long natureId) {
-        return null;
+    public NatureModel updateNature(NatureModel natureModel) {
+        Nature nature = getNatureById(natureModel.getId());
+
+        String name = natureModel.getName();
+        String description = natureModel.getDescription();
+        String img = natureModel.getImg();
+
+        if (name != null){
+            nature.setName(name);
+        }
+        if (description != null){
+            nature.setDescription(description);
+        }
+        if (img != null){
+            nature.setPhoto(img.getBytes(StandardCharsets.UTF_8));
+        }
+
+        natureRepository.save(nature);
+
+        return natureModel;
     }
 
     @Override

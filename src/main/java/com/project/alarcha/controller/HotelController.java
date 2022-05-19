@@ -19,6 +19,11 @@ public class HotelController {
         return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.createHotel(hotelModel));
     }
 
+    @PutMapping("/update")
+    public ResponseMessage<HotelModel> updateHotel(@RequestBody HotelModel hotelModel){
+        return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.updateHotel(hotelModel));
+    }
+
     @GetMapping("/get-all")
     public ResponseMessage<List<HotelModel>> getAll(){
         return new ResponseMessage<List<HotelModel>>().prepareSuccessMessage(hotelService.getAll());

@@ -25,6 +25,11 @@ public class HotelHallController {
         return new ResponseMessage<HotelHallModel>().prepareSuccessMessage(hotelHallService.createHotelHall(hotelHallModel));
     }
 
+    @PutMapping("/update")
+    public ResponseMessage<HotelHallModel> updateHotelHall(@RequestBody HotelHallModel hotelHallModel){
+        return new ResponseMessage<HotelHallModel>().prepareSuccessMessage(hotelHallService.updateHotelHall(hotelHallModel));
+    }
+
     @DeleteMapping("/delete/{hotelHallId}")
     public ResponseMessage<HotelHallModel> deleteHotelHall(@PathVariable Long hotelHallId){
         return new ResponseMessage<HotelHallModel>().prepareSuccessMessage(hotelHallService.deleteHotelHall(hotelHallId));

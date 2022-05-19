@@ -57,18 +57,12 @@ public class AreaServiceImpl implements AreaService {
     public AreaModel deleteArea(Long areaId) {
         Area area = getAreaById(areaId);
 
-        if (area != null){
-            if (area.getIsDeleted()){
-                throw new ApiFailException("Area is already deleted");
-            }
-            deleteHotelDepended(area.getHotels());
+        deleteHotelDepended(area.getHotels());
 
-            deleteObjectTypeDepended(area.getObjectTypes());
+        deleteObjectTypeDepended(area.getObjectTypes());
 
-            area.setIsDeleted(true);
+        area.setIsDeleted(true);
 
-
-        }
         areaRepository.save(area);
 
         return toModel(area);
@@ -86,7 +80,12 @@ public class AreaServiceImpl implements AreaService {
 
     @Override
     public Area getAreaById(Long areaId) {
-        return areaRepository.getById(areaId);
+        Area area = areaRepository.findById(areaId)
+                .orElseThrow(() -> new ApiFailException("Area is not found"));
+        if (area.getIsDeleted()){
+            throw new ApiFailException("Area is deleted or not found");
+        }
+        return area;
     }
 
     @Override
@@ -169,19 +168,21 @@ public class AreaServiceImpl implements AreaService {
 
     private void setValuesOnUpdateArea(Area area, AreaModel areaModel){
         String areaName = areaModel.getAreaName();
-        User user = userService.getByEmail(areaModel.getEmail());
-//        List<Hotel> hotels = areaModel.getHotels();
-//        List<Object> objects = areaModel.getObjects();
 
         if (areaName != null){
             area.setAreaName(areaName);
         }
 
-        if (user != null){
-            if (!user.getIsDeleted() && user.getUserRole() == UserRole.ADMIN){
-                area.setUser(user);
+        if (areaModel.getEmail() != null){
+            User user = userService.getByEmail(areaModel.getEmail());
+            if (user != null){
+                if (!user.getIsDeleted() && user.getUserRole() == UserRole.ADMIN){
+                    area.setUser(user);
+                }
             }
         }
+
+
     }
 
     private AreaModel toModel(Area area){

@@ -118,7 +118,6 @@ public class HotelHallServiceImpl implements HotelHallService {
     public HotelHallModel updateHotelHall(HotelHallModel hotelHallModel) {
         HotelHall hotel = getHotelHall(hotelHallModel.getId());
         setValuesOnUpdateHotelHall(hotel, hotelHallModel);
-
         hotelHallsRepository.save(hotel);
 
         return hotelHallModel;
@@ -180,8 +179,23 @@ public class HotelHallServiceImpl implements HotelHallService {
     }
 
     private void setValuesOnUpdateHotelHall(HotelHall hotelHall, HotelHallModel hotelHallModel){
-        hotelHall.setName(hotelHallModel.getName());
-        hotelHall.setPrice(hotelHallModel.getPrice());
+        String name = hotelHallModel.getName();
+        Float price = hotelHallModel.getPrice();
+        Float priceForNextHours = hotelHallModel.getPriceForNextHours();
+        Integer numberOfSeats = hotelHallModel.getNumberOfSeats();
+
+        if (name != null){
+            hotelHall.setName(name);
+        }
+        if (price != null){
+            hotelHall.setPrice(price);
+        }
+        if (priceForNextHours != null){
+            hotelHall.setPriceForNextHours(priceForNextHours);
+        }
+        if (numberOfSeats != null){
+            hotelHall.setNumberOfSeats(numberOfSeats);
+        }
     }
 
     private HotelHallModel toModel(HotelHall hotelHall){

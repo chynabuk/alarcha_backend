@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface RoomOrderService {
     RoomOrderModel order(RoomOrderModel roomOrderModel);
+    RoomOrderModel update(RoomOrderModel roomOrderModel);
     RoomOrderPayModel pay(RoomOrderPayModel roomOrderPayModel);
     RoomOrderModel acceptOrder(Long orderId);
     RoomOrderModel declineOrder(Long orderId);

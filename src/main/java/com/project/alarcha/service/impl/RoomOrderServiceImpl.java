@@ -46,6 +46,13 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     }
 
     @Override
+    public RoomOrderModel update(RoomOrderModel roomOrderModel) {
+        RoomOrder roomOrder = getRoomOrder(roomOrderModel.getId());
+
+        return null;
+    }
+
+    @Override
     public RoomOrderPayModel pay(RoomOrderPayModel roomOrderPayModel) {
         RoomOrder roomOrder = getRoomOrder(roomOrderPayModel.getRoomOrderId());
 
@@ -198,9 +205,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         roomOrder.setStartDate(startDate);
         roomOrder.setEndDate(endDate);
-        Date expirationDate = new Date();
-        expirationDate.setDate(startDate.getDate() + 3);
-        roomOrder.setExpirationDate(expirationDate);
+        roomOrder.setExpirationDate(setAndGetExpirationDate(startDate));
         roomOrder.setTotalPrice(getTotalPrice(price, startDate, endDate));
         roomOrder.setOrderStatus(OrderStatus.IN_PROCESS);
 
@@ -212,6 +217,13 @@ public class RoomOrderServiceImpl implements RoomOrderService {
                         "http://localhost:8080/admin/book-room");
 
         return roomOrder;
+    }
+
+    private Date setAndGetExpirationDate(Date startDate){
+        Date expirationDate = new Date();
+        expirationDate.setDate(startDate.getDate() + 3);
+
+        return expirationDate;
     }
 
     private Float getTotalPrice(Float price, Date startDate, Date endDate){
