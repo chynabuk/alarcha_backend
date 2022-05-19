@@ -13,9 +13,9 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class ReplyToUserMessageModel extends BaseModel {
     private Long userFeedBackId;
-    @NotEmpty(message = "Поле должно быть заполнено")
-    @Length(max = 150, message = "Слишком длинное поле")
+//    @NotEmpty(message = "Поле должно быть заполнено")
+//    @Length(max = 150, message = "Слишком длинное поле")
     private String subject;
-    @NotEmpty(message = "Поле должно быть заполнено")
+//    @NotEmpty(message = "Поле должно быть заполнено")
     private String body;
 }

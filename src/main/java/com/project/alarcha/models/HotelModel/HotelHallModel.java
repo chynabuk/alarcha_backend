@@ -12,15 +12,15 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class HotelHallModel extends BaseModel {
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private String name;
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private Float price;
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private Float priceForNextHours;
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private Integer numberOfSeats;
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private String hotelName;
     private Long hotelId;
     private String img;

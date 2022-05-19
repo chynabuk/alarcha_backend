@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class MenuSectionModel extends BaseModel {
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private String name;
     private List<MenuModel> menuModels;
     private Long objectTypeId;

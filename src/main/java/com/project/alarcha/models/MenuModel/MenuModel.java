@@ -11,11 +11,11 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 @NoArgsConstructor
 public class MenuModel extends BaseModel {
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private String name;
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private Float price;
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private String description;
     private Long menuSectionId;
     private String objectTypeName;

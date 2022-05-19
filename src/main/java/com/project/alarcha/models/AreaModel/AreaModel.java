@@ -16,10 +16,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class AreaModel extends BaseModel {
-    @NotEmpty(message = "Поле должно быть обязательно заполнено")
+//    @NotEmpty(message = "Поле должно быть обязательно заполнено")
     private String areaName;
-    @Email
-    @NotEmpty(message = "Email должен быть заполнен")
+//    @Email
+//    @NotEmpty(message = "Email должен быть заполнен")
     private String email;
     private List<ObjectTypeModel> objectTypeModels;
     private List<HotelModel> hotelModels;

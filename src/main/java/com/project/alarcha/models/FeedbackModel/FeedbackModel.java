@@ -15,12 +15,11 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 @NoArgsConstructor
 public class FeedbackModel extends BaseModel {
-    @NotEmpty(message = "Email должен быть обязательно заполнен")
-    @Email(message = "Введите правильный формат email")
+//    @Email(message = "Введите правильный формат email")
     private String email;
-    @NotEmpty(message = "Имя должно быть обязательно заполнено")
-    @Length(max = 50, message = "Имя слишком длинное, должно быть не более 50 символов")
+//    @NotEmpty(message = "Имя должно быть обязательно заполнено")
+//    @Length(max = 50, message = "Имя слишком длинное, должно быть не более 50 символов")
     private String name;
-    @NotEmpty(message = "Сообщение должно быть обязательно заполнено")
+//    @NotEmpty(message = "Сообщение должно быть обязательно заполнено")
     private String message;
 }

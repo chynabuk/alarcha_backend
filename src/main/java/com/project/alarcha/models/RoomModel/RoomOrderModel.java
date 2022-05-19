@@ -17,7 +17,7 @@ import java.util.Date;
 public class RoomOrderModel extends BaseModel {
     private Long roomId;
     private Long userId;
-    @NotEmpty(message = "Обязательное для заполнение поле")
+//    @NotEmpty(message = "Обязательное для заполнение поле")
     private String userFullName;
     private int roomNumber;
     private String roomType;
@@ -29,7 +29,7 @@ public class RoomOrderModel extends BaseModel {
     private String hotelName;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date expirationDate;
-    @Pattern(regexp = "^\\+\\d+ \\d+$", message = "Неправильный формат номера телефона")
+//    @Pattern(regexp = "^\\+\\d+ \\d+$", message = "Неправильный формат номера телефона")
     private String userPhone;
     private Float totalPrice;
     private String img;

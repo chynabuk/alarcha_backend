@@ -24,8 +24,8 @@ public class ObjectOrderModel extends BaseModel {
     private String objectTypeName;
     private Time startTime;
     private Time endTime;
-    @NotEmpty(message = "Обязательное поле для заполнения")
-    @Pattern(regexp = "^\\+\\d+ \\d+$", message = "Неправильный формат номера телефона")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @Pattern(regexp = "^\\+\\d+ \\d+$", message = "Неправильный формат номера телефона")
     private String userPhone;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date startDate;

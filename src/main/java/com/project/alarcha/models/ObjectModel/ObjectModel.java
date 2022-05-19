@@ -12,9 +12,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class ObjectModel extends BaseEntity {
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private String name;
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private Integer numberOfSeats;
     private Long objectTypeId;
     private String objectTypeName;

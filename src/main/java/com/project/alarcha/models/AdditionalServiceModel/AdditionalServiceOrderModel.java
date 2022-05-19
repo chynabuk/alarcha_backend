@@ -17,15 +17,15 @@ import java.util.Date;
 public class AdditionalServiceOrderModel extends BaseModel {
     private Long userId;
     private Long additionalServiceId;
-    @NotEmpty(message = "Поле должно быть заполнено")
-    @Length(max = 100, message = "Слишком длинное полное имя")
+//    @NotEmpty(message = "Поле должно быть заполнено")
+//    @Length(max = 100, message = "Слишком длинное полное имя")
     private String fullName;
 
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
+//    @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date registrationDate;
 
-    @NotEmpty(message = "Поле должно быть заполнено")
+//    @NotEmpty(message = "Поле должно быть заполнено")
     private Time startTime;
-    @NotEmpty(message = "Поле должно быть заполнено")
+//    @NotEmpty(message = "Поле должно быть заполнено")
     private Time endTime;
 }

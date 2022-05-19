@@ -13,9 +13,9 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class BlogModel extends BaseModel {
 
-    @NotEmpty(message = "Поле должно быть заполнено")
+//    @NotEmpty(message = "Поле должно быть заполнено")
     private String title;
-    @NotEmpty(message = "Поле должно быть заполнено")
+//    @NotEmpty(message = "Поле должно быть заполнено")
     private String description;
 
     private byte[] photo;

@@ -13,11 +13,11 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class NatureModel extends BaseModel {
 
-    @NotEmpty(message = "Обязательное поле для заполнения")
-    @Length(max = 100, message = "Слишком длинное имя")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @Length(max = 100, message = "Слишком длинное имя")
     private String name;
 
-    @NotEmpty(message = "Обязательное поле для заполнения")
+//    @NotEmpty(message = "Обязательное поле для заполнения")
     private String description;
 
     private String img;
