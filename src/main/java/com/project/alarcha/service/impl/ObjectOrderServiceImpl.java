@@ -462,7 +462,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
                 checkTimeForNull(startTime, endTime, registrationDate);
 
-                registrationDate.setHours(0);
+                registrationDate.setHours(12);
                 registrationDate.setMinutes(0);
                 registrationDate.setSeconds(0);
 
