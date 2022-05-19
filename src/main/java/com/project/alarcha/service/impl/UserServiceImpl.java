@@ -1,23 +1,23 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.config.security.JwtUtils;
-import com.project.alarcha.entities.RefreshToken;
-import com.project.alarcha.entities.User;
+import com.project.alarcha.entities.*;
+import com.project.alarcha.entities.Object;
+import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.enums.UserRole;
 import com.project.alarcha.enums.UserStatus;
 import com.project.alarcha.exception.ApiFailException;
+import com.project.alarcha.models.HotelModel.HotelHallOrderBasketModel;
+import com.project.alarcha.models.ObjectModel.ObjectOrderBasketModel;
+import com.project.alarcha.models.RoomModel.RoomOrderBasketModel;
 import com.project.alarcha.models.SecurityModel.UserSecurityModel;
 import com.project.alarcha.models.TokenModel.UserTokenModel;
-import com.project.alarcha.models.UserModel.UserAuthModel;
-import com.project.alarcha.models.UserModel.UserRegistrationModel;
-import com.project.alarcha.models.UserModel.UserToSendModel;
-import com.project.alarcha.models.UserModel.UserUpdateModel;
+import com.project.alarcha.models.UserModel.*;
 import com.project.alarcha.repositories.UserRepository;
 import com.project.alarcha.service.RefreshTokenService;
 import com.project.alarcha.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
         UserSecurityModel userDetails = (UserSecurityModel) authentication.getPrincipal();
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
-        UserTokenModel userTokenModel = initUserTokenDTO(userDetails, jwtToken, refreshToken);
+        UserTokenModel userTokenModel = initUserTokenModel(userDetails, jwtToken, refreshToken);
         return userTokenModel;
     }
 
@@ -159,6 +160,29 @@ public class UserServiceImpl implements UserService {
         return initUserToSendModel(user);
     }
 
+    @Override
+    public UserOrdersModel getUserOrdersModel(Long id) {
+        User user = getById(id);
+
+        UserOrdersModel userOrdersModel = new UserOrdersModel();
+        userOrdersModel.setId(id);
+
+        List<RoomOrder> roomOrders = user.getRoomOrders();
+        List<ObjectOrder> objectOrders = user.getObjectOrders();
+        List<HotelHallOrder> hotelHallOrders = user.getHotelHallOrders();
+        if (!roomOrders.isEmpty() || roomOrders != null){
+            userOrdersModel.setRoomOrderBasketModels(convertToRoomOrderBasket(roomOrders));
+        }
+        if (!objectOrders.isEmpty() || objectOrders != null){
+            userOrdersModel.setOrderBasketModels(convertToObjectOrderBasket(objectOrders));
+        }
+        if (!hotelHallOrders.isEmpty() || hotelHallOrders != null){
+            userOrdersModel.setHotelHallOrderBasketModels(convertToHotelHallOrderBasket(hotelHallOrders));
+        }
+
+        return userOrdersModel;
+    }
+
     private void checkEmailForUnique(String email) {
         User dataUserByEmail = getByEmail(email);
         if (dataUserByEmail != null)
@@ -219,16 +243,99 @@ public class UserServiceImpl implements UserService {
         return userToSendModel;
     }
 
-    private UserTokenModel initUserTokenDTO(UserSecurityModel userDetails, String accessToken, RefreshToken refreshToken) {
+    private UserTokenModel initUserTokenModel(UserSecurityModel userDetails, String accessToken, RefreshToken refreshToken) {
         UserTokenModel userTokenModel = new UserTokenModel();
+        userTokenModel.setUserId(userDetails.getId());
         userTokenModel.setFirstName(userDetails.getFirstName());
         userTokenModel.setLastName(userDetails.getLastName());
         userTokenModel.setEmail(userDetails.getUsername());
-        userTokenModel.setPhone(userTokenModel.getPhone());
-        userTokenModel.setRole(userTokenModel.getRole());
+        userTokenModel.setPhone(userDetails.getPhone());
+        userTokenModel.setRole(userDetails.getUserRole().getRoleName());
         userTokenModel.setToken(accessToken);
         userTokenModel.setRefreshtoken(refreshToken.getToken());
         return userTokenModel;
+    }
+
+
+    private List<RoomOrderBasketModel> convertToRoomOrderBasket(List<RoomOrder> roomOrders){
+        List<RoomOrderBasketModel> roomOrderBasketModels = new ArrayList<>();
+
+        for (RoomOrder roomOrder : roomOrders){
+            RoomOrderBasketModel roomOrderBasketModel = new RoomOrderBasketModel();
+            roomOrderBasketModel.setId(roomOrder.getId());
+            Room room = roomOrder.getRoom();
+            RoomType roomType = room.getRoomType();
+            roomOrderBasketModel.setRoomType(roomType.getType());
+            roomOrderBasketModel.setRoomNumber(room.getRoomNumber());
+            roomOrderBasketModel.setDays(roomOrder.getEndDate().getDate() - roomOrder.getStartDate().getDate());
+            roomOrderBasketModel.setHotelName(roomType.getHotel().getHotelName());
+            roomOrderBasketModel.setTotalPrice(roomOrder.getTotalPrice());
+            roomOrderBasketModel.setPrice(roomType.getPrice());
+            roomOrderBasketModel.setOrderStatus(roomOrder.getOrderStatus());
+            roomOrderBasketModel.setCreatedDate(roomOrder.getCreateDate());
+
+            roomOrderBasketModel.setImg(new String(roomType.getRoomTypeImages().get(0).getImg(), StandardCharsets.UTF_8));
+
+            roomOrderBasketModels.add(roomOrderBasketModel);
+        }
+
+        return roomOrderBasketModels;
+    }
+
+    private List<ObjectOrderBasketModel> convertToObjectOrderBasket(List<ObjectOrder> objectOrders){
+        List<ObjectOrderBasketModel> objectOrderBasketModels = new ArrayList<>();
+
+        for (ObjectOrder objectOrder : objectOrders){
+            ObjectOrderBasketModel orderBasketModel = new ObjectOrderBasketModel();
+            orderBasketModel.setId(objectOrder.getId());
+            Object object = objectOrder.getObject();
+            ObjectType objectType = object.getObjectType();
+            orderBasketModel.setObjectType(objectType.getName());
+            orderBasketModel.setPrice(objectType.getPrice());
+            orderBasketModel.setPriceForNextHours(objectType.getPricePerHour());
+            orderBasketModel.setTotalPrice(objectOrder.getTotalPrice());
+            orderBasketModel.setName(object.getName());
+            if (objectType.getTimeType() == TimeType.DATE){
+                orderBasketModel.setDays(objectOrder.getEndDate().getDate() - objectOrder.getStartDate().getDate());
+            }
+            else if (objectType.getTimeType() == TimeType.TIME){
+                orderBasketModel.setHours(objectOrder.getEndTime().getHours() - objectOrder.getStartTime().getHours());
+            }
+            
+            orderBasketModel.setOrderStatus(objectOrder.getOrderStatus());
+
+            orderBasketModel.setCreatedDate(objectOrder.getCreateDate());
+            
+            orderBasketModel.setImg(new String(objectType.getObjectTypeImages().get(0).getImg(), StandardCharsets.UTF_8));
+
+            objectOrderBasketModels.add(orderBasketModel);
+        }
+        
+        return objectOrderBasketModels;
+    }
+
+    private List<HotelHallOrderBasketModel> convertToHotelHallOrderBasket(List<HotelHallOrder> hotelHallOrders){
+        List<HotelHallOrderBasketModel> hotelHallOrderBasketModels = new ArrayList<>();
+
+        for (HotelHallOrder hotelHallOrder : hotelHallOrders){
+            HotelHallOrderBasketModel orderBasketModel = new HotelHallOrderBasketModel();
+            orderBasketModel.setId(hotelHallOrder.getId());
+            HotelHall hotelHall = hotelHallOrder.getHotelHall();
+            orderBasketModel.setHotelName(hotelHall.getHotel().getHotelName());
+            orderBasketModel.setPrice(hotelHall.getPrice());
+            orderBasketModel.setPriceForNextHours(hotelHall.getPriceForNextHours());
+            orderBasketModel.setTotalPrice(hotelHallOrder.getTotalPrice());
+            orderBasketModel.setHotelHallName(hotelHall.getName());
+            orderBasketModel.setHours(hotelHallOrder.getEndTime().getHours() - hotelHallOrder.getStartTime().getHours());
+            orderBasketModel.setOrderStatus(hotelHallOrder.getOrderStatus());
+            orderBasketModel.setCreatedDate(hotelHallOrder.getCreateDate());
+
+            orderBasketModel.setImg(new String(hotelHall.getHotelHallImages().get(0).getImg(), StandardCharsets.UTF_8));
+
+            hotelHallOrderBasketModels.add(orderBasketModel);
+        }
+
+        return hotelHallOrderBasketModels;
     }
 
 }

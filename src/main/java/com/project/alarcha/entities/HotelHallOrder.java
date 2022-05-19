@@ -49,4 +49,7 @@ public class HotelHallOrder extends BaseEntity{
 
     @Column(name = "user_full_name")
     private String userFullName;
+
+    @Column(name = "img_of_check")
+    private byte[] imgOfCheck;
 }

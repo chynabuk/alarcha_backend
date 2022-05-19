@@ -262,7 +262,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
             if (objectType.getObjectTypeImages().size() > 2){
                 objectTypeModel.setObjectTypeImgModels(objectTypeImgService
                         .convertToModels(objectType.getObjectTypeImages()
-                        .subList(1, objectType.getObjectTypeImages().size() - 1)));
+                        .subList(1, objectType.getObjectTypeImages().size())));
             }
         }
 

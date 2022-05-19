@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserTokenModel {
+    private Long userId;
     private String token;
     private String refreshtoken;
     private String firstName;

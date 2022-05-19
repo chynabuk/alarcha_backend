@@ -50,4 +50,7 @@ public class ObjectOrder extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private OrderStatus orderStatus;
+
+    @Column(name = "img_of_check")
+    private byte[] imgOfCheck;
 }

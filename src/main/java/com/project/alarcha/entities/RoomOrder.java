@@ -45,4 +45,6 @@ public class RoomOrder extends BaseEntity{
     @Column(name = "expiration_date", nullable = false)
     private Date expirationDate;
 
+    @Column(name = "img_of_check")
+    private byte[] imgOfCheck;
 }

@@ -2,6 +2,7 @@ package com.project.alarcha.controller;
 
 import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
+import com.project.alarcha.models.ObjectModel.ObjectOrderPayModel;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
 import com.project.alarcha.service.ObjectOrderService;
 import com.project.alarcha.service.ObjectService;
@@ -60,6 +61,11 @@ public class ObjectController {
         return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.order(objectOrderModel));
     }
 
+    @PostMapping("/order/pay")
+    public ResponseMessage<ObjectOrderPayModel> orderObject(@RequestBody ObjectOrderPayModel objectOrderPayModel){
+        return new ResponseMessage<ObjectOrderPayModel>().prepareSuccessMessage(objectOrderService.pay(objectOrderPayModel));
+    }
+
     @PostMapping("/order/{objectOrderId}/accept")
     public ResponseMessage<ObjectOrderModel> acceptOrder(@PathVariable Long objectOrderId){
         return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.acceptOrder(objectOrderId));
@@ -70,14 +76,39 @@ public class ObjectController {
         return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.declineOrder(objectOrderId));
     }
 
+    @PostMapping("/order/{objectOrderId}/accept-pay")
+    public ResponseMessage<ObjectOrderModel> acceptPay(@PathVariable Long objectOrderId){
+        return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.acceptPayOrder(objectOrderId));
+    }
+
     @DeleteMapping("/order/delete/{objectOrderId}")
     public ResponseMessage<ObjectOrderModel> deleteOrder(@PathVariable Long objectOrderId){
         return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.deleteOrder(objectOrderId));
     }
 
     @GetMapping("/order/get-all")
-    public ResponseMessage<List<ObjectOrderModel>> getOrders(){
-        return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getAll());
+    public ResponseMessage<List<ObjectOrderModel>> getOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getAll(page));
+    }
+
+    @GetMapping("/order/get-in-process")
+    public ResponseMessage<List<ObjectOrderModel>> getInProcessOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getInProcessOrders(page));
+    }
+
+    @GetMapping("/order/get-in-pay-check")
+    public ResponseMessage<List<ObjectOrderModel>> getInPayCheck(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getInCheckPay(page));
+    }
+
+    @GetMapping("/order/get-paid")
+    public ResponseMessage<List<ObjectOrderModel>> getPaid(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getCheckedPay(page));
+    }
+
+    @GetMapping("/order/get-confirmed-or-declined")
+    public ResponseMessage<List<ObjectOrderModel>> getConfirmedOrDeclinedOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getConfirmedOrDeclinedOrders(page));
     }
 
     @GetMapping("/order/get/{objectOrderId}")

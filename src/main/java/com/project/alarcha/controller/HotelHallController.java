@@ -2,6 +2,7 @@ package com.project.alarcha.controller;
 
 import com.project.alarcha.models.HotelModel.HotelHallModel;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
+import com.project.alarcha.models.HotelModel.HotelHallOrderPayModel;
 import com.project.alarcha.service.HotelHallOrderService;
 import com.project.alarcha.service.HotelHallService;
 import com.project.alarcha.util.ResponseMessage;
@@ -49,6 +50,11 @@ public class HotelHallController {
         return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.order(hotelHallOrderModel));
     }
 
+    @PostMapping("/order/pay")
+    public ResponseMessage<HotelHallOrderPayModel> orderHotelHall(@RequestBody HotelHallOrderPayModel hotelHallOrderPayModel){
+        return new ResponseMessage<HotelHallOrderPayModel>().prepareSuccessMessage(hotelHallOrderService.pay(hotelHallOrderPayModel));
+    }
+
     @PostMapping("/order/{hotelHallOrderId}/accept")
     public ResponseMessage<HotelHallOrderModel> acceptOrder(@PathVariable Long hotelHallOrderId){
         return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.acceptOrder(hotelHallOrderId));
@@ -59,17 +65,42 @@ public class HotelHallController {
         return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.declineOrder(hotelHallOrderId));
     }
 
+    @PostMapping("/order/{hotelHallOrderId}/accept-pay")
+    public ResponseMessage<HotelHallOrderModel> acceptPay(@PathVariable Long hotelHallOrderId){
+        return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.acceptPayOrder(hotelHallOrderId));
+    }
+
     @DeleteMapping("/order/delete/{hotelHallOrderId}")
     public ResponseMessage<HotelHallOrderModel> deleteOrder(@PathVariable Long hotelHallOrderId){
         return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.deleteOrder(hotelHallOrderId));
     }
 
-    @PostMapping("/order/get-all")
-    public ResponseMessage<List<HotelHallOrderModel>> getOrders(){
-        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getAll());
+    @GetMapping("/order/get-all")
+    public ResponseMessage<List<HotelHallOrderModel>> getOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getAll(page));
     }
 
-    @PostMapping("/order/get/{hotelHallOrderId}")
+    @GetMapping("/order/get-in-process")
+    public ResponseMessage<List<HotelHallOrderModel>> getInProcessOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getInProcessOrders(page));
+    }
+
+    @GetMapping("/order/get-confirmed-or-declined")
+    public ResponseMessage<List<HotelHallOrderModel>> getConfirmedOrDeclinedOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getConfirmedOrDeclinedOrders(page));
+    }
+
+    @GetMapping("/order/get-in-pay-check")
+    public ResponseMessage<List<HotelHallOrderModel>> getInPayCheck(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getInCheckPay(page));
+    }
+
+    @GetMapping("/order/get-paid")
+    public ResponseMessage<List<HotelHallOrderModel>> getPaid(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<HotelHallOrderModel>>().prepareSuccessMessage(hotelHallOrderService.getCheckedPay(page));
+    }
+
+    @GetMapping("/order/get/{hotelHallOrderId}")
     public ResponseMessage<HotelHallOrderModel> getOrder(@PathVariable Long hotelHallOrderId){
         return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.getById(hotelHallOrderId));
     }

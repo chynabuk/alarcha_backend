@@ -76,7 +76,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
         for (RoomType roomType : roomTypes){
             if (!roomType.getIsDeleted()){
-                roomTypeModels.add(toModel(roomType));
+                roomTypeModels.add(toModelDetailed(roomType));
             }
         }
         return roomTypeModels;
@@ -240,8 +240,11 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         if (roomType.getRooms() != null){
             roomTypeModel.setRoomModels(roomService.getByRoomType(roomType));
         }
-        if (roomType.getRoomTypeImages() != null){
-            roomTypeModel.setRoomTypeImageModels(roomTypeImageService.convertToModels(roomType.getRoomTypeImages()));
+        if (!roomType.getRoomTypeImages().isEmpty()){
+            if(roomType.getRoomTypeImages().size() > 2){
+                roomTypeModel.setRoomTypeImageModels(roomTypeImageService
+                        .convertToModels(roomType.getRoomTypeImages()));
+            }
         }
 
         return roomTypeModel;

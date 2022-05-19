@@ -1,20 +1,23 @@
 package com.project.alarcha.service.impl;
 
+import com.project.alarcha.entities.*;
 import com.project.alarcha.entities.Object;
-import com.project.alarcha.entities.ObjectOrder;
-import com.project.alarcha.entities.ObjectType;
-import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
+import com.project.alarcha.models.ObjectModel.ObjectOrderPayModel;
 import com.project.alarcha.repositories.ObjectOrderRepository;
+import com.project.alarcha.repositories.ObjectRepository;
+import com.project.alarcha.service.EmailSenderService;
 import com.project.alarcha.service.ObjectOrderService;
-import com.project.alarcha.service.ObjectService;
 import com.project.alarcha.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -27,15 +30,32 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     private ObjectOrderRepository objectOrderRepository;
 
     @Autowired
-    private ObjectService objectService;
+    private ObjectRepository objectRepository;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Override
     public ObjectOrderModel order(ObjectOrderModel objectOrderModel) {
         objectOrderRepository.save(initAndGetObjectOrder(objectOrderModel));
         return objectOrderModel;
+    }
+
+    @Override
+    public ObjectOrderPayModel pay(ObjectOrderPayModel objectOrderPayModel) {
+        ObjectOrder objectOrder = objectOrderRepository.getById(objectOrderPayModel.getObjectOrderId());
+
+        if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+            if (!objectOrderPayModel.getImg().isEmpty() || objectOrderPayModel.getImg() != null){
+                objectOrder.setImgOfCheck(objectOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
+                objectOrder.setOrderStatus(OrderStatus.CHECK_CHECK);
+                objectOrderRepository.save(objectOrder);
+            }
+        }
+        return objectOrderPayModel;
     }
 
     @Override
@@ -54,7 +74,12 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     public ObjectOrderModel declineOrder(Long orderId) {
         ObjectOrder objectOrder = getObjectOrder(orderId);
 
-        if(objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+        if(
+                objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS
+                || objectOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                || objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK
+                || objectOrder.getOrderStatus() == OrderStatus.PAID
+        ){
             objectOrder.setOrderStatus(OrderStatus.DECLINED);
         }
 
@@ -74,10 +99,23 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
-    public List<ObjectOrderModel> getAll() {
+    public ObjectOrderModel acceptPayOrder(Long orderId) {
+        ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
+
+        if (objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
+            objectOrder.setOrderStatus(OrderStatus.PAID);
+            objectOrderRepository.save(objectOrder);
+        }
+
+        return toModel(objectOrder);
+    }
+
+    @Override
+    public List<ObjectOrderModel> getAll(int page) {
+        Page<ObjectOrder> objectOrders = objectOrderRepository.findAll(PageRequest.of(page, 10));
         List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
 
-        for(ObjectOrder objectOrder : objectOrderRepository.findAll()){
+        for(ObjectOrder objectOrder : objectOrders){
             if(!objectOrder.getIsDeleted()){
                 if(isExpired(objectOrder.getExpirationDate())){
                     objectOrder.setIsDeleted(true);
@@ -88,6 +126,93 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 objectOrderModels.add(toModel(objectOrder));
             }
         }
+        ObjectOrderModel objectOrderModel = new ObjectOrderModel();
+        objectOrderModel.setTotalPage(objectOrders.getTotalPages());
+        objectOrderModels.add(objectOrderModel);
+        return objectOrderModels;
+    }
+
+    @Override
+    public List<ObjectOrderModel> getInProcessOrders(int page) {
+        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+
+        for (ObjectOrder objectOrder : objectOrders){
+            if (!objectOrder.getIsDeleted()){
+                if (objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+                    objectOrderModels.add(toModel(objectOrder));
+                }
+            }
+        }
+
+        return objectOrderModels;
+    }
+
+    @Override
+    public List<ObjectOrderModel> getConfirmedOrDeclinedOrders(int page) {
+        Page<ObjectOrder> objectOrders = objectOrderRepository.findAll(PageRequest.of(page, 10));
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+
+        for (ObjectOrder objectOrder : objectOrders){
+            if (!objectOrder.getIsDeleted()){
+                if (
+                        objectOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                        || objectOrder.getOrderStatus() == OrderStatus.DECLINED
+                        || objectOrder.getOrderStatus() == OrderStatus.PAID
+                ){
+                    objectOrderModels.add(toModel(objectOrder));
+                }
+            }
+        }
+        ObjectOrderModel objectOrderModel = new ObjectOrderModel();
+        objectOrderModel.setTotalPage(objectOrders.getTotalPages());
+        objectOrderModels.add(objectOrderModel);
+
+        return objectOrderModels;
+    }
+
+    @Override
+    public List<ObjectOrderModel> getInCheckPay(int page) {
+        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+
+        for (ObjectOrder objectOrder : objectOrders){
+            if (!objectOrder.getIsDeleted()){
+                if (objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
+                    objectOrderModels.add(toModel(objectOrder));
+                }
+            }
+        }
+
+        return objectOrderModels;
+    }
+
+    @Override
+    public List<ObjectOrderModel> getCheckedPay(int page) {
+        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+
+        for (ObjectOrder objectOrder : objectOrders){
+            if (!objectOrder.getIsDeleted()){
+                if (objectOrder.getOrderStatus() == OrderStatus.PAID){
+                    objectOrderModels.add(toModel(objectOrder));
+                }
+            }
+        }
+
+        return objectOrderModels;
+    }
+
+    @Override
+    public List<ObjectOrderModel> convertToModels(List<ObjectOrder> objectOrders) {
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+        objectOrders.forEach(objectOrder -> {
+            if (!objectOrder.getIsDeleted()) {
+                if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                    objectOrderModels.add(toModel(objectOrder));
+                }
+            }
+        });
         return objectOrderModels;
     }
 
@@ -113,7 +238,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         ObjectOrder objectOrder = new ObjectOrder();
 
         User user = userService.getById(objectOrderModel.getUserId());
-        Object object = objectService.getByObjectId(objectOrderModel.getObjectId());
+        Object object = objectRepository.findById(objectOrderModel.getObjectId())
+                .orElseThrow(() -> new ApiFailException("object is not found"));
         ObjectType objectType = object.getObjectType();
 
         objectOrder.setUser(user);
@@ -157,6 +283,12 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
             objectOrder.setTotalPrice(getTotalPriceByDate(price, startDate, endDate));
         }
 
+        emailSenderService.sendEmail(
+                object.getObjectType().getArea().getUser().getEmail(),
+                "Новая бронь объекта",
+                "от " + objectOrder.getFullName() + " поступил запрос на бронирование \n" +
+                        "http://localhost:8080/admin/book-object");
+
         return objectOrder;
     }
 
@@ -194,7 +326,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         checkTimeForNull(startTime, endTime, registrationDate);
 
-        registrationDate.setHours(0);
+        registrationDate.setHours(12);
         registrationDate.setMinutes(0);
         registrationDate.setSeconds(0);
 
@@ -239,7 +371,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         currentDate.setYear(tempDate.getYear());
         currentDate.setMonth(tempDate.getMonth());
         currentDate.setDate(tempDate.getDate());
-        currentDate.setHours(0);
+        currentDate.setHours(12);
         currentDate.setMinutes(0);
         currentDate.setSeconds(0);
 
@@ -310,7 +442,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 if( (registrationDate.getYear() == objectOrder.getStartDate().getYear() && registrationDate.getMonth() == objectOrder.getStartDate().getMonth()
                         && registrationDate.getDay() == objectOrder.getStartDate().getDay())
                 ){
-                    if(objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                    OrderStatus orderStatus = objectOrder.getOrderStatus();
+                    if(orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                         Time rSTime = objectOrder.getStartTime();
                         Time rETime = objectOrder.getEndTime();
 
@@ -328,7 +461,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     private void doDatesValidation(List<ObjectOrder> objectOrders, ObjectOrderModel objectOrderModel, Date startDate, Date endDate){
         for (ObjectOrder objectOrder : objectOrders){
             if (objectOrderModel.getObjectId() == objectOrder.getObject().getId()){
-                if (objectOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                OrderStatus orderStatus = objectOrder.getOrderStatus();
+                if (orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                     Date rSDate = objectOrder.getStartDate();
                     Date rEDate = objectOrder.getEndDate();
                     if (
@@ -348,7 +482,14 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     private void setValuesOnUpdateObjectOrder(ObjectOrder objectOrder, ObjectOrderModel objectOrderModel){
-        Object object = objectService.getByObjectId(objectOrder.getObject().getId());
+        Object object = objectRepository
+                .findById(objectOrder.getObject().getId())
+                .orElseThrow(() -> new ApiFailException("Object is not found!"));
+
+        if(object.getIsDeleted()){
+            throw new ApiFailException("Object is not found or deleted!");
+        }
+
         ObjectType objectType = object.getObjectType();
 
         Date expirationDate = new Date();
@@ -438,17 +579,27 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     private ObjectOrderModel toModel(ObjectOrder objectOrder){
         ObjectOrderModel objectOrderModel = new ObjectOrderModel();
+        objectOrderModel.setId(objectOrder.getId());
         objectOrderModel.setUserId(objectOrder.getUser().getId());
         objectOrderModel.setFullName(objectOrder.getFullName());
         objectOrderModel.setObjectId(objectOrder.getObject().getId());
+        objectOrderModel.setObjectName(objectOrder.getObject().getName());
+        objectOrderModel.setObjectTypeName(objectOrder.getObject().getObjectType().getName());
         objectOrderModel.setStartDate(objectOrder.getStartDate());
         objectOrderModel.setEndDate(objectOrder.getEndDate());
+        objectOrderModel.setUserPhone(objectOrder.getUser().getPhone());
+        objectOrderModel.setOrderStatus(objectOrder.getOrderStatus());
+        objectOrderModel.setTotalPrice(objectOrder.getTotalPrice());
 
         ObjectType objectType = objectOrder.getObject().getObjectType();
 
         if(objectType.getTimeType() == TimeType.TIME){
             objectOrderModel.setStartTime(objectOrder.getStartTime());
             objectOrderModel.setEndTime(objectOrder.getEndTime());
+        }
+
+        if (objectOrder.getImgOfCheck() != null){
+            objectOrderModel.setImg(new String(objectOrder.getImgOfCheck(), StandardCharsets.UTF_8));
         }
 
         return objectOrderModel;

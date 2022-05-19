@@ -1,19 +1,24 @@
 package com.project.alarcha.service.impl;
 
-import com.project.alarcha.entities.HotelHall;
-import com.project.alarcha.entities.HotelHallOrder;
-import com.project.alarcha.entities.User;
+import com.project.alarcha.entities.*;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
+import com.project.alarcha.models.HotelModel.HotelHallOrderPayModel;
+import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.HotelHallOrderRepository;
+import com.project.alarcha.repositories.HotelHallsRepository;
+import com.project.alarcha.service.EmailSenderService;
 import com.project.alarcha.service.HotelHallOrderService;
 import com.project.alarcha.service.HotelHallService;
 import com.project.alarcha.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -27,10 +32,13 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     private HotelHallOrderRepository hotelHallOrderRepository;
 
     @Autowired
-    private HotelHallService hotelHallService;
+    private HotelHallsRepository hotelHallsRepository;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Override
     public HotelHallOrderModel order(HotelHallOrderModel hotelHallOrderModel) {
@@ -40,8 +48,21 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     }
 
     @Override
+    public HotelHallOrderPayModel pay(HotelHallOrderPayModel hotelHallOrderPayModel) {
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(hotelHallOrderPayModel.getHotelHallOrderId());
+        if (hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+            if (!hotelHallOrderPayModel.getImg().isEmpty() || hotelHallOrderPayModel.getImg() != null){
+                hotelHallOrder.setImgOfCheck(hotelHallOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
+                hotelHallOrder.setOrderStatus(OrderStatus.CHECK_CHECK);
+                hotelHallOrderRepository.save(hotelHallOrder);
+            }
+        }
+        return hotelHallOrderPayModel;
+    }
+
+    @Override
     public HotelHallOrderModel acceptOrder(Long orderId) {
-        HotelHallOrder hotelHallOrder = hotelHallOrderRepository.getById(orderId);
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
 
         if(hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             hotelHallOrder.setOrderStatus(OrderStatus.CONFIRMED);
@@ -53,13 +74,30 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
     @Override
     public HotelHallOrderModel declineOrder(Long orderId) {
-        HotelHallOrder hotelHallOrder = hotelHallOrderRepository.getById(orderId);
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
 
-        if(hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+        if(
+                hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS
+                || hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                || hotelHallOrder.getOrderStatus() == OrderStatus.CHECK_CHECK
+                || hotelHallOrder.getOrderStatus() == OrderStatus.PAID
+        ){
             hotelHallOrder.setOrderStatus(OrderStatus.DECLINED);
         }
 
         hotelHallOrderRepository.save(hotelHallOrder);
+        return toModel(hotelHallOrder);
+    }
+
+    @Override
+    public HotelHallOrderModel acceptPayOrder(Long orderId) {
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
+
+        if (hotelHallOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
+            hotelHallOrder.setOrderStatus(OrderStatus.PAID);
+            hotelHallOrderRepository.save(hotelHallOrder);
+        }
+
         return toModel(hotelHallOrder);
     }
 
@@ -75,21 +113,33 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     }
 
     @Override
-    public List<HotelHallOrderModel> getAll() {
-        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
+    public List<HotelHallOrderModel> getAll(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getAll(PageRequest.of(page, 10));
+        return getModelListFrom(hotelHallOrders);
+    }
 
-        for (HotelHallOrder hotelHallOrder : hotelHallOrderRepository.findAll()){
-            if (!hotelHallOrder.getIsDeleted()){
-                if (isExpired(hotelHallOrder.getExpirationDate())){
-                    hotelHallOrder.setIsDeleted(true);
-                    hotelHallOrderRepository.save(hotelHallOrder);
-                }
-            }
-            if (!hotelHallOrder.getIsDeleted()){
-                hotelHallOrderModels.add(toModel(hotelHallOrder));
-            }
-        }
-        return hotelHallOrderModels;
+    @Override
+    public List<HotelHallOrderModel> getInProcessOrders(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getInProcessOrders(PageRequest.of(page, 10));
+        return getModelListFrom(hotelHallOrders);
+    }
+
+    @Override
+    public List<HotelHallOrderModel> getConfirmedOrDeclinedOrders(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getConfirmedOrDeclinedOrders(PageRequest.of(page, 10));
+        return getModelListFrom(hotelHallOrders);
+    }
+
+    @Override
+    public List<HotelHallOrderModel> getInCheckPay(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getInCheckPay(PageRequest.of(page, 10));
+        return getModelListFrom(hotelHallOrders);
+    }
+
+    @Override
+    public List<HotelHallOrderModel> getCheckedPay(int page) {
+        Page<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getCheckedPay(PageRequest.of(page, 10));
+        return getModelListFrom(hotelHallOrders);
     }
 
     @Override
@@ -97,6 +147,20 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         HotelHallOrder hotelHallOrder = getHotelHallOrder(id);
 
         return toModel(hotelHallOrder);
+    }
+
+    @Override
+    public List<HotelHallOrderModel> convertToModels(List<HotelHallOrder> hotelHallOrders) {
+        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
+        hotelHallOrders.forEach(hotelHallOrder -> {
+            if (!hotelHallOrder.getIsDeleted()) {
+                if (hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                    hotelHallOrderModels.add(toModel(hotelHallOrder));
+                }
+            }
+        });
+
+        return hotelHallOrderModels;
     }
 
     private HotelHallOrder getHotelHallOrder(Long id){
@@ -124,7 +188,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         User user = userService.getById(hotelHallOrderModel.getUserId());
         hotelHallOrder.setUser(user);
 
-        HotelHall hotelHall = hotelHallService.getHotelHallById(hotelHallOrderModel.getHotelHallId());
+        HotelHall hotelHall = hotelHallsRepository.findById(hotelHallOrderModel.getHotelHallId())
+                .orElseThrow(() -> new ApiFailException("HotelHall is not found"));
         Float price = hotelHall.getPrice();
         Float priceForNextHours = hotelHall.getPriceForNextHours();
 
@@ -144,6 +209,12 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrder.setOrderStatus(OrderStatus.IN_PROCESS);
         hotelHallOrder.setIsDeleted(false);
 
+        emailSenderService.sendEmail(
+                hotelHall.getHotel().getArea().getUser().getEmail(),
+                "Новая бронь доп комнаты",
+                "от " + hotelHallOrder.getUserFullName() + " поступил запрос на бронирование \n" +
+                        "http://localhost:8080/admin/book-hall");
+
         return hotelHallOrder;
     }
 
@@ -160,7 +231,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         Time endTime = hotelHallOrderModel.getEndTime();
         Date startDate = hotelHallOrderModel.getStartDate();
 
-        startDate.setHours(0);
+        startDate.setHours(12);
         startDate.setMinutes(0);
         startDate.setSeconds(0);
 
@@ -175,7 +246,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         currentDate.setYear(tempDate.getYear());
         currentDate.setMonth(tempDate.getMonth());
         currentDate.setDate(tempDate.getDate());
-        currentDate.setHours(0);
+        currentDate.setHours(12);
         currentDate.setMinutes(0);
         currentDate.setSeconds(0);
 
@@ -201,7 +272,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 if( (startDate.getYear() == hotelHallOrder.getStartDate().getYear() && startDate.getMonth() == hotelHallOrder.getStartDate().getMonth()
                         && startDate.getDate() == hotelHallOrder.getStartDate().getDate())
                 ){
-                    if(hotelHallOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                    OrderStatus orderStatus = hotelHallOrder.getOrderStatus();
+                    if(orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                         Time rSTime = hotelHallOrder.getStartTime();
                         Time rETime = hotelHallOrder.getEndTime();
 
@@ -225,10 +297,6 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         if (hours <= 0){
             throw new ApiFailException("can not get totalPrice");
         }
-
-        if (hours > 5){
-            return 6000F;
-        }
         else {
             return price + (hours - 1) * priceForNextHours;
         }
@@ -236,6 +304,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
     private HotelHallOrderModel toModel(HotelHallOrder hotelHallOrder){
         HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+        hotelHallOrderModel.setId(hotelHallOrder.getId());
         hotelHallOrderModel.setHotelHallId(hotelHallOrder.getId());
         hotelHallOrderModel.setStartTime(hotelHallOrder.getStartTime());
         hotelHallOrderModel.setEndTime(hotelHallOrder.getEndTime());
@@ -243,7 +312,37 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrderModel.setUserId(hotelHallOrder.getUser().getId());
         hotelHallOrderModel.setUserFullName(hotelHallOrder.getUserFullName());
         hotelHallOrderModel.setOrderStatus(hotelHallOrder.getOrderStatus());
-
+        hotelHallOrderModel.setHotelName(hotelHallOrder.getHotelHall().getHotel().getHotelName());
+        hotelHallOrderModel.setHotelHallName(hotelHallOrder.getHotelHall().getName());
+        hotelHallOrderModel.setUserPhone(hotelHallOrder.getUser().getPhone());
+        hotelHallOrderModel.setTotalPrice(hotelHallOrder.getTotalPrice());
+        if (hotelHallOrder.getImgOfCheck() != null){
+            hotelHallOrderModel.setImg(new String(hotelHallOrder.getImgOfCheck(), StandardCharsets.UTF_8));
+        }
         return hotelHallOrderModel;
+    }
+
+    private List<HotelHallOrderModel> getModelListFrom(Page<HotelHallOrder> hotelHallOrders){
+        List<HotelHallOrderModel> hotelHallOrderModels = new ArrayList<>();
+
+        int countExpiredOrder = 0;
+        for (HotelHallOrder hotelHallOrder : hotelHallOrders){
+            if (isExpired(hotelHallOrder.getExpirationDate())){
+                hotelHallOrder.setIsDeleted(true);
+                hotelHallOrderRepository.save(hotelHallOrder);
+                countExpiredOrder++;
+            }
+            hotelHallOrderModels.add(toModel(hotelHallOrder));
+        }
+
+        if (countExpiredOrder > 0){
+            throw new ApiFailException("Обновите страницу");
+        }
+
+        HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();
+        hotelHallOrderModel.setTotalPage(hotelHallOrders.getTotalPages());
+        hotelHallOrderModels.add(hotelHallOrderModel);
+
+        return hotelHallOrderModels;
     }
 }

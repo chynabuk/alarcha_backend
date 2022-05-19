@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
@@ -39,7 +40,10 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public List<Feedback> getAll() {
-        return feedbackRepository.findAll();
+        return feedbackRepository.findAll()
+                .stream()
+                .filter(feedback -> !feedback.getIsReplied())
+                .collect(Collectors.toList());
     }
 
     @Override

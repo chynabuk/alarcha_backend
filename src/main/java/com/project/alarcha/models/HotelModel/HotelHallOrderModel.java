@@ -1,6 +1,7 @@
 package com.project.alarcha.models.HotelModel;
 
 import com.project.alarcha.enums.OrderStatus;
+import com.project.alarcha.models.BaseModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-public class HotelHallOrderModel {
+public class HotelHallOrderModel extends BaseModel {
     private Long hotelHallId;
     private Long userId;
     private String userFullName;
@@ -21,4 +22,10 @@ public class HotelHallOrderModel {
     private Time startTime;
     private Time endTime;
     private OrderStatus orderStatus;
+    private String hotelName;
+    private String hotelHallName;
+    private String userPhone;
+    private Float totalPrice;
+    private String img;
+    private int totalPage;
 }

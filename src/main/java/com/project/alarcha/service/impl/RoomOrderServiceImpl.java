@@ -6,14 +6,19 @@ import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
+import com.project.alarcha.models.RoomModel.RoomOrderPayModel;
 import com.project.alarcha.repositories.RoomOrderRepository;
+import com.project.alarcha.repositories.RoomRepository;
+import com.project.alarcha.service.EmailSenderService;
 import com.project.alarcha.service.RoomOrderService;
-import com.project.alarcha.service.RoomService;
 import com.project.alarcha.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,10 +30,13 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     private RoomOrderRepository roomOrderRepository;
 
     @Autowired
-    private RoomService roomService;
+    private RoomRepository roomRepository;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Override
     public RoomOrderModel order(RoomOrderModel roomOrderModel) {
@@ -38,14 +46,29 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     }
 
     @Override
+    public RoomOrderPayModel pay(RoomOrderPayModel roomOrderPayModel) {
+        RoomOrder roomOrder = getRoomOrder(roomOrderPayModel.getRoomOrderId());
+
+        if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+            if (!roomOrderPayModel.getImg().isEmpty() || roomOrderPayModel.getImg() != null){
+                roomOrder.setImgOfCheck(roomOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
+                roomOrder.setOrderStatus(OrderStatus.CHECK_CHECK);
+                roomOrderRepository.save(roomOrder);
+            }
+        }
+
+        return roomOrderPayModel;
+    }
+
+    @Override
     public RoomOrderModel acceptOrder(Long orderId) {
         RoomOrder roomOrder = getRoomOrder(orderId);
 
         if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             roomOrder.setOrderStatus(OrderStatus.CONFIRMED);
+            roomOrderRepository.save(roomOrder);
         }
 
-        roomOrderRepository.save(roomOrder);
         return toModel(roomOrder);
     }
 
@@ -53,11 +76,28 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     public RoomOrderModel declineOrder(Long orderId) {
         RoomOrder roomOrder = getRoomOrder(orderId);
 
-        if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
+        if (
+                roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS
+                || roomOrder.getOrderStatus() == OrderStatus.CONFIRMED
+                || roomOrder.getOrderStatus() == OrderStatus.CHECK_CHECK
+                || roomOrder.getOrderStatus() == OrderStatus.PAID
+        ){
             roomOrder.setOrderStatus(OrderStatus.DECLINED);
+            roomOrderRepository.save(roomOrder);
         }
 
-        roomOrderRepository.save(roomOrder);
+        return toModel(roomOrder);
+    }
+
+    @Override
+    public RoomOrderModel acceptPayOrder(Long orderId) {
+        RoomOrder roomOrder = getRoomOrder(orderId);
+
+        if (roomOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
+            roomOrder.setOrderStatus(OrderStatus.PAID);
+            roomOrderRepository.save(roomOrder);
+        }
+
         return toModel(roomOrder);
     }
 
@@ -73,20 +113,44 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     }
 
     @Override
-    public List<RoomOrderModel> getAll() {
-        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
+    public List<RoomOrderModel> getAll(int page) {
+        Page<RoomOrder> roomOrders = roomOrderRepository.getAll(PageRequest.of(page, 10));
+        return getModelListFrom(roomOrders);
+    }
 
-        for (RoomOrder roomOrder : roomOrderRepository.findAll()){
-            if (!roomOrder.getIsDeleted()){
-                if (isExpired(roomOrder.getExpirationDate())){
-                    roomOrder.setIsDeleted(true);
-                    roomOrderRepository.save(roomOrder);
-                }
+    @Override
+    public List<RoomOrderModel> getInProcessOrders(int page) {
+        Page<RoomOrder> roomOrders = roomOrderRepository.getInProcessOrders(PageRequest.of(page, 10));
+        return getModelListFrom(roomOrders);
+    }
+
+    @Override
+    public List<RoomOrderModel> getConfirmedOrDeclinedOrders(int page) {
+        Page<RoomOrder> roomOrders = roomOrderRepository.getConfirmedOrDeclinedOrders(PageRequest.of(page, 10));
+        return getModelListFrom(roomOrders);
+    }
+
+    @Override
+    public List<RoomOrderModel> getInCheckPay(int page) {
+        Page<RoomOrder> roomOrders = roomOrderRepository.getInCheckPay(PageRequest.of(page, 10));
+        return getModelListFrom(roomOrders);
+    }
+
+    @Override
+    public List<RoomOrderModel> getCheckedPay(int page) {
+        Page<RoomOrder> roomOrders = roomOrderRepository.getCheckedPay(PageRequest.of(page, 10));
+        return getModelListFrom(roomOrders);
+    }
+
+    @Override
+    public List<RoomOrderModel> convertToModels(List<RoomOrder> roomOrders) {
+        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
+        roomOrders.forEach(roomOrder -> {
+            if (!roomOrder.getIsDeleted()) {
+                if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED)
+                    roomOrderModels.add(toModel(roomOrder));
             }
-            if (!roomOrder.getIsDeleted()){
-                roomOrderModels.add(toModel(roomOrder));
-            }
-        }
+        });
         return roomOrderModels;
     }
 
@@ -105,11 +169,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     }
 
     private RoomOrder getRoomOrder(Long id){
-        RoomOrder roomOrder = roomOrderRepository.getById(id);
-
-        if (roomOrder == null){
-            throw new ApiFailException("Room order not found");
-        }
+        RoomOrder roomOrder = roomOrderRepository.findById(id)
+                .orElseThrow(() -> new ApiFailException("Room order not found"));
 
         if (roomOrder.getIsDeleted()){
             throw new ApiFailException("Room order is not found or deleted");
@@ -125,7 +186,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         User user = userService.getById(roomOrderModel.getUserId());
         roomOrder.setUser(user);
-        Room room = roomService.getByRoomId(roomOrderModel.getRoomId());
+        Room room = roomRepository.findById(roomOrderModel.getRoomId())
+                .orElseThrow(() -> new ApiFailException("room is not found"));
         roomOrder.setIsDeleted(false);
         roomOrder.setRoom(room);
         roomOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
@@ -141,6 +203,13 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         roomOrder.setExpirationDate(expirationDate);
         roomOrder.setTotalPrice(getTotalPrice(price, startDate, endDate));
         roomOrder.setOrderStatus(OrderStatus.IN_PROCESS);
+
+
+        emailSenderService.sendEmail(
+                room.getRoomType().getHotel().getArea().getUser().getEmail(),
+                "Новая бронь комнаты",
+                "от " + roomOrder.getUserFullName() + " поступил запрос на бронирование \n" +
+                        "http://localhost:8080/admin/book-room");
 
         return roomOrder;
     }
@@ -181,7 +250,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         for (RoomOrder roomOrder : roomOrders){
             if (roomOrderModel.getRoomId() == roomOrder.getRoom().getId()){
-                if (roomOrder.getOrderStatus() == OrderStatus.CONFIRMED){
+                OrderStatus orderStatus = roomOrder.getOrderStatus();
+                if (orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
                     Date rSDate = roomOrder.getStartDate();
                     Date rEDate = roomOrder.getEndDate();
                     if (
@@ -202,6 +272,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     private RoomOrderModel toModel(RoomOrder roomOrder){
         RoomOrderModel roomOrderModel = new RoomOrderModel();
+        roomOrderModel.setId(roomOrder.getId());
         roomOrderModel.setUserId(roomOrder.getUser().getId());
         roomOrderModel.setRoomId(roomOrder.getId());
         roomOrderModel.setStartDate(roomOrder.getStartDate());
@@ -209,8 +280,40 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         roomOrderModel.setUserFullName(roomOrder.getUserFullName());
         roomOrderModel.setOrderStatus(roomOrder.getOrderStatus());
         roomOrderModel.setHotelName(roomOrder.getRoom().getRoomType().getHotel().getHotelName());
+        roomOrderModel.setRoomNumber(roomOrder.getRoom().getRoomNumber());
+        roomOrderModel.setRoomType(roomOrder.getRoom().getRoomType().getType());
+        roomOrderModel.setUserPhone(roomOrder.getUser().getPhone());
+        roomOrderModel.setTotalPrice(roomOrder.getTotalPrice());
+
+        if (roomOrder.getImgOfCheck() != null){
+            roomOrderModel.setImg(new String(roomOrder.getImgOfCheck(), StandardCharsets.UTF_8));
+        }
 
         return roomOrderModel;
+    }
+
+    private List<RoomOrderModel> getModelListFrom(Page<RoomOrder> roomOrders){
+        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
+
+        int countExpiredOrder = 0;
+        for (RoomOrder roomOrder : roomOrders){
+            if (isExpired(roomOrder.getExpirationDate())){
+                roomOrder.setIsDeleted(true);
+                roomOrderRepository.save(roomOrder);
+                countExpiredOrder++;
+            }
+            roomOrderModels.add(toModel(roomOrder));
+        }
+
+        if (countExpiredOrder > 0){
+            throw new ApiFailException("Обновите страницу");
+        }
+
+        RoomOrderModel roomOrderModel = new RoomOrderModel();
+        roomOrderModel.setTotalPage(roomOrders.getTotalPages());
+        roomOrderModels.add(roomOrderModel);
+
+        return roomOrderModels;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.project.alarcha.models.ObjectModel;
 
+import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.models.BaseModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,12 +18,16 @@ public class ObjectOrderModel extends BaseModel {
     private Long objectId;
     private Float totalPrice;
     private String fullName;
-
+    private String objectName;
+    private String objectTypeName;
     private Time startTime;
     private Time endTime;
-
+    private String userPhone;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date startDate;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date endDate;
+    private OrderStatus orderStatus;
+    private String img;
+    private int totalPage;
 }

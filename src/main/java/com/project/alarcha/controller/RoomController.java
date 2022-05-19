@@ -2,6 +2,7 @@ package com.project.alarcha.controller;
 
 import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
+import com.project.alarcha.models.RoomModel.RoomOrderPayModel;
 import com.project.alarcha.models.RoomModel.RoomTypeModel;
 import com.project.alarcha.service.RoomOrderService;
 import com.project.alarcha.service.RoomService;
@@ -84,6 +85,11 @@ public class RoomController {
         return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.order(roomOrderModel));
     }
 
+    @PostMapping("/order/pay")
+    public ResponseMessage<RoomOrderPayModel> payOrderRoom(@RequestBody RoomOrderPayModel roomOrderPayModel){
+        return new ResponseMessage<RoomOrderPayModel>().prepareSuccessMessage(roomOrderService.pay(roomOrderPayModel));
+    }
+
     @PostMapping("/order/{roomOrderId}/accept")
     public ResponseMessage<RoomOrderModel> acceptOrder(@PathVariable Long roomOrderId){
         return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.acceptOrder(roomOrderId));
@@ -94,14 +100,39 @@ public class RoomController {
         return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.declineOrder(roomOrderId));
     }
 
+    @PostMapping("/order/{roomOrderId}/accept-pay")
+    public ResponseMessage<RoomOrderModel> acceptPay(@PathVariable Long roomOrderId){
+        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.acceptPayOrder(roomOrderId));
+    }
+
     @DeleteMapping("/order/delete/{roomOrderId}")
     public ResponseMessage<RoomOrderModel> deleteOrder(@PathVariable Long roomOrderId){
         return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.deleteOrder(roomOrderId));
     }
 
     @GetMapping("/order/get-all")
-    public ResponseMessage<List<RoomOrderModel>> getOrders(){
-        return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getAll());
+    public ResponseMessage<List<RoomOrderModel>> getOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getAll(page));
+    }
+
+    @GetMapping("/order/get-confirmed-or-declined")
+    public ResponseMessage<List<RoomOrderModel>> getConfirmedOrDeclinedOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getConfirmedOrDeclinedOrders(page));
+    }
+
+    @GetMapping("/order/get-in-process")
+    public ResponseMessage<List<RoomOrderModel>> getInProcessOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getInProcessOrders(page));
+    }
+
+    @GetMapping("/order/get-in-pay-check")
+    public ResponseMessage<List<RoomOrderModel>> getInPayCheck(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getInCheckPay(page));
+    }
+
+    @GetMapping("/order/get-paid")
+    public ResponseMessage<List<RoomOrderModel>> getPaid(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+        return new ResponseMessage<List<RoomOrderModel>>().prepareSuccessMessage(roomOrderService.getCheckedPay(page));
     }
 
     @GetMapping("/order/get/{roomOrderId}")
