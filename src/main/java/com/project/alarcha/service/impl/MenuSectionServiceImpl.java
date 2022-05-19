@@ -73,10 +73,8 @@ public class MenuSectionServiceImpl implements MenuSectionService {
     public List<MenuSectionModel> getAll() {
         List<MenuSectionModel> menuSectionModels = new ArrayList<>();
 
-        for(MenuSection menuSection : menuSectionRepository.findAll()){
-            if(!menuSection.getIsDeleted()){
-                menuSectionModels.add(toModel(menuSection));
-            }
+        for(MenuSection menuSection : menuSectionRepository.getAll()){
+            menuSectionModels.add(toModel(menuSection));
         }
 
         return menuSectionModels;
@@ -86,13 +84,11 @@ public class MenuSectionServiceImpl implements MenuSectionService {
     public List<MenuSectionModel> getForSelect() {
         List<MenuSectionModel> menuSectionModels = new ArrayList<>();
 
-        for(MenuSection menuSection : menuSectionRepository.findAll()){
-            if(!menuSection.getIsDeleted()){
-                MenuSectionModel menuSectionModel = new MenuSectionModel();
-                menuSectionModel.setId(menuSection.getId());
-                menuSectionModel.setName(menuSection.getName());
-                menuSectionModels.add(menuSectionModel);
-            }
+        for(MenuSection menuSection : menuSectionRepository.getAll()){
+            MenuSectionModel menuSectionModel = new MenuSectionModel();
+            menuSectionModel.setId(menuSection.getId());
+            menuSectionModel.setName(menuSection.getName());
+            menuSectionModels.add(menuSectionModel);
         }
         return menuSectionModels;
     }
@@ -101,13 +97,11 @@ public class MenuSectionServiceImpl implements MenuSectionService {
     public List<MenuSectionModel> getForList() {
         List<MenuSectionModel> menuSectionModels = new ArrayList<>();
 
-        for(MenuSection menuSection : menuSectionRepository.findAll()){
-            if(!menuSection.getIsDeleted()){
-                MenuSectionModel menuSectionModel = new MenuSectionModel();
-                menuSectionModel.setId(menuSection.getId());
-                menuSectionModel.setName(menuSection.getName());
-                menuSectionModels.add(menuSectionModel);
-            }
+        for(MenuSection menuSection : menuSectionRepository.getAll()){
+            MenuSectionModel menuSectionModel = new MenuSectionModel();
+            menuSectionModel.setId(menuSection.getId());
+            menuSectionModel.setName(menuSection.getName());
+            menuSectionModels.add(menuSectionModel);
         }
         return menuSectionModels;
     }

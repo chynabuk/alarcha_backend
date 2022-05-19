@@ -26,9 +26,6 @@ public class NatureTypeServiceImpl implements NatureTypeService {
 
     @Override
     public NatureTypeModel createNatureType(NatureTypeModel natureTypeModel) {
-//        if (natureTypeRepository.findAll().stream().map(natureType -> !natureType.getIsDeleted()).count() <= 2){
-//
-//        }
         natureTypeRepository.save(initAndGet(natureTypeModel));
         return natureTypeModel;
     }
@@ -76,10 +73,8 @@ public class NatureTypeServiceImpl implements NatureTypeService {
     public List<NatureTypeModel> getAll() {
         List<NatureTypeModel> natureTypeModels = new ArrayList<>();
 
-        for (NatureType natureType : natureTypeRepository.findAll()){
-            if (!natureType.getIsDeleted()){
-                natureTypeModels.add(toDetailedModel(natureType));
-            }
+        for (NatureType natureType : natureTypeRepository.getAll()){
+            natureTypeModels.add(toDetailedModel(natureType));
         }
 
         return natureTypeModels;
@@ -89,10 +84,8 @@ public class NatureTypeServiceImpl implements NatureTypeService {
     public List<NatureTypeModel> getForSelect() {
         List<NatureTypeModel> natureTypeModels = new ArrayList<>();
 
-        for (NatureType natureType : natureTypeRepository.findAll()){
-            if (!natureType.getIsDeleted()){
-                natureTypeModels.add(toModel(natureType));
-            }
+        for (NatureType natureType : natureTypeRepository.getAll()){
+            natureTypeModels.add(toModel(natureType));
         }
 
         return natureTypeModels;
@@ -154,11 +147,8 @@ public class NatureTypeServiceImpl implements NatureTypeService {
     }
 
     private NatureType getNatureType(Long id){
-        NatureType natureType = natureTypeRepository.getById(id);
-
-        if (natureType == null){
-            throw new ApiFailException("NatureType is not found");
-        }
+        NatureType natureType = natureTypeRepository.findById(id)
+                .orElseThrow(() -> new ApiFailException("NatureType is not found"));
 
         if (natureType.getIsDeleted()){
             throw new ApiFailException("NatureType is not found or deleted");

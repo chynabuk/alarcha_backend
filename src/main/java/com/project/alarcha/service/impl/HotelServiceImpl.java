@@ -52,10 +52,8 @@ public class HotelServiceImpl implements HotelService {
     public List<HotelModel> getAll() {
         List<HotelModel> hotelModels = new ArrayList<>();
 
-        for (Hotel hotel : hotelRepository.findAll()){
-            if (!hotel.getIsDeleted()){
-                hotelModels.add(toModel(hotel));
-            }
+        for (Hotel hotel : hotelRepository.getAll()){
+            hotelModels.add(toModel(hotel));
         }
 
         return hotelModels;
@@ -65,13 +63,11 @@ public class HotelServiceImpl implements HotelService {
     public List<HotelModel> getForSelect() {
         List<HotelModel> hotelModels = new ArrayList<>();
 
-        for (Hotel hotel : hotelRepository.findAll()){
-            if (!hotel.getIsDeleted()){
-                HotelModel hotelModel = new HotelModel();
-                hotelModel.setId(hotel.getId());
-                hotelModel.setHotelName(hotel.getHotelName());
-                hotelModels.add(hotelModel);
-            }
+        for (Hotel hotel : hotelRepository.getAll()){
+            HotelModel hotelModel = new HotelModel();
+            hotelModel.setId(hotel.getId());
+            hotelModel.setHotelName(hotel.getHotelName());
+            hotelModels.add(hotelModel);
         }
 
         return hotelModels;
@@ -81,14 +77,12 @@ public class HotelServiceImpl implements HotelService {
     public List<HotelModel> getForList() {
         List<HotelModel> hotelModels = new ArrayList<>();
 
-        for (Hotel hotel : hotelRepository.findAll()){
-            if (!hotel.getIsDeleted()){
-                HotelModel hotelModel = new HotelModel();
-                hotelModel.setId(hotel.getId());
-                hotelModel.setHotelName(hotel.getHotelName());
-                hotelModel.setAreaName(hotel.getArea().getAreaName());
-                hotelModels.add(toModel(hotel));
-            }
+        for (Hotel hotel : hotelRepository.getAll()){
+            HotelModel hotelModel = new HotelModel();
+            hotelModel.setId(hotel.getId());
+            hotelModel.setHotelName(hotel.getHotelName());
+            hotelModel.setAreaName(hotel.getArea().getAreaName());
+            hotelModels.add(toModel(hotel));
         }
 
         return hotelModels;
@@ -110,14 +104,20 @@ public class HotelServiceImpl implements HotelService {
         Hotel hotel = getHotel(hotelId);
 
         for (RoomType roomType : hotel.getRoomTypes()){
+            roomType.setIsDeleted(true);
             for (Room room : roomType.getRooms()){
                 room.setIsDeleted(true);
             }
-            roomType.setIsDeleted(true);
         }
 
         for (HotelHall hotelHall : hotel.getHotelHalls()){
             hotelHall.setIsDeleted(true);
+
+            for (HotelHallOrder hotelHallOrder : hotelHall.getHotelHallOrders()){
+                if (!hotelHallOrder.getIsDeleted()){
+                    hotelHallOrder.setIsDeleted(true);
+                }
+            }
         }
 
         hotel.setIsDeleted(true);
@@ -140,11 +140,9 @@ public class HotelServiceImpl implements HotelService {
     }
 
     private Hotel getHotel(Long id){
-        Hotel hotel = hotelRepository.getById(id);
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new ApiFailException("Hotel is not found"));
 
-        if (hotel == null){
-            throw new ApiFailException("Hotel is not found");
-        }
         if (hotel.getIsDeleted()){
             throw new ApiFailException("Hotel is not found or deleted");
         }

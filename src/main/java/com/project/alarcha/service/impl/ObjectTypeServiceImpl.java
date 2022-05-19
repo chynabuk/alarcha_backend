@@ -54,10 +54,8 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     public List<ObjectTypeModel> getAll() {
         List<ObjectTypeModel> objectTypeModels = new ArrayList<>();
 
-        for(ObjectType objectType : objectTypeRepository.findAll()){
-            if(!objectType.getIsDeleted()){
-                objectTypeModels.add(toModel(objectType));
-            }
+        for(ObjectType objectType : objectTypeRepository.getAll()){
+            objectTypeModels.add(toModel(objectType));
         }
 
         return objectTypeModels;
@@ -67,13 +65,11 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     public List<ObjectTypeModel> getForSelect() {
         List<ObjectTypeModel> objectTypeModels = new ArrayList<>();
 
-        for(ObjectType objectType : objectTypeRepository.findAll()){
-            if(!objectType.getIsDeleted()){
-                ObjectTypeModel objectTypeModel = new ObjectTypeModel();
-                objectTypeModel.setId(objectType.getId());
-                objectTypeModel.setName(objectType.getName());
-                objectTypeModels.add(objectTypeModel);
-            }
+        for(ObjectType objectType : objectTypeRepository.getAll()){
+            ObjectTypeModel objectTypeModel = new ObjectTypeModel();
+            objectTypeModel.setId(objectType.getId());
+            objectTypeModel.setName(objectType.getName());
+            objectTypeModels.add(objectTypeModel);
         }
 
         return objectTypeModels;
@@ -83,16 +79,14 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     public List<ObjectTypeModel> getForList() {
         List<ObjectTypeModel> objectTypeModels = new ArrayList<>();
 
-        for(ObjectType objectType : objectTypeRepository.findAll()){
-            if(!objectType.getIsDeleted()){
-                ObjectTypeModel objectTypeModel = new ObjectTypeModel();
-                objectTypeModel.setId(objectType.getId());
-                objectTypeModel.setName(objectType.getName());
-                objectTypeModel.setAreaName(objectType.getArea().getAreaName());
-                objectTypeModel.setTimeType(objectType.getTimeType());
-                objectTypeModel.setPrice(objectType.getPrice());
-                objectTypeModels.add(objectTypeModel);
-            }
+        for(ObjectType objectType : objectTypeRepository.getAll()){
+            ObjectTypeModel objectTypeModel = new ObjectTypeModel();
+            objectTypeModel.setId(objectType.getId());
+            objectTypeModel.setName(objectType.getName());
+            objectTypeModel.setAreaName(objectType.getArea().getAreaName());
+            objectTypeModel.setTimeType(objectType.getTimeType());
+            objectTypeModel.setPrice(objectType.getPrice());
+            objectTypeModels.add(objectTypeModel);
         }
 
         return objectTypeModels;

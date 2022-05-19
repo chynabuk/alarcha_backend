@@ -90,18 +90,15 @@ public class HotelHallServiceImpl implements HotelHallService {
 
     @Override
     public HotelHall getHotelHallById(long id) {
-        return hotelHallsRepository.getById(id);
+        return getHotelHall(id);
     }
 
     @Override
     public List<HotelHallModel> getAll() {
         List<HotelHallModel> hotelHallModelModels = new ArrayList<>();
 
-        for (HotelHall hotelHall : hotelHallsRepository.findAll()){
-            if (!hotelHall.getIsDeleted()){
-                hotelHallModelModels.add(toModel(hotelHall));
-            }
-
+        for (HotelHall hotelHall : hotelHallsRepository.getAll()){
+            hotelHallModelModels.add(toModel(hotelHall));
         }
         return hotelHallModelModels;
     }
@@ -110,12 +107,9 @@ public class HotelHallServiceImpl implements HotelHallService {
     public List<HotelHallModel> getForList() {
         List<HotelHallModel> hotelHallModelModels = new ArrayList<>();
 
-        for (HotelHall hotelHall : hotelHallsRepository.findAll()){
-            if (!hotelHall.getIsDeleted()){
-                hotelHall.setHotelHallImages(null);
-                hotelHallModelModels.add(toModel(hotelHall));
-            }
-
+        for (HotelHall hotelHall : hotelHallsRepository.getAll()){
+            hotelHall.setHotelHallImages(null);
+            hotelHallModelModels.add(toModel(hotelHall));
         }
         return hotelHallModelModels;
     }
@@ -154,11 +148,9 @@ public class HotelHallServiceImpl implements HotelHallService {
     }
 
     private HotelHall getHotelHall(Long id){
-        HotelHall hotelHall = hotelHallsRepository.getById(id);
+        HotelHall hotelHall = hotelHallsRepository.findById(id)
+                .orElseThrow(() -> new ApiFailException("Hotel hall is not found"));
 
-        if (hotelHall != null) {
-            throw new ApiFailException("Hotel hall is not found");
-        }
         if (hotelHall.getIsDeleted()){
             throw new ApiFailException("Hotel hall is not found or deleted");
         }

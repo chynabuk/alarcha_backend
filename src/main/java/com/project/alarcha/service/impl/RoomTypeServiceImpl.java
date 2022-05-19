@@ -93,10 +93,8 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     public List<RoomTypeModel> getAll() {
         List<RoomTypeModel> roomTypeModels = new ArrayList<>();
 
-        for (RoomType roomType : roomTypeRepository.findAll()){
-            if (!roomType.getIsDeleted()){
-                roomTypeModels.add(toModel(roomType));
-            }
+        for (RoomType roomType : roomTypeRepository.getAll()){
+            roomTypeModels.add(toModel(roomType));
         }
 
         return roomTypeModels;
@@ -106,13 +104,11 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     public List<RoomTypeModel> getForSelect() {
         List<RoomTypeModel> roomTypeModels = new ArrayList<>();
 
-        for (RoomType roomType : roomTypeRepository.findAll()){
-            if (!roomType.getIsDeleted()){
-                RoomTypeModel roomTypeModel = new RoomTypeModel();
-                roomTypeModel.setId(roomType.getId());
-                roomTypeModel.setType(roomType.getType());
-                roomTypeModels.add(roomTypeModel);
-            }
+        for (RoomType roomType : roomTypeRepository.getAll()){
+            RoomTypeModel roomTypeModel = new RoomTypeModel();
+            roomTypeModel.setId(roomType.getId());
+            roomTypeModel.setType(roomType.getType());
+            roomTypeModels.add(roomTypeModel);
         }
 
         return roomTypeModels;
@@ -122,15 +118,13 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     public List<RoomTypeModel> getForList() {
         List<RoomTypeModel> roomTypeModels = new ArrayList<>();
 
-        for (RoomType roomType : roomTypeRepository.findAll()){
-            if (!roomType.getIsDeleted()){
-                RoomTypeModel roomTypeModel = new RoomTypeModel();
-                roomTypeModel.setId(roomType.getId());
-                roomTypeModel.setType(roomType.getType());
-                roomTypeModel.setHotelName(roomType.getHotel().getHotelName());
-                roomTypeModel.setPrice(roomType.getPrice());
-                roomTypeModels.add(roomTypeModel);
-            }
+        for (RoomType roomType : roomTypeRepository.getAll()){
+            RoomTypeModel roomTypeModel = new RoomTypeModel();
+            roomTypeModel.setId(roomType.getId());
+            roomTypeModel.setType(roomType.getType());
+            roomTypeModel.setHotelName(roomType.getHotel().getHotelName());
+            roomTypeModel.setPrice(roomType.getPrice());
+            roomTypeModels.add(roomTypeModel);
         }
 
         return roomTypeModels;
@@ -147,13 +141,12 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
         for (Room room : roomType.getRooms()){
             if (!room.getIsDeleted()){
-                room.setIsDeleted(true);
-
                 for (RoomOrder roomOrder : room.getRoomOrders()){
                     if (!roomOrder.getIsDeleted()){
                         roomOrder.setIsDeleted(true);
                     }
                 }
+                room.setIsDeleted(true);
             }
         }
 
@@ -165,15 +158,14 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
         roomType.setIsDeleted(true);
 
+        roomTypeRepository.save(roomType);
+
         return toModel(roomType);
     }
 
     private RoomType getRoomType(Long id){
-        RoomType roomType = roomTypeRepository.getById(id);
-
-        if (roomType != null){
-            throw new ApiFailException("RoomType not found");
-        }
+        RoomType roomType = roomTypeRepository.findById(id)
+                .orElseThrow(() -> new ApiFailException("RoomType not found"));
 
         if (roomType.getIsDeleted()){
             throw new ApiFailException("RoomType not found or deleted");

@@ -111,10 +111,8 @@ public class RoomServiceImpl implements RoomService {
     public List<RoomModel> getAll() {
         List<RoomModel> roomModels = new ArrayList<>();
 
-        for (Room room : roomRepository.findAll()){
-            if (!room.getIsDeleted()){
-                roomModels.add(toModel(room));
-            }
+        for (Room room : roomRepository.getAll()){
+            roomModels.add(toModel(room));
         }
 
         return roomModels;
@@ -124,16 +122,14 @@ public class RoomServiceImpl implements RoomService {
     public List<RoomModel> getForList() {
         List<RoomModel> roomModels = new ArrayList<>();
 
-        for (Room room : roomRepository.findAll()){
-            if (!room.getIsDeleted()){
-                RoomModel roomModel = new RoomModel();
-                roomModel.setId(room.getId());
-                roomModel.setRoomNumber(room.getRoomNumber());
-                roomModel.setBedNumber(room.getBedNumber());
-                roomModel.setHotelName(room.getRoomType().getHotel().getHotelName());
-                roomModel.setRoomTypeName(room.getRoomType().getType());
-                roomModels.add(roomModel);
-            }
+        for (Room room : roomRepository.getAll()){
+            RoomModel roomModel = new RoomModel();
+            roomModel.setId(room.getId());
+            roomModel.setRoomNumber(room.getRoomNumber());
+            roomModel.setBedNumber(room.getBedNumber());
+            roomModel.setHotelName(room.getRoomType().getHotel().getHotelName());
+            roomModel.setRoomTypeName(room.getRoomType().getType());
+            roomModels.add(roomModel);
         }
 
         return roomModels;

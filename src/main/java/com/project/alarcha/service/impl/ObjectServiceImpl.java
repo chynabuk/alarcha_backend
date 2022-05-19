@@ -88,10 +88,8 @@ public class ObjectServiceImpl implements ObjectService {
     public List<ObjectModel> getAll() {
         List<ObjectModel> objectModels = new ArrayList<>();
 
-        for(Object object : objectRepository.findAll()){
-            if(!object.getIsDeleted()){
-                objectModels.add(toModel(object));
-            }
+        for(Object object : objectRepository.getAll()){
+            objectModels.add(toModel(object));
         }
 
         return objectModels;
@@ -101,15 +99,13 @@ public class ObjectServiceImpl implements ObjectService {
     public List<ObjectModel> getForList() {
         List<ObjectModel> objectModels = new ArrayList<>();
 
-        for(Object object : objectRepository.findAll()){
-            if(!object.getIsDeleted()){
-                ObjectModel objectModel = new ObjectModel();
-                objectModel.setId(object.getId());
-                objectModel.setName(object.getName());
-                objectModel.setObjectTypeName(object.getObjectType().getName());
-                objectModel.setNumberOfSeats(object.getNumberOfSeats());
-                objectModels.add(objectModel);
-            }
+        for(Object object : objectRepository.getAll()){
+            ObjectModel objectModel = new ObjectModel();
+            objectModel.setId(object.getId());
+            objectModel.setName(object.getName());
+            objectModel.setObjectTypeName(object.getObjectType().getName());
+            objectModel.setNumberOfSeats(object.getNumberOfSeats());
+            objectModels.add(objectModel);
         }
 
         return objectModels;
