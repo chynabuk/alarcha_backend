@@ -7,8 +7,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface HotelHallOrderRepository extends JpaRepository<HotelHallOrder, Long> {
+    @Query(nativeQuery = true, value = "SELECT * FROM hotel_hall_orders " +
+            "WHERE NOT is_deleted " +
+            "ORDER BY id DESC")
+    List<HotelHallOrder> getAllHotelHallOrders();
+
     @Query(nativeQuery = true, value = "SELECT * FROM hotel_hall_orders " +
             "WHERE NOT is_deleted " +
             "ORDER BY id DESC")

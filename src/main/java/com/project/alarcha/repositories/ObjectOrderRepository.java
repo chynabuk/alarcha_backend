@@ -6,7 +6,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ObjectOrderRepository extends JpaRepository<ObjectOrder, Long> {
+    @Query(nativeQuery = true, value = "SELECT * FROM object_orders " +
+            "WHERE NOT is_deleted " +
+            "ORDER BY id DESC")
+    List<ObjectOrder> getAllObjectOrders();
+
     @Query(nativeQuery = true, value = "SELECT * FROM object_orders " +
             "WHERE NOT is_deleted " +
             "ORDER BY id DESC")

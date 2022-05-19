@@ -7,8 +7,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @RequestMapping
 public interface RoomOrderRepository extends JpaRepository<RoomOrder, Long> {
+    @Query(nativeQuery = true, value = "SELECT * FROM room_orders " +
+            "WHERE NOT is_deleted " +
+            "ORDER BY id DESC")
+    List<RoomOrder> getAllRoomOrders();
+
     @Query(nativeQuery = true, value = "SELECT * FROM room_orders " +
             "WHERE NOT is_deleted " +
             "ORDER BY id DESC")
