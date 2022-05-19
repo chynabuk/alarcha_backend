@@ -87,27 +87,27 @@ public class ObjectController {
     }
 
     @GetMapping("/order/get-all")
-    public ResponseMessage<List<ObjectOrderModel>> getOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+    public ResponseMessage<List<ObjectOrderModel>> getOrders(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
         return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getAll(page));
     }
 
     @GetMapping("/order/get-in-process")
-    public ResponseMessage<List<ObjectOrderModel>> getInProcessOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+    public ResponseMessage<List<ObjectOrderModel>> getInProcessOrders(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
         return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getInProcessOrders(page));
     }
 
     @GetMapping("/order/get-in-pay-check")
-    public ResponseMessage<List<ObjectOrderModel>> getInPayCheck(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+    public ResponseMessage<List<ObjectOrderModel>> getInPayCheck(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
         return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getInCheckPay(page));
     }
 
     @GetMapping("/order/get-paid")
-    public ResponseMessage<List<ObjectOrderModel>> getPaid(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+    public ResponseMessage<List<ObjectOrderModel>> getPaid(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
         return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getCheckedPay(page));
     }
 
     @GetMapping("/order/get-confirmed-or-declined")
-    public ResponseMessage<List<ObjectOrderModel>> getConfirmedOrDeclinedOrders(@RequestParam(name = "page", defaultValue = "1", required = false) int page){
+    public ResponseMessage<List<ObjectOrderModel>> getConfirmedOrDeclinedOrders(@RequestParam(name = "page", defaultValue = "0", required = false) int page){
         return new ResponseMessage<List<ObjectOrderModel>>().prepareSuccessMessage(objectOrderService.getConfirmedOrDeclinedOrders(page));
     }
 
