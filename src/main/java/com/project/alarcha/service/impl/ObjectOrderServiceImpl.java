@@ -112,95 +112,32 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     @Override
     public List<ObjectOrderModel> getAll(int page) {
-        Page<ObjectOrder> objectOrders = objectOrderRepository.findAll(PageRequest.of(page, 10));
-        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
-
-        for(ObjectOrder objectOrder : objectOrders){
-            if(!objectOrder.getIsDeleted()){
-                if(isExpired(objectOrder.getExpirationDate())){
-                    objectOrder.setIsDeleted(true);
-                    objectOrderRepository.save(objectOrder);
-                }
-            }
-            if(!objectOrder.getIsDeleted()){
-                objectOrderModels.add(toModel(objectOrder));
-            }
-        }
-        ObjectOrderModel objectOrderModel = new ObjectOrderModel();
-        objectOrderModel.setTotalPage(objectOrders.getTotalPages());
-        objectOrderModels.add(objectOrderModel);
-        return objectOrderModels;
+        Page<ObjectOrder> objectOrders = objectOrderRepository.getAll(PageRequest.of(page, 10));
+        return getModelListFrom(objectOrders);
     }
 
     @Override
     public List<ObjectOrderModel> getInProcessOrders(int page) {
-        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
-        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
-
-        for (ObjectOrder objectOrder : objectOrders){
-            if (!objectOrder.getIsDeleted()){
-                if (objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
-                    objectOrderModels.add(toModel(objectOrder));
-                }
-            }
-        }
-
-        return objectOrderModels;
+        Page<ObjectOrder> objectOrders = objectOrderRepository.getInProcessOrders(PageRequest.of(page, 10));
+        return getModelListFrom(objectOrders);
     }
 
     @Override
     public List<ObjectOrderModel> getConfirmedOrDeclinedOrders(int page) {
-        Page<ObjectOrder> objectOrders = objectOrderRepository.findAll(PageRequest.of(page, 10));
-        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
-
-        for (ObjectOrder objectOrder : objectOrders){
-            if (!objectOrder.getIsDeleted()){
-                if (
-                        objectOrder.getOrderStatus() == OrderStatus.CONFIRMED
-                        || objectOrder.getOrderStatus() == OrderStatus.DECLINED
-                        || objectOrder.getOrderStatus() == OrderStatus.PAID
-                ){
-                    objectOrderModels.add(toModel(objectOrder));
-                }
-            }
-        }
-        ObjectOrderModel objectOrderModel = new ObjectOrderModel();
-        objectOrderModel.setTotalPage(objectOrders.getTotalPages());
-        objectOrderModels.add(objectOrderModel);
-
-        return objectOrderModels;
+        Page<ObjectOrder> objectOrders = objectOrderRepository.getConfirmedOrDeclinedOrders(PageRequest.of(page, 10));
+        return getModelListFrom(objectOrders);
     }
 
     @Override
     public List<ObjectOrderModel> getInCheckPay(int page) {
-        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
-        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
-
-        for (ObjectOrder objectOrder : objectOrders){
-            if (!objectOrder.getIsDeleted()){
-                if (objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
-                    objectOrderModels.add(toModel(objectOrder));
-                }
-            }
-        }
-
-        return objectOrderModels;
+        Page<ObjectOrder> objectOrders = objectOrderRepository.getInCheckPay(PageRequest.of(page, 10));
+        return getModelListFrom(objectOrders);
     }
 
     @Override
     public List<ObjectOrderModel> getCheckedPay(int page) {
-        List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
-        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
-
-        for (ObjectOrder objectOrder : objectOrders){
-            if (!objectOrder.getIsDeleted()){
-                if (objectOrder.getOrderStatus() == OrderStatus.PAID){
-                    objectOrderModels.add(toModel(objectOrder));
-                }
-            }
-        }
-
-        return objectOrderModels;
+        Page<ObjectOrder> objectOrders = objectOrderRepository.getCheckedPay(PageRequest.of(page, 10));
+        return getModelListFrom(objectOrders);
     }
 
     @Override
@@ -603,5 +540,29 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         }
 
         return objectOrderModel;
+    }
+
+    private List<ObjectOrderModel> getModelListFrom(Page<ObjectOrder> objectOrders){
+        List<ObjectOrderModel> objectOrderModels = new ArrayList<>();
+
+        int countExpiredOrder = 0;
+        for (ObjectOrder objectOrder : objectOrders){
+            if (isExpired(objectOrder.getExpirationDate())){
+                objectOrder.setIsDeleted(true);
+                objectOrderRepository.save(objectOrder);
+                countExpiredOrder++;
+            }
+            objectOrderModels.add(toModel(objectOrder));
+        }
+
+        if (countExpiredOrder > 0){
+            throw new ApiFailException("Обновите страницу");
+        }
+
+        ObjectOrderModel objectOrderModel = new ObjectOrderModel();
+        objectOrderModel.setTotalPage(objectOrders.getTotalPages());
+        objectOrderModels.add(objectOrderModel);
+
+        return objectOrderModels;
     }
 }
