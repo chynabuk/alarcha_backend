@@ -51,7 +51,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         Feedback feedback = feedbackRepository.getById(replyToUserMessageModel.getUserFeedBackId());
 
         if (feedback == null){
-            throw new ApiFailException("FeedBack is not found");
+            throw new ApiFailException("FeedBack не найден.");
         }
 
         if (!feedback.getIsReplied()){

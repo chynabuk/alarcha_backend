@@ -64,11 +64,11 @@ public class RoomTypeImageServiceImpl implements RoomTypeImageService {
         RoomTypeImage roomTypeImage = roomTypeImageRepository.getById(id);
 
         if (roomTypeImage == null){
-            throw new ApiFailException("RoomTypeImage is not found");
+            throw new ApiFailException("RoomTypeImage не найден.");
         }
 
         if (roomTypeImage.getIsDeleted()){
-            throw new ApiFailException("RoomTypeImage is not found or deleted");
+            throw new ApiFailException("RoomTypeImage не найден или удален.");
         }
 
         return roomTypeImage;

@@ -48,11 +48,11 @@ public class HotelHall_ImgServiceImpl implements HotelHall_ImgService {
         HotelHall_IMG hotelHall_img = hotelHall_imgRepository.getById(id);
 
         if (hotelHall_img == null){
-            throw new ApiFailException("RoomTypeImage is not found");
+            throw new ApiFailException("RoomTypeImage не найден.");
         }
 
         if (hotelHall_img.getIsDeleted()){
-            throw new ApiFailException("RoomTypeImage is already deleted");
+            throw new ApiFailException("RoomTypeImage уже удален.");
         }
 
         hotelHall_img.setIsDeleted(true);

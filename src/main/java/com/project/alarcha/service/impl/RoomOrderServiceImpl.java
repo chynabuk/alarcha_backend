@@ -177,10 +177,10 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     private RoomOrder getRoomOrder(Long id){
         RoomOrder roomOrder = roomOrderRepository.findById(id)
-                .orElseThrow(() -> new ApiFailException("Room order not found"));
+                .orElseThrow(() -> new ApiFailException("Заказ комнаты не найден."));
 
         if (roomOrder.getIsDeleted()){
-            throw new ApiFailException("Room order is not found or deleted");
+            throw new ApiFailException("Заказ комнаты не найден или удален.");
         }
 
         return roomOrder;
@@ -194,7 +194,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         User user = userService.getById(roomOrderModel.getUserId());
         roomOrder.setUser(user);
         Room room = roomRepository.findById(roomOrderModel.getRoomId())
-                .orElseThrow(() -> new ApiFailException("room is not found"));
+                .orElseThrow(() -> new ApiFailException("Комната не найдена."));
         roomOrder.setIsDeleted(false);
         roomOrder.setRoom(room);
         roomOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
@@ -248,15 +248,15 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         endDate.setHours(12);
 
         if (startDate == null || endDate == null){
-            throw new ApiFailException("dates must not be null");
+            throw new ApiFailException("Даты не должны быть пустыми.");
         }
 
         if (endDate.compareTo(startDate) <= 0){
-            throw new ApiFailException("endDate must be greater than startDate");
+            throw new ApiFailException("Дата окончания не может быть раньше даты начала.");
         }
 
         if (startDate.compareTo(currentDate) < 0){
-            throw new ApiFailException("start date can not be less than currentDate");
+            throw new ApiFailException("Дата начала не может быть раньше текущей даты.");
         }
 
 
@@ -273,7 +273,7 @@ public class RoomOrderServiceImpl implements RoomOrderService {
                     {
                         for (int i = startDate.getDate(); i < endDate.getDate(); i++){
                             if (i >= rSDate.getDate() && i <= rEDate.getDate()){
-                                throw new ApiFailException("You can't order for this date");
+                                throw new ApiFailException("Вы не можете сделать заказ на эту дату.");
                             }
                         }
                     }

@@ -97,11 +97,11 @@ public class NatureServiceImpl implements NatureService {
         Nature nature = natureRepository.getById(natureId);
 
         if (nature == null){
-            throw new ApiFailException("Nature not found");
+            throw new ApiFailException("Природа не найдена.");
         }
 
         if (nature.getIsDeleted() == null || nature.getIsDeleted()){
-            throw new ApiFailException("Nature is not found or deleted");
+            throw new ApiFailException("Природа не найдена или удалена.");
         }
 
         return nature;
@@ -141,7 +141,7 @@ public class NatureServiceImpl implements NatureService {
         NatureType natureType = natureTypeRepository.getById(natureModel.getNatureTypeId());
 
         if (natureType == null){
-            throw new ApiFailException("Nature type is not found");
+            throw new ApiFailException("Тип природы не найден.");
         }
 
         nature.setNatureType(natureType);

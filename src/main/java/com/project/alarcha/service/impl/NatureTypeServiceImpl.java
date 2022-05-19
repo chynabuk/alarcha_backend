@@ -158,10 +158,10 @@ public class NatureTypeServiceImpl implements NatureTypeService {
 
     private NatureType getNatureType(Long id){
         NatureType natureType = natureTypeRepository.findById(id)
-                .orElseThrow(() -> new ApiFailException("NatureType is not found"));
+                .orElseThrow(() -> new ApiFailException("Тип природы не найден."));
 
         if (natureType.getIsDeleted()){
-            throw new ApiFailException("NatureType is not found or deleted");
+            throw new ApiFailException("Тип природы не найден или удален.");
         }
 
         return natureType;

@@ -47,11 +47,11 @@ public class ObjectTypeImgServiceImpl implements ObjectTypeImgService {
         ObjectTypeImage objectTypeImage = objectTypeImgRepository.getById(id);
 
         if (objectTypeImage == null){
-            throw new ApiFailException("ObjectTypeImage is not found");
+            throw new ApiFailException("ObjectTypeImage не найден.");
         }
 
         if (objectTypeImage.getIsDeleted()){
-            throw new ApiFailException("ObjectTypeImage is already deleted");
+            throw new ApiFailException("ObjectTypeImage уже удален.");
         }
 
         objectTypeImage.setIsDeleted(true);

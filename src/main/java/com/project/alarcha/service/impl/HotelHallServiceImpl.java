@@ -148,10 +148,10 @@ public class HotelHallServiceImpl implements HotelHallService {
 
     private HotelHall getHotelHall(Long id){
         HotelHall hotelHall = hotelHallsRepository.findById(id)
-                .orElseThrow(() -> new ApiFailException("Hotel hall is not found"));
+                .orElseThrow(() -> new ApiFailException("Hotel hall не найден."));
 
         if (hotelHall.getIsDeleted()){
-            throw new ApiFailException("Hotel hall is not found or deleted");
+            throw new ApiFailException("Hotel hall не найден или удален.");
         }
 
         return hotelHall;

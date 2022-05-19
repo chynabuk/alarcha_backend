@@ -177,10 +177,10 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     private RoomType getRoomType(Long id){
         RoomType roomType = roomTypeRepository.findById(id)
-                .orElseThrow(() -> new ApiFailException("RoomType not found"));
+                .orElseThrow(() -> new ApiFailException("Тип комнаты не найден."));
 
         if (roomType.getIsDeleted()){
-            throw new ApiFailException("RoomType not found or deleted");
+            throw new ApiFailException("Тип комнаты не найден или удален.");
         }
 
         return roomType;
@@ -192,7 +192,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         Hotel hotel = hotelRepository.getById(roomTypeModel.getHotelId());
 
         if (hotel == null){
-            throw new ApiFailException("can not set hotel");
+            throw new ApiFailException("Невозможно устаносить отель");
         }
 
         roomType.setType(roomTypeModel.getType());

@@ -42,7 +42,7 @@ public class AreaServiceImpl implements AreaService {
     public AreaModel updateArea(AreaModel areaModel) {
         Area area = getAreaById(areaModel.getId());
         if (area == null){
-            throw new ApiFailException("area not found");
+            throw new ApiFailException("Арея не найдена.");
         }
 
         if (!area.getIsDeleted()){
@@ -81,9 +81,9 @@ public class AreaServiceImpl implements AreaService {
     @Override
     public Area getAreaById(Long areaId) {
         Area area = areaRepository.findById(areaId)
-                .orElseThrow(() -> new ApiFailException("Area is not found"));
+                .orElseThrow(() -> new ApiFailException("Арея не найдена"));
         if (area.getIsDeleted()){
-            throw new ApiFailException("Area is deleted or not found");
+            throw new ApiFailException("Арея не найдена или удалена");
         }
         return area;
     }
