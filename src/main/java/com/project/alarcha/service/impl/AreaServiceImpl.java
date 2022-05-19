@@ -1,6 +1,7 @@
 package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.*;
+import com.project.alarcha.entities.Object;
 import com.project.alarcha.enums.UserRole;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.AreaModel.AreaModel;
@@ -62,7 +63,6 @@ public class AreaServiceImpl implements AreaService {
             }
             deleteHotelDepended(area.getHotels());
 
-            //TODO BEKZHAN
             deleteObjectTypeDepended(area.getObjectTypes());
 
             area.setIsDeleted(true);
@@ -93,10 +93,8 @@ public class AreaServiceImpl implements AreaService {
     public List<AreaModel> getAll() {
         List<AreaModel> areaModels = new ArrayList<>();
 
-        for (Area area : areaRepository.findAll()){
-            if (!area.getIsDeleted()){
-                areaModels.add(toModel(area));
-            }
+        for (Area area : areaRepository.getAll()){
+            areaModels.add(toModel(area));
         }
         return areaModels;
     }
@@ -105,14 +103,12 @@ public class AreaServiceImpl implements AreaService {
     public List<AreaModel> getForSelectBox() {
         List<AreaModel> areaModels = new ArrayList<>();
 
-        for (Area area : areaRepository.findAll()){
-            if (!area.getIsDeleted()){
-                AreaModel areaModel = new AreaModel();
-                areaModel.setId(area.getId());
-                areaModel.setAreaName(area.getAreaName());
+        for (Area area : areaRepository.getAll()){
+            AreaModel areaModel = new AreaModel();
+            areaModel.setId(area.getId());
+            areaModel.setAreaName(area.getAreaName());
 
-                areaModels.add(areaModel);
-            }
+            areaModels.add(areaModel);
         }
         return areaModels;
     }
@@ -122,21 +118,43 @@ public class AreaServiceImpl implements AreaService {
             for (RoomType roomType : hotel.getRoomTypes()){
                 for (Room room : roomType.getRooms()){
                     room.setIsDeleted(true);
+
+                    for (RoomOrder roomOrder : room.getRoomOrders()){
+                        roomOrder.setIsDeleted(true);
+                    }
                 }
                 roomType.setIsDeleted(true);
             }
 
             for (HotelHall hotelHall : hotel.getHotelHalls()){
                 hotelHall.setIsDeleted(true);
+
+                for (HotelHallOrder hotelHallOrder : hotelHall.getHotelHallOrders()){
+                    hotelHallOrder.setIsDeleted(true);
+                }
             }
 
             hotel.setIsDeleted(true);
         }
     }
 
-    //TODO BEKZHAN
     private void deleteObjectTypeDepended(List<ObjectType> objectTypes){
-        //YOUR CODE
+        for (ObjectType objectType : objectTypes){
+            objectType.setIsDeleted(true);
+            for (Object object : objectType.getObjects()){
+                object.setIsDeleted(true);
+                for (ObjectOrder objectOrder : object.getObjectOrders()){
+                    objectOrder.setIsDeleted(true);
+                }
+            }
+
+            for (MenuSection menuSection : objectType.getMenuSections()){
+                menuSection.setIsDeleted(true);
+                for (Menu menu : menuSection.getMenus()){
+                    menu.setIsDeleted(true);
+                }
+            }
+        }
     }
 
     private Area initAndGet(Area area, AreaModel areaCreateModel){
