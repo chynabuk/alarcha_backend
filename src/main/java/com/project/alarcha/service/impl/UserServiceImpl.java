@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ApiFailException("User is not found"));
+                .orElseThrow(() -> new ApiFailException("Пользователь не найден."));
     }
 
     @Override
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
         User user = getById(userId);
 
         if (user.getIsDeleted()){
-            throw new ApiFailException("User is already deleted");
+            throw new ApiFailException("Пользователь уже удален.");
         }
 
         user.setIsDeleted(true);
@@ -179,7 +179,7 @@ public class UserServiceImpl implements UserService {
     private void checkEmailForUnique(String email) {
         User dataUserByEmail = getByEmail(email);
         if (dataUserByEmail != null)
-            throw new ApiFailException(email + " is already existed");
+            throw new ApiFailException(email + " уже существует.");
     }
 
     private void setValuesOnUpdate(User user, UserUpdateModel userUpdateModel){

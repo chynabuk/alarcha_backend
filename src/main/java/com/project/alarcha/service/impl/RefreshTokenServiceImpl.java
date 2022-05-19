@@ -43,7 +43,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                     return ResponseEntity.ok(new RefreshTokenResponse(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new RefreshTokenException(requestRefreshToken,
-                        "Refresh token is not in database!"));
+                        "Refresh token не в Базе данных!"));
     }
 
     public Optional<RefreshToken> findByToken(String token) {
@@ -62,7 +62,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new RefreshTokenException(token.getToken(), "Refresh token was expired. Please make a new signin request");
+            throw new RefreshTokenException(token.getToken(), "Refresh token просрочен. Пожалуйста сделайте новый signin запрос");
         }
         return token;
     }

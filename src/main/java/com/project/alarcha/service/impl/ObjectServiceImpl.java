@@ -142,10 +142,10 @@ public class ObjectServiceImpl implements ObjectService {
     private Object getObject(Long objectId){
         Object object = objectRepository
                 .findById(objectId)
-                .orElseThrow(() -> new ApiFailException("Object is not found!"));
+                .orElseThrow(() -> new ApiFailException("Объект не найден."));
 
         if(object.getIsDeleted()){
-            throw new ApiFailException("Object is not found or deleted!");
+            throw new ApiFailException("Объект не найден или удален.");
         }
 
         return object;

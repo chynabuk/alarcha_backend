@@ -75,10 +75,10 @@ public class AdditionalServiceServiceImpl implements AdditionalServiceService {
     private AdditionalService getAdditionalService(Long additionalServiceId){
         AdditionalService additionalService = additionalServiceRepository
                 .findById(additionalServiceId)
-                .orElseThrow(() -> new ApiFailException("Additional service is not found!"));
+                .orElseThrow(() -> new ApiFailException("Дополнительная услуга не найдена."));
 
         if(additionalService.getIsDeleted()){
-            throw new ApiFailException("Additional service is not found!");
+            throw new ApiFailException("Дополнительная услуга не найдена или удалена.");
         }
 
         return additionalService;

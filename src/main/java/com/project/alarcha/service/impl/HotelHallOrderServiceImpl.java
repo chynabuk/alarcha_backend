@@ -166,7 +166,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     private HotelHallOrder getHotelHallOrder(Long id){
         HotelHallOrder hotelHallOrder = hotelHallOrderRepository
                 .findById(id)
-                .orElseThrow(() -> new ApiFailException("HotelHall order not found"));
+                .orElseThrow(() -> new ApiFailException("HotelHall order не найдке."));
 
         if (isExpired(hotelHallOrder.getExpirationDate())){
             hotelHallOrder.setIsDeleted(true);
@@ -174,7 +174,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         }
 
         if (hotelHallOrder.getIsDeleted()){
-            throw new ApiFailException("HotelHall order is not found or deleted");
+            throw new ApiFailException("HotelHall order не найден или удален.");
         }
 
         return hotelHallOrder;
@@ -189,7 +189,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrder.setUser(user);
 
         HotelHall hotelHall = hotelHallsRepository.findById(hotelHallOrderModel.getHotelHallId())
-                .orElseThrow(() -> new ApiFailException("HotelHall is not found"));
+                .orElseThrow(() -> new ApiFailException("HotelHall не найден."));
         Float price = hotelHall.getPrice();
         Float priceForNextHours = hotelHall.getPriceForNextHours();
 
@@ -251,19 +251,19 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         currentDate.setSeconds(0);
 
         if (startTime == null || endTime == null || startDate == null){
-            throw new ApiFailException("startTime or endTime or startDate can not be null");
+            throw new ApiFailException("Время начала, время оконцания или дата начала не могут быть пустыми.");
         }
 
         if (startDate.before(currentDate)){
-            throw new ApiFailException("StartDate can not be less than currentDate");
+            throw new ApiFailException("Дата начала не может быть раньше текущей даты.");
         }
 
         if (endTime.compareTo(startTime) <= 0){
-            throw new ApiFailException("endTime must be greater than startTime");
+            throw new ApiFailException("Время окончания не может быть до времени начала.");
         }
 
         if (startDate.equals(currentDate) && startTime.compareTo(currentTime) < 0){
-            throw new ApiFailException("startTime can not be less than currentTime");
+            throw new ApiFailException("Время начала не может быть раньше текущего времени.");
         }
 
 
@@ -279,7 +279,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
                         for(int i = startTime.getHours(); i < endTime.getHours(); i++){
                             if(i >= rSTime.getHours() && i <= rETime.getHours()){
-                                throw new ApiFailException("You can't order for this period of time");
+                                throw new ApiFailException("Вы не можете сделать заказ в этот промежуток вермени.");
                             }
                         }
                     }
@@ -295,7 +295,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
         Integer hours = endTime.getHours() - startTime.getHours();
         if (hours <= 0){
-            throw new ApiFailException("can not get totalPrice");
+            throw new ApiFailException("Не возможно получить полную сумму.");
         }
         else {
             return price + (hours - 1) * priceForNextHours;
@@ -336,7 +336,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         }
 
         if (countExpiredOrder > 0){
-            throw new ApiFailException("Обновите страницу");
+            throw new ApiFailException("Обновите страницу.");
         }
 
         HotelHallOrderModel hotelHallOrderModel = new HotelHallOrderModel();

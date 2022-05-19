@@ -141,10 +141,10 @@ public class HotelServiceImpl implements HotelService {
 
     private Hotel getHotel(Long id){
         Hotel hotel = hotelRepository.findById(id)
-                .orElseThrow(() -> new ApiFailException("Hotel is not found"));
+                .orElseThrow(() -> new ApiFailException("Hotel не найден."));
 
         if (hotel.getIsDeleted()){
-            throw new ApiFailException("Hotel is not found or deleted");
+            throw new ApiFailException("Hotel не найден или удален.");
         }
 
         return hotel;

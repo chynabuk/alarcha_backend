@@ -86,6 +86,8 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
             objectTypeModel.setAreaName(objectType.getArea().getAreaName());
             objectTypeModel.setTimeType(objectType.getTimeType());
             objectTypeModel.setPrice(objectType.getPrice());
+            objectTypeModel.setMinHours(objectType.getMinHours());
+            objectTypeModel.setPricePerHour(objectType.getPricePerHour());
             objectTypeModels.add(objectTypeModel);
         }
 
@@ -140,10 +142,10 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     private ObjectType getObjectType(Long objectTypeId){
         ObjectType objectType = objectTypeRepository
                 .findById(objectTypeId)
-                .orElseThrow(() -> new ApiFailException("ObjectType is not found!"));
+                .orElseThrow(() -> new ApiFailException("Тип объекта не найден."));
 
         if(objectType.getIsDeleted()){
-            throw new ApiFailException("ObjectType is not found or deleted!");
+            throw new ApiFailException("Тип объекта не найден или удален.");
         }
 
         return objectType;
@@ -230,6 +232,8 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setId(objectType.getId());
         objectTypeModel.setName(objectType.getName());
         objectTypeModel.setPrice(objectType.getPrice());
+        objectTypeModel.setPricePerHour(objectType.getPricePerHour());
+        objectTypeModel.setMinHours(objectType.getMinHours());
 
         objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
         objectTypeModel.setObjectModels(objectService.getByObjectType(objectType));
@@ -246,6 +250,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeModel.setName(objectType.getName());
         objectTypeModel.setPrice(objectType.getPrice());
         objectTypeModel.setPricePerHour(objectType.getPricePerHour());
+        objectTypeModel.setMinHours(objectType.getMinHours());
         if (!objectType.getMenuSections().isEmpty()){
             objectTypeModel.setMenuSectionModels(menuSectionService.getByObjectType(objectType));
         }

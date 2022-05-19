@@ -176,7 +176,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         User user = userService.getById(objectOrderModel.getUserId());
         Object object = objectRepository.findById(objectOrderModel.getObjectId())
-                .orElseThrow(() -> new ApiFailException("object is not found"));
+                .orElseThrow(() -> new ApiFailException("Обьект не найден."));
         ObjectType objectType = object.getObjectType();
 
         objectOrder.setUser(user);
@@ -232,7 +232,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     private ObjectOrder getObjectOrder(Long objectOrderId){
         ObjectOrder objectOrder = objectOrderRepository
                 .findById(objectOrderId)
-                .orElseThrow(() -> new ApiFailException("ObjectOrder is not found!"));
+                .orElseThrow(() -> new ApiFailException("Заказ объкта не найден."));
 
         if(isExpired(objectOrder.getExpirationDate())){
             objectOrder.setIsDeleted(true);
@@ -240,7 +240,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         }
 
         if(objectOrder.getIsDeleted()){
-            throw new ApiFailException("ObjectOrder is not found or deleted!");
+            throw new ApiFailException("Заказ объекта не найден или удален.");
         }
 
         return objectOrder;
@@ -327,49 +327,49 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     private void checkMinHours(Time startTime, Time endTime, Integer minHours){
         int hours = endTime.getHours() - startTime.getHours();
         if(hours < minHours){
-            throw new ApiFailException("You can not order this ObjectType for less than " + minHours + " hours.");
+            throw new ApiFailException("Вы не можете заказать этот тип объета меньше чем на " + minHours + " часа.");
         }
     }
 
     private void checkDateForNull(Date startDate, Date endDate){
         if (startDate == null || endDate == null){
-            throw new ApiFailException("Dates must not be null");
+            throw new ApiFailException("Даты не должны быть пустыми.");
         }
     }
 
     private void checkTimeForNull(Time startTime, Time endTime, Date registrationDate){
         if(startTime == null || endTime == null || registrationDate == null){
-            throw new ApiFailException("Time or registration date must not be null!");
+            throw new ApiFailException("Время или дата регистрации не должны быть пустыми.");
         }
     }
 
     private void compareStartTimeWithCurrentTime(Date registrationDate, Date currentDate, Time startTime, Time currentTime){
         if(registrationDate.equals(currentDate) && startTime.before(currentTime)){
-            throw new ApiFailException("startTime can not be less than currentTime");
+            throw new ApiFailException("Время начала не может быть раньше текущего времени.");
         }
     }
 
     private void compareEndTimeWithStartTime(Time startTime, Time endTime){
         if (endTime.compareTo(startTime) <= 0){
-            throw new ApiFailException("endTime must be greater than startTime");
+            throw new ApiFailException("Время окончания не может быть раньше времени начала.");
         }
     }
 
     private void compareRegistrationDateWithCurrentDate(Date registrationDate, Date currentDate){
         if(registrationDate.before(currentDate)){
-            throw new ApiFailException("RegistrationDate can not be less than currentDate");
+            throw new ApiFailException("Дата регистрации не может быть раньше текущей даты.");
         }
     }
 
     private void compareStartWithCurrentDate(Date startDate, Date currentDate){
         if (startDate.compareTo(currentDate) < 0){
-            throw new ApiFailException("start date can not be less than currentDate");
+            throw new ApiFailException("Дата начала не может быть раньше текущей даты.");
         }
     }
 
     private void compareEndWithStartDate(Date startDate, Date endDate){
         if (endDate.compareTo(startDate) <= 0){
-            throw new ApiFailException("endDate must be greater than startDate");
+            throw new ApiFailException("Дата окончания не может быть раньше даты начала.");
         }
     }
 
@@ -386,7 +386,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
                         for(int i = startTime.getHours(); i < endTime.getHours(); i++){
                             if(i >= rSTime.getHours() && i <= rETime.getHours()){
-                                throw new ApiFailException("You can't order for this period of time");
+                                throw new ApiFailException("Вы не можете сделать заказ в этот промежуток вермени.");
                             }
                         }
                     }
@@ -409,7 +409,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                     {
                         for (int i = startDate.getDate(); i < endDate.getDate(); i++){
                             if (i >= rSDate.getDate() && i <= rEDate.getDate()){
-                                throw new ApiFailException("You can't order for this date");
+                                throw new ApiFailException("Вы не можете сделать заказ на эту дату.");
                             }
                         }
                     }
@@ -421,10 +421,10 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     private void setValuesOnUpdateObjectOrder(ObjectOrder objectOrder, ObjectOrderModel objectOrderModel){
         Object object = objectRepository
                 .findById(objectOrder.getObject().getId())
-                .orElseThrow(() -> new ApiFailException("Object is not found!"));
+                .orElseThrow(() -> new ApiFailException("Объект не найден."));
 
         if(object.getIsDeleted()){
-            throw new ApiFailException("Object is not found or deleted!");
+            throw new ApiFailException("Объект не найден или удален.");
         }
 
         ObjectType objectType = object.getObjectType();

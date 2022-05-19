@@ -100,7 +100,7 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
     private AdditionalServiceOrder getAdditionalServiceOrder(Long id){
         AdditionalServiceOrder additionalServiceOrder = additionalServiceOrderRepository
                 .findById(id)
-                .orElseThrow(() -> new ApiFailException("Additional service order is not found!"));
+                .orElseThrow(() -> new ApiFailException("Заказ дополнительных услуг не найден."));
 
         if(isExpired(additionalServiceOrder.getExpirationDate())){
             additionalServiceOrder.setIsDeleted(true);
@@ -108,7 +108,7 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
         }
 
         if(additionalServiceOrder.getIsDeleted()){
-            throw new ApiFailException("Additional service order is not found or deleted!");
+            throw new ApiFailException("Заказ дополнительных услуг не найден или удален.");
         }
 
         return additionalServiceOrder;
@@ -161,7 +161,7 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
             additionalService.setInStock(stock);
         }
         else {
-            throw new ApiFailException("The following additional service is not in stock!");
+            throw new ApiFailException("Этой дополнительной услуги нет в наличии.");
         }
     }
 
@@ -179,7 +179,7 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
         Date registrationDate = additionalServiceOrderModel.getRegistrationDate();
 
         if(startTime == null || registrationDate == null){
-            throw new ApiFailException("Time or registration date must not be null!");
+            throw new ApiFailException("Время и дата регистрации не должны быть пустыми.");
         }
 
         registrationDate.setHours(0);
@@ -198,11 +198,11 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
         currentDate.setSeconds(0);
 
         if(registrationDate.before(currentDate)){
-            throw new ApiFailException("RegistrationDate can not be less than currentDate");
+            throw new ApiFailException("Дата регитсрации не может быть раньше текущей даты.");
         }
 
         if(registrationDate.equals(currentDate) && startTime.before(currentTime)){
-            throw new ApiFailException("startTime can not be less than currentTime");
+            throw new ApiFailException("Время начала не может быть раньше текущего времени.");
         }
 
         if(endTime == null){
@@ -214,13 +214,13 @@ public class AdditionalServiceOrderServiceImpl implements AdditionalServiceOrder
         }
         else if(endTime != null){
             if (endTime.compareTo(startTime) <= 0){
-                throw new ApiFailException("endTime must be greater than startTime");
+                throw new ApiFailException("Время окончания не может быть раньше времени начала");
             }
 
             int hours = endTime.getHours() - startTime.getHours();
 
             if(hours < 4){
-                throw new ApiFailException("You can't order additional service for less than 4 hours!");
+                throw new ApiFailException("Вы не можете заказать дополнительную услугу меньше чем на 4 часа!");
             }
         }
     }

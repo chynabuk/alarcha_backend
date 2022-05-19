@@ -147,10 +147,10 @@ public class MenuServiceImpl implements MenuService {
     private Menu getMenu(Long menuId){
         Menu menu = menuRepository
                 .findById(menuId)
-                .orElseThrow(() -> new ApiFailException("Menu is not found!"));
+                .orElseThrow(() -> new ApiFailException("Меню не найено."));
 
         if(menu.getIsDeleted()){
-            throw new ApiFailException("Menu is not found or deleted!");
+            throw new ApiFailException("Меню не найдено или удалено.");
         }
 
         return menu;

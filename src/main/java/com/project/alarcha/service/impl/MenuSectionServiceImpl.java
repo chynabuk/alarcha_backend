@@ -170,10 +170,10 @@ public class MenuSectionServiceImpl implements MenuSectionService {
     private MenuSection getMenuSection(Long menuSectionId){
         MenuSection menuSection = menuSectionRepository
                 .findById(menuSectionId)
-                .orElseThrow(() -> new ApiFailException("MenuSection is not found!"));
+                .orElseThrow(() -> new ApiFailException("Раздел меню не найден."));
 
         if(menuSection.getIsDeleted()){
-            throw new ApiFailException("MenuSection is not found or deleted!");
+            throw new ApiFailException("Раздел меню не найден или удален.");
         }
 
         return menuSection;

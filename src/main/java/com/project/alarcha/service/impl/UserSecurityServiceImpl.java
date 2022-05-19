@@ -25,7 +25,7 @@ public class UserSecurityServiceImpl implements UserSecurityService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository
                 .findByEmail(email)
-                .orElseThrow(() -> new ApiFailException("incorrect email or password"));
+                .orElseThrow(() -> new ApiFailException("Неправильный email или пароль."));
         return toUserSecurityModel(user);
     }
 
