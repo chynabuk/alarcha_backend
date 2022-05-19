@@ -114,95 +114,32 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
     @Override
     public List<RoomOrderModel> getAll(int page) {
-        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
-        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
-
-        for (RoomOrder roomOrder : roomOrders){
-            if (!roomOrder.getIsDeleted()){
-                if (isExpired(roomOrder.getExpirationDate())){
-                    roomOrder.setIsDeleted(true);
-                    roomOrderRepository.save(roomOrder);
-                }
-            }
-            if (!roomOrder.getIsDeleted()){
-                roomOrderModels.add(toModel(roomOrder));
-            }
-        }
-
-        return roomOrderModels;
+        Page<RoomOrder> roomOrders = roomOrderRepository.getAll(PageRequest.of(page, 10));
+        return getModelListFrom(roomOrders);
     }
 
     @Override
     public List<RoomOrderModel> getInProcessOrders(int page) {
-        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
-
-        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
-
-        for (RoomOrder roomOrder : roomOrders){
-            if (!roomOrder.getIsDeleted()){
-                if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
-                    roomOrderModels.add(toModel(roomOrder));
-                }
-            }
-        }
-
-        return roomOrderModels;
+        Page<RoomOrder> roomOrders = roomOrderRepository.getInProcessOrders(PageRequest.of(page, 10));
+        return getModelListFrom(roomOrders);
     }
 
     @Override
     public List<RoomOrderModel> getConfirmedOrDeclinedOrders(int page) {
-        Page<RoomOrder> roomOrders = roomOrderRepository.findAll(PageRequest.of(page, 10));
-
-        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
-
-        for (RoomOrder roomOrder : roomOrders){
-            if (!roomOrder.getIsDeleted()){
-                if (
-                        roomOrder.getOrderStatus() == OrderStatus.CONFIRMED
-                        || roomOrder.getOrderStatus() == OrderStatus.DECLINED
-                        || roomOrder.getOrderStatus() == OrderStatus.PAID
-                ){
-                    roomOrderModels.add(toModel(roomOrder));
-                }
-            }
-        }
-
-        RoomOrderModel roomOrderModel = new RoomOrderModel();
-        roomOrderModel.setTotalPage(roomOrders.getTotalPages());
-        roomOrderModels.add(roomOrderModel);
-        return roomOrderModels;
+        Page<RoomOrder> roomOrders = roomOrderRepository.getConfirmedOrDeclinedOrders(PageRequest.of(page, 10));
+        return getModelListFrom(roomOrders);
     }
 
     @Override
     public List<RoomOrderModel> getInCheckPay(int page) {
-        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
-        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
-
-        for (RoomOrder roomOrder : roomOrders){
-            if (!roomOrder.getIsDeleted()){
-                if (roomOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
-                    roomOrderModels.add(toModel(roomOrder));
-                }
-            }
-        }
-
-        return roomOrderModels;
+        Page<RoomOrder> roomOrders = roomOrderRepository.getInCheckPay(PageRequest.of(page, 10));
+        return getModelListFrom(roomOrders);
     }
 
     @Override
     public List<RoomOrderModel> getCheckedPay(int page) {
-        List<RoomOrder> roomOrders = roomOrderRepository.findAll();
-        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
-
-        for (RoomOrder roomOrder : roomOrders){
-            if (!roomOrder.getIsDeleted()){
-                if (roomOrder.getOrderStatus() == OrderStatus.PAID){
-                    roomOrderModels.add(toModel(roomOrder));
-                }
-            }
-        }
-
-        return roomOrderModels;
+        Page<RoomOrder> roomOrders = roomOrderRepository.getCheckedPay(PageRequest.of(page, 10));
+        return getModelListFrom(roomOrders);
     }
 
     @Override
@@ -353,6 +290,30 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         }
 
         return roomOrderModel;
+    }
+
+    private List<RoomOrderModel> getModelListFrom(Page<RoomOrder> roomOrders){
+        List<RoomOrderModel> roomOrderModels = new ArrayList<>();
+
+        int countExpiredOrder = 0;
+        for (RoomOrder roomOrder : roomOrders){
+            if (isExpired(roomOrder.getExpirationDate())){
+                roomOrder.setIsDeleted(true);
+                roomOrderRepository.save(roomOrder);
+                countExpiredOrder++;
+            }
+            roomOrderModels.add(toModel(roomOrder));
+        }
+
+        if (countExpiredOrder > 0){
+            throw new ApiFailException("Обновите страницу");
+        }
+
+        RoomOrderModel roomOrderModel = new RoomOrderModel();
+        roomOrderModel.setTotalPage(roomOrders.getTotalPages());
+        roomOrderModels.add(roomOrderModel);
+
+        return roomOrderModels;
     }
 
 }
