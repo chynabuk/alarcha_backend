@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -148,6 +149,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setIsDeleted(true);
+        user.setDeletedDate(new Date());
 
         userRepository.save(user);
 

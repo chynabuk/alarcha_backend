@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -51,6 +52,7 @@ public class RoomTypeImageServiceImpl implements RoomTypeImageService {
         RoomTypeImage roomTypeImage = getRoomTypeImage(id);
 
         roomTypeImage.setIsDeleted(true);
+        roomTypeImage.setDeletedDate(new Date());
 
         roomTypeImageRepository.save(roomTypeImage);
 

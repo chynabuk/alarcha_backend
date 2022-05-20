@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -62,6 +63,7 @@ public class AreaServiceImpl implements AreaService {
         deleteObjectTypeDepended(area.getObjectTypes());
 
         area.setIsDeleted(true);
+        area.setDeletedDate(new Date());
 
         areaRepository.save(area);
 
@@ -113,26 +115,33 @@ public class AreaServiceImpl implements AreaService {
     }
 
     private void deleteHotelDepended(List<Hotel> hotels){
+        Date deletedDate = new Date();
         if (hotels != null){
             if (!hotels.isEmpty()){
                 for (Hotel hotel : hotels){
                     hotel.setIsDeleted(true);
+                    hotel.setDeletedDate(deletedDate);
+
                     List<RoomType> roomTypes = hotel.getRoomTypes();
                     if (roomTypes != null){
                         if (!roomTypes.isEmpty()){
                             for (RoomType roomType : roomTypes){
                                 roomType.setIsDeleted(true);
+                                roomType.setDeletedDate(deletedDate);
+
                                 List<Room> rooms = roomType.getRooms();
                                 if (rooms != null){
                                     if (!rooms.isEmpty()){
                                         for (Room room : rooms){
                                             room.setIsDeleted(true);
+                                            room.setDeletedDate(deletedDate);
 
                                             List<RoomOrder> roomOrders = room.getRoomOrders();
                                             if (roomOrders != null){
                                                 if (!roomOrders.isEmpty()){
                                                     for (RoomOrder roomOrder : roomOrders){
                                                         roomOrder.setIsDeleted(true);
+                                                        roomOrder.setDeletedDate(deletedDate);
                                                     }
                                                 }
                                             }
@@ -148,11 +157,13 @@ public class AreaServiceImpl implements AreaService {
                         if (!hotelHalls.isEmpty()){
                             for (HotelHall hotelHall : hotelHalls){
                                 hotelHall.setIsDeleted(true);
+                                hotelHall.setDeletedDate(deletedDate);
                                 List<HotelHallOrder> hotelHallOrders = hotelHall.getHotelHallOrders();
                                 if (hotelHallOrders != null){
                                     if (!hotelHallOrders.isEmpty()){
                                         for (HotelHallOrder hotelHallOrder : hotelHallOrders){
                                             hotelHallOrder.setIsDeleted(true);
+                                            hotelHallOrder.setDeletedDate(deletedDate);
                                         }
                                     }
                                 }
@@ -165,16 +176,20 @@ public class AreaServiceImpl implements AreaService {
     }
 
     private void deleteObjectTypeDepended(List<ObjectType> objectTypes){
+        Date deletedDate = new Date();
         if (objectTypes != null){
             for (ObjectType objectType : objectTypes){
                 objectType.setIsDeleted(true);
+                objectType.setDeletedDate(deletedDate);
                 List<Object> objects = objectType.getObjects();
                 if (objects != null){
                     if (!objects.isEmpty()){
                         for (Object object : objects){
                             object.setIsDeleted(true);
+                            object.setDeletedDate(deletedDate);
                             for (ObjectOrder objectOrder : object.getObjectOrders()){
                                 objectOrder.setIsDeleted(true);
+                                objectOrder.setDeletedDate(deletedDate);
                             }
                         }
                     }
@@ -185,8 +200,10 @@ public class AreaServiceImpl implements AreaService {
                     if (!menuSections.isEmpty()){
                         for (MenuSection menuSection : menuSections){
                             menuSection.setIsDeleted(true);
+                            menuSection.setDeletedDate(deletedDate);
                             for (Menu menu : menuSection.getMenus()){
                                 menu.setIsDeleted(true);
+                                menu.setDeletedDate(deletedDate);
                             }
                         }
                     }

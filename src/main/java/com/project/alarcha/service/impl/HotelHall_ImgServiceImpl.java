@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -60,6 +61,7 @@ public class HotelHall_ImgServiceImpl implements HotelHall_ImgService {
         }
 
         hotelHall_img.setIsDeleted(true);
+        hotelHall_img.setDeletedDate(new Date());
 
         hotelHall_imgRepository.save(hotelHall_img);
         return toModel(hotelHall_img);

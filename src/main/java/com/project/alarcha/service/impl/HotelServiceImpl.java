@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -103,13 +104,16 @@ public class HotelServiceImpl implements HotelService {
     public HotelModel deleteHotel(Long hotelId) {
         Hotel hotel = getHotel(hotelId);
 
+        Date deletedDate = new Date();
         List<RoomType> roomTypes = hotel.getRoomTypes();
         if (roomTypes != null){
             if (!roomTypes.isEmpty()){
                 for (RoomType roomType : roomTypes){
                     roomType.setIsDeleted(true);
+                    roomType.setDeletedDate(deletedDate);
                     for (Room room : roomType.getRooms()){
                         room.setIsDeleted(true);
+                        room.setDeletedDate(deletedDate);
                     }
                 }
             }
@@ -120,10 +124,12 @@ public class HotelServiceImpl implements HotelService {
             if (!hotelHalls.isEmpty()){
                 for (HotelHall hotelHall : hotel.getHotelHalls()){
                     hotelHall.setIsDeleted(true);
+                    hotelHall.setDeletedDate(deletedDate);
 
                     for (HotelHallOrder hotelHallOrder : hotelHall.getHotelHallOrders()){
                         if (!hotelHallOrder.getIsDeleted()){
                             hotelHallOrder.setIsDeleted(true);
+                            hotelHallOrder.setDeletedDate(deletedDate);
                         }
                     }
                 }
@@ -131,6 +137,7 @@ public class HotelServiceImpl implements HotelService {
         }
 
         hotel.setIsDeleted(true);
+        hotel.setDeletedDate(deletedDate);
 
         hotelRepository.save(hotel);
 

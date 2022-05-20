@@ -106,6 +106,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         HotelHallOrder hotelHallOrder = getHotelHallOrder(id);
 
         hotelHallOrder.setIsDeleted(true);
+        hotelHallOrder.setDeletedDate(new Date());
 
         hotelHallOrderRepository.save(hotelHallOrder);
 
@@ -333,6 +334,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         for (HotelHallOrder hotelHallOrder : hotelHallOrders){
             if (isExpired(hotelHallOrder.getExpirationDate())){
                 hotelHallOrder.setIsDeleted(true);
+                hotelHallOrder.setDeletedDate(new Date());
                 hotelHallOrderRepository.save(hotelHallOrder);
                 countExpiredOrder++;
             }

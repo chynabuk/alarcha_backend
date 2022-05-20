@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -129,7 +130,9 @@ public class ObjectServiceImpl implements ObjectService {
     public ObjectModel deleteObject(Long objectId) {
         Object object = getObject(objectId);
 
+        Date deletedDate = new Date();
         object.setIsDeleted(true);
+        object.setDeletedDate(deletedDate);
 
         List<ObjectOrder> objectOrders = object.getObjectOrders();
         if (objectOrders != null){
@@ -137,6 +140,7 @@ public class ObjectServiceImpl implements ObjectService {
                 for(ObjectOrder objectOrder : objectOrders){
                     if(!objectOrder.getIsDeleted()){
                         objectOrder.setIsDeleted(true);
+                        objectOrder.setDeletedDate(deletedDate);
                     }
                 }
             }

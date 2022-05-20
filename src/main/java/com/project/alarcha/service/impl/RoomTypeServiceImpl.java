@@ -11,9 +11,11 @@ import com.project.alarcha.service.RoomService;
 import com.project.alarcha.service.RoomTypeImageService;
 import com.project.alarcha.service.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -152,18 +154,21 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     public RoomTypeModel deleteRoomType(Long roomTypeId) {
         RoomType roomType = getRoomType(roomTypeId);
 
+        Date deletedDate = new Date();
         List<Room> rooms = roomType.getRooms();
         if (rooms != null){
             if (!rooms.isEmpty()){
                 for (Room room : rooms){
                     if (!room.getIsDeleted()){
                         room.setIsDeleted(true);
+                        room.setDeletedDate(deletedDate);
                         List<RoomOrder> roomOrders = room.getRoomOrders();
                         if (roomOrders != null){
                             if (!roomOrders.isEmpty()){
                                 for (RoomOrder roomOrder : room.getRoomOrders()){
                                     if (!roomOrder.getIsDeleted()){
                                         roomOrder.setIsDeleted(true);
+                                        roomOrder.setDeletedDate(deletedDate);
                                     }
                                 }
                             }
@@ -179,12 +184,14 @@ public class RoomTypeServiceImpl implements RoomTypeService {
                 for (RoomTypeImage roomTypeImage : roomTypeImages){
                     if (!roomType.getIsDeleted()){
                         roomTypeImage.setIsDeleted(true);
+                        roomTypeImage.setDeletedDate(deletedDate);
                     }
                 }
             }
         }
 
         roomType.setIsDeleted(true);
+        roomType.setDeletedDate(deletedDate);
 
         roomTypeRepository.save(roomType);
 

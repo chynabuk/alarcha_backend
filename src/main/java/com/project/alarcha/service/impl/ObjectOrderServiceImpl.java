@@ -169,6 +169,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         ObjectOrder objectOrder = getObjectOrder(orderId);
 
         objectOrder.setIsDeleted(true);
+        objectOrder.setDeletedDate(new Date());
 
         objectOrderRepository.save(objectOrder);
 
@@ -553,6 +554,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         for (ObjectOrder objectOrder : objectOrders){
             if (isExpired(objectOrder.getExpirationDate())){
                 objectOrder.setIsDeleted(true);
+                objectOrder.setDeletedDate(new Date());
                 objectOrderRepository.save(objectOrder);
                 countExpiredOrder++;
             }

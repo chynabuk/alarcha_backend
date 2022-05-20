@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -110,16 +111,19 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     public ObjectTypeModel deleteObjectType(Long objectTypeId) {
         ObjectType objectType = getObjectType(objectTypeId);
 
+        Date deletedDate = new Date();
         List<MenuSection> menuSections = objectType.getMenuSections();
         if (menuSections != null){
             if (!menuSections.isEmpty()){
                 for(MenuSection menuSection : objectType.getMenuSections()){
                     menuSection.setIsDeleted(true);
+                    menuSection.setDeletedDate(deletedDate);
                     List<Menu> menus = menuSection.getMenus();
                     if (menus != null){
                         if (!menus.isEmpty()){
                             for(Menu menu : menus){
                                 menu.setIsDeleted(true);
+                                menu.setDeletedDate(deletedDate);
                             }
                         }
                     }
@@ -132,11 +136,13 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
             if (!objects.isEmpty()){
                 for(Object object : objects){
                     object.setIsDeleted(true);
+                    object.setDeletedDate(deletedDate);
                 }
             }
         }
 
         objectType.setIsDeleted(true);
+        objectType.setDeletedDate(deletedDate);
         objectTypeRepository.save(objectType);
 
         return toModel(objectType);

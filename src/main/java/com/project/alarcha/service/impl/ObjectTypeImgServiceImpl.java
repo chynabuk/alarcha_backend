@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -25,6 +26,7 @@ public class ObjectTypeImgServiceImpl implements ObjectTypeImgService {
             ObjectTypeImage objectTypeImage = new ObjectTypeImage();
             objectTypeImage.setImg(objectTypeImgModel.getImg().getBytes(StandardCharsets.UTF_8));
             objectTypeImage.setIsDeleted(false);
+            objectTypeImage.setDeletedDate(new Date());
 
             objectTypeImages.add(objectTypeImage);
         }

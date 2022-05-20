@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -28,6 +29,7 @@ public class Hotel_ImgServiceImpl implements Hotel_ImgService {
                 Hotel_Img hallImg = new Hotel_Img();
                 hallImg.setImg(hotelImgModel.getImg().getBytes(StandardCharsets.UTF_8));
                 hallImg.setIsDeleted(false);
+                hallImg.setDeletedDate(new Date());
 
                 hotelImgs.add(hallImg);
             }

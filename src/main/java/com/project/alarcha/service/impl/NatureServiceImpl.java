@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -39,6 +40,7 @@ public class NatureServiceImpl implements NatureService {
         Nature nature = getNatureById(natureId);
 
         nature.setIsDeleted(true);
+        nature.setDeletedDate(new Date());
 
         natureRepository.save(nature);
 

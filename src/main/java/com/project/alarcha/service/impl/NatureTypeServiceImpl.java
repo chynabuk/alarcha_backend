@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -110,12 +111,14 @@ public class NatureTypeServiceImpl implements NatureTypeService {
     public NatureTypeModel deleteNatureType(Long natureTypeId) {
         NatureType natureType = getNatureType(natureTypeId);
 
+        Date deletedDate = new Date();
         natureType.setIsDeleted(true);
+        natureType.setDeletedDate(deletedDate);
 
         List<Nature> natures = natureType.getNatures();
         if (natures != null){
             if (!natures.isEmpty()){
-                natures.forEach(nature -> nature.setIsDeleted(true));
+                natures.forEach(nature -> {nature.setIsDeleted(true); nature.setDeletedDate(deletedDate);});
             }
         }
 

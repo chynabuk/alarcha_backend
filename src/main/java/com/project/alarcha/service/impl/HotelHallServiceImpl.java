@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -128,7 +129,10 @@ public class HotelHallServiceImpl implements HotelHallService {
     public HotelHallModel deleteHotelHall(Long id) {
         HotelHall hotelHall = getHotelHall(id);
 
+        Date deletedDate = new Date();
+
         hotelHall.setIsDeleted(true);
+        hotelHall.setDeletedDate(deletedDate);
 
         List<HotelHallOrder> hotelHallOrders = hotelHall.getHotelHallOrders();
         if (hotelHallOrders != null){
@@ -136,6 +140,7 @@ public class HotelHallServiceImpl implements HotelHallService {
                 for (HotelHallOrder hotelHallOrder : hotelHallOrders){
                     if (!hotelHallOrder.getIsDeleted()){
                         hotelHallOrder.setIsDeleted(true);
+                        hotelHallOrder.setDeletedDate(deletedDate);
                     }
                 }
             }
@@ -147,6 +152,7 @@ public class HotelHallServiceImpl implements HotelHallService {
                 for (HotelHall_IMG hotelHall_img : hotelHall.getHotelHallImages()){
                     if (!hotelHall_img.getIsDeleted()){
                         hotelHall_img.setIsDeleted(true);
+                        hotelHall_img.setDeletedDate(deletedDate);
                     }
                 }
             }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -137,12 +138,14 @@ public class MenuSectionServiceImpl implements MenuSectionService {
     public MenuSectionModel deleteMenuSection(Long menuSectionId) {
         MenuSection menuSection = getMenuSection(menuSectionId);
 
+        Date deletedDate = new Date();
         List<Menu> menus = menuSection.getMenus();
         if (menus != null){
             if (!menus.isEmpty()){
                 for(Menu menu : menuSection.getMenus()){
                     if(!menu.getIsDeleted()){
                         menu.setIsDeleted(true);
+                        menu.setDeletedDate(deletedDate);
                     }
                 }
             }
@@ -150,6 +153,7 @@ public class MenuSectionServiceImpl implements MenuSectionService {
 
 
         menuSection.setIsDeleted(true);
+        menuSection.setDeletedDate(deletedDate);
         menuSectionRepository.save(menuSection);
 
         return toModel(menuSection);

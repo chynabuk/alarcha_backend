@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -152,7 +153,9 @@ public class RoomServiceImpl implements RoomService {
     public RoomModel deleteRoom(Long roomId) {
         Room room = getRoom(roomId);
 
+        Date deletedDate = new Date();
         room.setIsDeleted(true);
+        room.setDeletedDate(deletedDate);
 
         List<RoomOrder> roomOrders = room.getRoomOrders();
         if (roomOrders != null){
@@ -160,6 +163,7 @@ public class RoomServiceImpl implements RoomService {
                 for (RoomOrder roomOrder : room.getRoomOrders()){
                     if (!roomOrder.getIsDeleted()){
                         roomOrder.setIsDeleted(true);
+                        roomOrder.setDeletedDate(deletedDate);
                     }
                 }
             }
