@@ -5,6 +5,7 @@ import com.project.alarcha.entities.HotelHallOrder;
 import com.project.alarcha.entities.HotelHall_IMG;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallModel;
+import com.project.alarcha.models.HotelModel.HotelHall_ImgModel;
 import com.project.alarcha.repositories.HotelHallsRepository;
 import com.project.alarcha.repositories.HotelRepository;
 import com.project.alarcha.service.HotelHallOrderService;
@@ -129,15 +130,25 @@ public class HotelHallServiceImpl implements HotelHallService {
 
         hotelHall.setIsDeleted(true);
 
-        for (HotelHallOrder hotelHallOrder : hotelHall.getHotelHallOrders()){
-            if (!hotelHallOrder.getIsDeleted()){
-                hotelHallOrder.setIsDeleted(true);
+        List<HotelHallOrder> hotelHallOrders = hotelHall.getHotelHallOrders();
+        if (hotelHallOrders != null){
+            if (!hotelHallOrders.isEmpty()){
+                for (HotelHallOrder hotelHallOrder : hotelHallOrders){
+                    if (!hotelHallOrder.getIsDeleted()){
+                        hotelHallOrder.setIsDeleted(true);
+                    }
+                }
             }
         }
 
-        for (HotelHall_IMG hotelHall_img : hotelHall.getHotelHallImages()){
-            if (!hotelHall_img.getIsDeleted()){
-                hotelHall_img.setIsDeleted(true);
+        List<HotelHall_IMG> hotelHall_imgs = hotelHall.getHotelHallImages();
+        if (hotelHall_imgs != null){
+            if (!hotelHall_imgs.isEmpty()){
+                for (HotelHall_IMG hotelHall_img : hotelHall.getHotelHallImages()){
+                    if (!hotelHall_img.getIsDeleted()){
+                        hotelHall_img.setIsDeleted(true);
+                    }
+                }
             }
         }
 
@@ -166,13 +177,15 @@ public class HotelHallServiceImpl implements HotelHallService {
         hotelHall.setHotel(hotelRepository.getById(hotelHallModel.getHotelId()));
         hotelHall.setIsDeleted(false);
 
-        if (hotelHallModel.getHotelHall_imgModels() != null){
-            List<HotelHall_IMG> hotelHall_imgs = hotelHall_imgService.uploadImages(hotelHallModel.getHotelHall_imgModels());
+        List<HotelHall_ImgModel> hotelHall_imgModels = hotelHallModel.getHotelHall_imgModels();
+        if (hotelHall_imgModels != null){
+            if (!hotelHall_imgModels.isEmpty()){
+                List<HotelHall_IMG> hotelHall_imgs = hotelHall_imgService.uploadImages(hotelHallModel.getHotelHall_imgModels());
 
-            hotelHall.setHotelHallImages(hotelHall_imgs);
+                hotelHall.setHotelHallImages(hotelHall_imgs);
 
-            hotelHall_imgs.forEach(hotelHall_img -> hotelHall_img.setHotelHall(hotelHall));
-
+                hotelHall_imgs.forEach(hotelHall_img -> hotelHall_img.setHotelHall(hotelHall));
+            }
         }
 
         return hotelHall;

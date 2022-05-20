@@ -114,7 +114,9 @@ public class NatureTypeServiceImpl implements NatureTypeService {
 
         List<Nature> natures = natureType.getNatures();
         if (natures != null){
-            natures.forEach(nature -> nature.setIsDeleted(true));
+            if (!natures.isEmpty()){
+                natures.forEach(nature -> nature.setIsDeleted(true));
+            }
         }
 
         natureTypeRepository.save(natureType);

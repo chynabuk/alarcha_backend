@@ -103,19 +103,29 @@ public class HotelServiceImpl implements HotelService {
     public HotelModel deleteHotel(Long hotelId) {
         Hotel hotel = getHotel(hotelId);
 
-        for (RoomType roomType : hotel.getRoomTypes()){
-            roomType.setIsDeleted(true);
-            for (Room room : roomType.getRooms()){
-                room.setIsDeleted(true);
+        List<RoomType> roomTypes = hotel.getRoomTypes();
+        if (roomTypes != null){
+            if (!roomTypes.isEmpty()){
+                for (RoomType roomType : roomTypes){
+                    roomType.setIsDeleted(true);
+                    for (Room room : roomType.getRooms()){
+                        room.setIsDeleted(true);
+                    }
+                }
             }
         }
 
-        for (HotelHall hotelHall : hotel.getHotelHalls()){
-            hotelHall.setIsDeleted(true);
+        List<HotelHall> hotelHalls = hotel.getHotelHalls();
+        if (hotelHalls != null) {
+            if (!hotelHalls.isEmpty()){
+                for (HotelHall hotelHall : hotel.getHotelHalls()){
+                    hotelHall.setIsDeleted(true);
 
-            for (HotelHallOrder hotelHallOrder : hotelHall.getHotelHallOrders()){
-                if (!hotelHallOrder.getIsDeleted()){
-                    hotelHallOrder.setIsDeleted(true);
+                    for (HotelHallOrder hotelHallOrder : hotelHall.getHotelHallOrders()){
+                        if (!hotelHallOrder.getIsDeleted()){
+                            hotelHallOrder.setIsDeleted(true);
+                        }
+                    }
                 }
             }
         }
@@ -176,10 +186,12 @@ public class HotelServiceImpl implements HotelService {
 //        }
 
         List<Hotel_ImgModel> hotelImgModels = hotelModel.getHotelImgModels();
-        if (hotelImgModels.isEmpty() || hotelImgModels != null){
-            List<Hotel_Img> hotelImgs = hotel_imgService.uploadImages(hotelImgModels);
-            hotel.setHotelImgs(hotelImgs);
-            hotelImgs.forEach(hotel_img -> hotel_img.setHotel(hotel));
+        if (hotelImgModels != null){
+            if (hotelImgModels.isEmpty()){
+                List<Hotel_Img> hotelImgs = hotel_imgService.uploadImages(hotelImgModels);
+                hotel.setHotelImgs(hotelImgs);
+                hotelImgs.forEach(hotel_img -> hotel_img.setHotel(hotel));
+            }
         }
 
         hotel.setIsDeleted(false);

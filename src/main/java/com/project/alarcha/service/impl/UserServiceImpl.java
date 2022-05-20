@@ -79,16 +79,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createSuperAdmin() {
-        User user = new User();
-        user.setFirstName("Kuba");
-        user.setLastName("Kushtarbekov");
-        user.setEmail("kuba@gmail.com");
-        user.setPassword(encoder.encode("kuba12345"));
-        user.setPhone("+996 777777777");
-        user.setUserStatus(UserStatus.ACTIVE);
-        user.setUserRole(UserRole.SUPER_ADMIN);
-        user.setIsDeleted(false);
-        userRepository.save(user);
+        User kuba = new User();
+        kuba.setFirstName("Kuba");
+        kuba.setLastName("Kushtarbekov");
+        kuba.setEmail("kushtarbekovkuba2002@gmail.com");
+        kuba.setPassword(encoder.encode("kuba12345"));
+        kuba.setPhone("+996 778393607");
+        kuba.setUserStatus(UserStatus.ACTIVE);
+        kuba.setUserRole(UserRole.ADMIN);
+        kuba.setIsDeleted(false);
+        userRepository.save(kuba);
+
+        User alaken = new User();
+        alaken.setFirstName("Alaken");
+        alaken.setLastName("Kubatbekov");
+        alaken.setEmail("kubatbekovalaken2002@gmail.com");
+        alaken.setPassword(encoder.encode("alaken12345"));
+        alaken.setPhone("+996 705667102");
+        alaken.setUserStatus(UserStatus.ACTIVE);
+        alaken.setUserRole(UserRole.SUPER_ADMIN);
+        alaken.setIsDeleted(false);
+        userRepository.save(alaken);
+
     }
 
     @Override

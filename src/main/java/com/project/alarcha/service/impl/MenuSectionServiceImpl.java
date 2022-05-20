@@ -137,11 +137,17 @@ public class MenuSectionServiceImpl implements MenuSectionService {
     public MenuSectionModel deleteMenuSection(Long menuSectionId) {
         MenuSection menuSection = getMenuSection(menuSectionId);
 
-        for(Menu menu : menuSection.getMenus()){
-            if(!menu.getIsDeleted()){
-                menu.setIsDeleted(true);
+        List<Menu> menus = menuSection.getMenus();
+        if (menus != null){
+            if (!menus.isEmpty()){
+                for(Menu menu : menuSection.getMenus()){
+                    if(!menu.getIsDeleted()){
+                        menu.setIsDeleted(true);
+                    }
+                }
             }
         }
+
 
         menuSection.setIsDeleted(true);
         menuSectionRepository.save(menuSection);

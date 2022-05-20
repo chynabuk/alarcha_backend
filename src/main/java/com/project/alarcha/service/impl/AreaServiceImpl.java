@@ -113,44 +113,83 @@ public class AreaServiceImpl implements AreaService {
     }
 
     private void deleteHotelDepended(List<Hotel> hotels){
-        for (Hotel hotel : hotels){
-            for (RoomType roomType : hotel.getRoomTypes()){
-                for (Room room : roomType.getRooms()){
-                    room.setIsDeleted(true);
+        if (hotels != null){
+            if (!hotels.isEmpty()){
+                for (Hotel hotel : hotels){
+                    hotel.setIsDeleted(true);
+                    List<RoomType> roomTypes = hotel.getRoomTypes();
+                    if (roomTypes != null){
+                        if (!roomTypes.isEmpty()){
+                            for (RoomType roomType : roomTypes){
+                                roomType.setIsDeleted(true);
+                                List<Room> rooms = roomType.getRooms();
+                                if (rooms != null){
+                                    if (!rooms.isEmpty()){
+                                        for (Room room : rooms){
+                                            room.setIsDeleted(true);
 
-                    for (RoomOrder roomOrder : room.getRoomOrders()){
-                        roomOrder.setIsDeleted(true);
+                                            List<RoomOrder> roomOrders = room.getRoomOrders();
+                                            if (roomOrders != null){
+                                                if (!roomOrders.isEmpty()){
+                                                    for (RoomOrder roomOrder : roomOrders){
+                                                        roomOrder.setIsDeleted(true);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    List<HotelHall> hotelHalls = hotel.getHotelHalls();
+                    if (hotelHalls != null){
+                        if (!hotelHalls.isEmpty()){
+                            for (HotelHall hotelHall : hotelHalls){
+                                hotelHall.setIsDeleted(true);
+                                List<HotelHallOrder> hotelHallOrders = hotelHall.getHotelHallOrders();
+                                if (hotelHallOrders != null){
+                                    if (!hotelHallOrders.isEmpty()){
+                                        for (HotelHallOrder hotelHallOrder : hotelHallOrders){
+                                            hotelHallOrder.setIsDeleted(true);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                roomType.setIsDeleted(true);
             }
-
-            for (HotelHall hotelHall : hotel.getHotelHalls()){
-                hotelHall.setIsDeleted(true);
-
-                for (HotelHallOrder hotelHallOrder : hotelHall.getHotelHallOrders()){
-                    hotelHallOrder.setIsDeleted(true);
-                }
-            }
-
-            hotel.setIsDeleted(true);
         }
     }
 
     private void deleteObjectTypeDepended(List<ObjectType> objectTypes){
-        for (ObjectType objectType : objectTypes){
-            objectType.setIsDeleted(true);
-            for (Object object : objectType.getObjects()){
-                object.setIsDeleted(true);
-                for (ObjectOrder objectOrder : object.getObjectOrders()){
-                    objectOrder.setIsDeleted(true);
+        if (objectTypes != null){
+            for (ObjectType objectType : objectTypes){
+                objectType.setIsDeleted(true);
+                List<Object> objects = objectType.getObjects();
+                if (objects != null){
+                    if (!objects.isEmpty()){
+                        for (Object object : objects){
+                            object.setIsDeleted(true);
+                            for (ObjectOrder objectOrder : object.getObjectOrders()){
+                                objectOrder.setIsDeleted(true);
+                            }
+                        }
+                    }
                 }
-            }
 
-            for (MenuSection menuSection : objectType.getMenuSections()){
-                menuSection.setIsDeleted(true);
-                for (Menu menu : menuSection.getMenus()){
-                    menu.setIsDeleted(true);
+                List<MenuSection> menuSections = objectType.getMenuSections();
+                if (menuSections != null){
+                    if (!menuSections.isEmpty()){
+                        for (MenuSection menuSection : menuSections){
+                            menuSection.setIsDeleted(true);
+                            for (Menu menu : menuSection.getMenus()){
+                                menu.setIsDeleted(true);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -194,12 +233,16 @@ public class AreaServiceImpl implements AreaService {
 
             List<Hotel> hotels = area.getHotels();
             if (hotels != null){
-                areaModel.setHotelModels(hotelService.convertToModel(area.getHotels()));
+                if (!hotels.isEmpty()){
+                    areaModel.setHotelModels(hotelService.convertToModel(area.getHotels()));
+                }
             }
 
             List<ObjectType> objectTypes = area.getObjectTypes();
             if (objectTypes != null){
-                areaModel.setObjectTypeModels(objectTypeService.convertToModels(objectTypes));
+                if (!objectTypes.isEmpty()){
+                    areaModel.setObjectTypeModels(objectTypeService.convertToModels(objectTypes));
+                }
             }
         }
 

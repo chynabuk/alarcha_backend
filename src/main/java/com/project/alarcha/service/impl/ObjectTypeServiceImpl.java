@@ -6,6 +6,7 @@ import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.MenuModel.MenuSectionModel;
 import com.project.alarcha.models.ObjectModel.ObjectModel;
+import com.project.alarcha.models.ObjectModel.ObjectTypeImgModel;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
 import com.project.alarcha.repositories.AreaRepository;
 import com.project.alarcha.repositories.ObjectTypeRepository;
@@ -109,15 +110,30 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     public ObjectTypeModel deleteObjectType(Long objectTypeId) {
         ObjectType objectType = getObjectType(objectTypeId);
 
-        for(MenuSection menuSection : objectType.getMenuSections()){
-            for(Menu menu : menuSection.getMenus()){
-                menu.setIsDeleted(true);
+        List<MenuSection> menuSections = objectType.getMenuSections();
+        if (menuSections != null){
+            if (!menuSections.isEmpty()){
+                for(MenuSection menuSection : objectType.getMenuSections()){
+                    menuSection.setIsDeleted(true);
+                    List<Menu> menus = menuSection.getMenus();
+                    if (menus != null){
+                        if (!menus.isEmpty()){
+                            for(Menu menu : menus){
+                                menu.setIsDeleted(true);
+                            }
+                        }
+                    }
+                }
             }
-            menuSection.setIsDeleted(true);
         }
 
-        for(Object object : objectType.getObjects()){
-            object.setIsDeleted(true);
+        List<Object> objects = objectType.getObjects();
+        if (objects != null){
+            if (!objects.isEmpty()){
+                for(Object object : objects){
+                    object.setIsDeleted(true);
+                }
+            }
         }
 
         objectType.setIsDeleted(true);
@@ -169,31 +185,41 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
 
         List<MenuSectionModel> menuSectionModels = objectTypeModel.getMenuSectionModels();
         if(menuSectionModels != null){
-            menuSectionModels.forEach(menuSectionModel -> menuSectionModel.setObjectTypeName(objectTypeModel.getName()));
+            if (!menuSectionModels.isEmpty()){
+                menuSectionModels.forEach(menuSectionModel -> menuSectionModel.setObjectTypeName(objectTypeModel.getName()));
 
-            List<MenuSection> menuSections = menuSectionService.createMenuSections(menuSectionModels);
-            if(menuSections != null){
-                objectType.setMenuSections(menuSections);
-                menuSections.forEach(menuSection -> menuSection.setObjectType(objectType));
+                List<MenuSection> menuSections = menuSectionService.createMenuSections(menuSectionModels);
+                if(menuSections != null){
+                    if (!menuSections.isEmpty()){
+                        objectType.setMenuSections(menuSections);
+                        menuSections.forEach(menuSection -> menuSection.setObjectType(objectType));
+                    }
+                }
             }
         }
 
         List<ObjectModel> objectModels = objectTypeModel.getObjectModels();
         if(objectModels != null) {
-            objectModels.forEach(objectModel -> objectModel.setObjectTypeName(objectTypeModel.getName()));
+            if (!objectModels.isEmpty()){
+                objectModels.forEach(objectModel -> objectModel.setObjectTypeName(objectTypeModel.getName()));
 
-            List<Object> objects = objectService.createObjects(objectTypeModel.getObjectModels());
-            if (objects != null) {
-                objectType.setObjects(objects);
-                objects.forEach(object -> object.setObjectType(objectType));
+                List<Object> objects = objectService.createObjects(objectTypeModel.getObjectModels());
+                if (objects != null) {
+                    if (!objects.isEmpty()){
+                        objectType.setObjects(objects);
+                        objects.forEach(object -> object.setObjectType(objectType));
+                    }
+                }
             }
-
         }
 
-        if (objectTypeModel.getObjectTypeImgModels() != null) {
-            List<ObjectTypeImage> objectTypeImages = objectTypeImgService.uploadImages(objectTypeModel.getObjectTypeImgModels());
-            objectType.setObjectTypeImages(objectTypeImages);
-            objectTypeImages.forEach(objectTypeImage -> objectTypeImage.setObjectType(objectType));
+        List<ObjectTypeImgModel> objectTypeImgModels = objectTypeModel.getObjectTypeImgModels();
+        if (objectTypeImgModels != null) {
+            if (!objectTypeImgModels.isEmpty()){
+                List<ObjectTypeImage> objectTypeImages = objectTypeImgService.uploadImages(objectTypeModel.getObjectTypeImgModels());
+                objectType.setObjectTypeImages(objectTypeImages);
+                objectTypeImages.forEach(objectTypeImage -> objectTypeImage.setObjectType(objectType));
+            }
         }
 
         objectType.setIsDeleted(false);

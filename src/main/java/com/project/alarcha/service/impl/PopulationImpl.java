@@ -47,12 +47,12 @@ public class PopulationImpl implements Population {
         HotelHall hotelHall = hotelHallsRepository.getById(1L);
         Object object = objectRepository.getById(1L);
 
-        OrderStatus orderStatus[] = {OrderStatus.CONFIRMED, OrderStatus.DECLINED, OrderStatus.PAID};
+        OrderStatus orderStatus[] = {OrderStatus.CONFIRMED, OrderStatus.DECLINED, OrderStatus.PAID, OrderStatus.IN_PROCESS};
 
         Random random = new Random();
 
         for (int i = 0; i < 1000000; i++){
-            int orderStatusIndex = random.nextInt(3);
+            int orderStatusIndex = random.nextInt(4);
 
             User tempUser = null;
             if (i % 2 == 0){

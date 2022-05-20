@@ -154,13 +154,17 @@ public class RoomServiceImpl implements RoomService {
 
         room.setIsDeleted(true);
 
-        for (RoomOrder roomOrder : room.getRoomOrders()){
-            if (!roomOrder.getIsDeleted()){
-                roomOrder.setIsDeleted(true);
+        List<RoomOrder> roomOrders = room.getRoomOrders();
+        if (roomOrders != null){
+            if (!roomOrders.isEmpty()){
+                for (RoomOrder roomOrder : room.getRoomOrders()){
+                    if (!roomOrder.getIsDeleted()){
+                        roomOrder.setIsDeleted(true);
+                    }
+                }
             }
+            roomRepository.save(room);
         }
-
-        roomRepository.save(room);
 
         return toModel(room);
     }

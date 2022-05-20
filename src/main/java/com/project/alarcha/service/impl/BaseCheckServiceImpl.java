@@ -75,10 +75,14 @@ public class BaseCheckServiceImpl implements BaseCheckService {
     private void checkRoomOrders(){
         List<RoomOrder> roomOrders = roomOrderRepository.getAllRoomOrders();
 
-        for (RoomOrder roomOrder : roomOrders){
-            if (isExpired(roomOrder.getExpirationDate())){
-                roomOrder.setIsDeleted(true);
-                roomOrderRepository.save(roomOrder);
+        if (roomOrders != null){
+            if (!roomOrders.isEmpty()){
+                for (RoomOrder roomOrder : roomOrders){
+                    if (isExpired(roomOrder.getExpirationDate())){
+                        roomOrder.setIsDeleted(true);
+                        roomOrderRepository.save(roomOrder);
+                    }
+                }
             }
         }
     }
@@ -86,10 +90,14 @@ public class BaseCheckServiceImpl implements BaseCheckService {
     private void checkObjectOrders(){
         List<ObjectOrder> objectOrders = objectOrderRepository.getAllObjectOrders();
 
-        for (ObjectOrder objectOrder : objectOrders){
-            if (isExpired(objectOrder.getExpirationDate())){
-                objectOrder.setIsDeleted(true);
-                objectOrderRepository.save(objectOrder);
+        if (objectOrders != null){
+            if (!objectOrders.isEmpty()){
+                for (ObjectOrder objectOrder : objectOrders){
+                    if (isExpired(objectOrder.getExpirationDate())){
+                        objectOrder.setIsDeleted(true);
+                        objectOrderRepository.save(objectOrder);
+                    }
+                }
             }
         }
     }
@@ -97,10 +105,14 @@ public class BaseCheckServiceImpl implements BaseCheckService {
     private void checkHotelHallOrders(){
         List<HotelHallOrder> hotelHallOrders = hotelHallOrderRepository.getAllHotelHallOrders();
 
-        for (HotelHallOrder hotelHallOrder : hotelHallOrders){
-            if (isExpired(hotelHallOrder.getExpirationDate())){
-                hotelHallOrder.setIsDeleted(true);
-                hotelHallOrderRepository.save(hotelHallOrder);
+        if (hotelHallOrders != null){
+            if (!hotelHallOrders.isEmpty()){
+                for (HotelHallOrder hotelHallOrder : hotelHallOrders){
+                    if (isExpired(hotelHallOrder.getExpirationDate())){
+                        hotelHallOrder.setIsDeleted(true);
+                        hotelHallOrderRepository.save(hotelHallOrder);
+                    }
+                }
             }
         }
     }

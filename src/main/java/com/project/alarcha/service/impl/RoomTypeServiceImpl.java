@@ -3,6 +3,7 @@ package com.project.alarcha.service.impl;
 import com.project.alarcha.entities.*;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.RoomModel.RoomModel;
+import com.project.alarcha.models.RoomModel.RoomTypeImageModel;
 import com.project.alarcha.models.RoomModel.RoomTypeModel;
 import com.project.alarcha.repositories.HotelRepository;
 import com.project.alarcha.repositories.RoomTypeRepository;
@@ -151,20 +152,35 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     public RoomTypeModel deleteRoomType(Long roomTypeId) {
         RoomType roomType = getRoomType(roomTypeId);
 
-        for (Room room : roomType.getRooms()){
-            if (!room.getIsDeleted()){
-                for (RoomOrder roomOrder : room.getRoomOrders()){
-                    if (!roomOrder.getIsDeleted()){
-                        roomOrder.setIsDeleted(true);
+        List<Room> rooms = roomType.getRooms();
+        if (rooms != null){
+            if (!rooms.isEmpty()){
+                for (Room room : rooms){
+                    if (!room.getIsDeleted()){
+                        room.setIsDeleted(true);
+                        List<RoomOrder> roomOrders = room.getRoomOrders();
+                        if (roomOrders != null){
+                            if (!roomOrders.isEmpty()){
+                                for (RoomOrder roomOrder : room.getRoomOrders()){
+                                    if (!roomOrder.getIsDeleted()){
+                                        roomOrder.setIsDeleted(true);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                room.setIsDeleted(true);
             }
         }
 
-        for (RoomTypeImage roomTypeImage : roomType.getRoomTypeImages()){
-            if (!roomType.getIsDeleted()){
-                roomTypeImage.setIsDeleted(true);
+        List<RoomTypeImage> roomTypeImages = roomType.getRoomTypeImages();
+        if (roomTypeImages != null){
+            if (!roomTypeImages.isEmpty()){
+                for (RoomTypeImage roomTypeImage : roomTypeImages){
+                    if (!roomType.getIsDeleted()){
+                        roomTypeImage.setIsDeleted(true);
+                    }
+                }
             }
         }
 
@@ -204,22 +220,27 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         List<RoomModel> roomModels = roomTypeModel.getRoomModels();
 
         if (roomModels != null){
-            roomModels.forEach(roomModel -> roomModel.setHotelName(roomTypeModel.getHotelName()));
+            if (!roomModels.isEmpty()){
+                roomModels.forEach(roomModel -> roomModel.setHotelName(roomTypeModel.getHotelName()));
 
-            List<Room> rooms = roomService.createRooms(roomModels);
-            roomType.setRooms(rooms);
+                List<Room> rooms = roomService.createRooms(roomModels);
+                roomType.setRooms(rooms);
 
-            rooms.forEach(room -> room.setRoomType(roomType));
+                rooms.forEach(room -> room.setRoomType(roomType));
+            }
         }
 
-        if (roomTypeModel.getRoomTypeImageModels() != null){
-            List<RoomTypeImage> roomTypeImages = roomTypeImageService
-                    .uploadImages(roomTypeModel
-                            .getRoomTypeImageModels());
+        List<RoomTypeImageModel> roomTypeImageModels = roomTypeModel.getRoomTypeImageModels();
+        if (roomTypeImageModels != null){
+            if (!roomTypeImageModels.isEmpty()){
+                List<RoomTypeImage> roomTypeImages = roomTypeImageService
+                        .uploadImages(roomTypeModel
+                                .getRoomTypeImageModels());
 
-            roomType.setRoomTypeImages(roomTypeImages);
+                roomType.setRoomTypeImages(roomTypeImages);
 
-            roomTypeImages.forEach(roomTypeImage -> roomTypeImage.setRoomType(roomType));
+                roomTypeImages.forEach(roomTypeImage -> roomTypeImage.setRoomType(roomType));
+            }
         }
 
         return roomType;
@@ -242,8 +263,11 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         roomTypeModel.setType(roomType.getType());
         roomTypeModel.setPrice(roomType.getPrice());
 
-        if (roomType.getRooms() != null){
-            roomTypeModel.setRoomModels(roomService.getByRoomType(roomType));
+        List<Room> rooms = roomType.getRooms();
+        if (rooms != null){
+            if (!rooms.isEmpty()){
+                roomTypeModel.setRoomModels(roomService.getByRoomType(roomType));
+            }
         }
 
         List<RoomTypeImage> roomTypeImages = roomType.getRoomTypeImages();

@@ -131,9 +131,14 @@ public class ObjectServiceImpl implements ObjectService {
 
         object.setIsDeleted(true);
 
-        for(ObjectOrder objectOrder : object.getObjectOrders()){
-            if(!objectOrder.getIsDeleted()){
-                objectOrder.setIsDeleted(true);
+        List<ObjectOrder> objectOrders = object.getObjectOrders();
+        if (objectOrders != null){
+            if (!objectOrders.isEmpty()){
+                for(ObjectOrder objectOrder : objectOrders){
+                    if(!objectOrder.getIsDeleted()){
+                        objectOrder.setIsDeleted(true);
+                    }
+                }
             }
         }
 
