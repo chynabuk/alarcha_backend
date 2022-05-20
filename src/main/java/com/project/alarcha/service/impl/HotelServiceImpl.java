@@ -194,7 +194,7 @@ public class HotelServiceImpl implements HotelService {
 
         List<Hotel_ImgModel> hotelImgModels = hotelModel.getHotelImgModels();
         if (hotelImgModels != null){
-            if (hotelImgModels.isEmpty()){
+            if (!hotelImgModels.isEmpty()){
                 List<Hotel_Img> hotelImgs = hotel_imgService.uploadImages(hotelImgModels);
                 hotel.setHotelImgs(hotelImgs);
                 hotelImgs.forEach(hotel_img -> hotel_img.setHotel(hotel));
@@ -280,7 +280,7 @@ public class HotelServiceImpl implements HotelService {
         List<Hotel_Img> hotelImgs = hotel.getHotelImgs();
         if (hotelImgs != null){
             if (!hotelImgs.isEmpty()){
-                if (hotel.getHotelImgs().size() >= 2){
+                if (hotelImgs.size() >= 2){
                     hotelModel.setImgUrl(new String(hotel.getHotelImgs().get(1).getImg(), StandardCharsets.UTF_8));
                 }
             }
