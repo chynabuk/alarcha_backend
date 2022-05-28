@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ObjectOrderService {
     ObjectOrderModel order(ObjectOrderModel objectOrderModel);
+    ObjectOrderModel orderAdmin(ObjectOrderModel objectOrderModel);
     ObjectOrderPayModel pay(ObjectOrderPayModel objectOrderPayModel);
     ObjectOrderModel acceptOrder(OrderModel orderModel);
     ObjectOrderModel declineOrder(OrderModel orderModel);

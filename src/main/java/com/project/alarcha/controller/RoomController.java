@@ -97,6 +97,11 @@ public class RoomController {
         return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.order(roomOrderModel));
     }
 
+    @PostMapping("/order/admin")
+    public ResponseMessage<RoomOrderModel> orderRoomAdmin(@RequestBody RoomOrderModel roomOrderModel){
+        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.adminOrder(roomOrderModel));
+    }
+
     @PostMapping("/order/pay")
     public ResponseMessage<RoomOrderPayModel> payOrderRoom(@RequestBody RoomOrderPayModel roomOrderPayModel){
         return new ResponseMessage<RoomOrderPayModel>().prepareSuccessMessage(roomOrderService.pay(roomOrderPayModel));

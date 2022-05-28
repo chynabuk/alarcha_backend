@@ -4,6 +4,7 @@ import com.project.alarcha.entities.*;
 import com.project.alarcha.entities.Object;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.enums.TimeType;
+import com.project.alarcha.enums.UserRole;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
 import com.project.alarcha.models.ObjectModel.ObjectOrderPayModel;
@@ -43,8 +44,18 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
     @Override
     public ObjectOrderModel order(ObjectOrderModel objectOrderModel) {
-        objectOrderRepository.save(initAndGetObjectOrder(objectOrderModel));
-        return objectOrderModel;
+        ObjectOrder objectOrder = initAndGetObjectOrder(objectOrderModel);
+        objectOrder.setOrderStatus(OrderStatus.IN_PROCESS);
+        objectOrderRepository.save(objectOrder);
+        return toModel(objectOrder);
+    }
+
+    @Override
+    public ObjectOrderModel orderAdmin(ObjectOrderModel objectOrderModel) {
+        ObjectOrder objectOrder = initAndGetObjectOrder(objectOrderModel);
+        objectOrder.setOrderStatus(OrderStatus.PAID);
+        objectOrderRepository.save(objectOrder);
+        return toModel(objectOrder);
     }
 
     @Override
@@ -191,7 +202,6 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         objectOrder.setIsDeleted(false);
         objectOrder.setFullName(user.getFirstName() + " " + user.getLastName());
         objectOrder.setObject(object);
-        objectOrder.setOrderStatus(OrderStatus.IN_PROCESS);
 
         if(objectType.getTimeType() == TimeType.TIME){
             checkObjectOrderTime(objectOrderModel, objectType);

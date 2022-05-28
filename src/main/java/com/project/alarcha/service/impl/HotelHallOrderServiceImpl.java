@@ -2,6 +2,7 @@ package com.project.alarcha.service.impl;
 
 import com.project.alarcha.entities.*;
 import com.project.alarcha.enums.OrderStatus;
+import com.project.alarcha.enums.UserRole;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.models.HotelModel.HotelHallOrderPayModel;
@@ -45,6 +46,15 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     @Override
     public HotelHallOrderModel order(HotelHallOrderModel hotelHallOrderModel) {
         HotelHallOrder hotelHallOrder = initAndGetHotelHallOrder(hotelHallOrderModel);
+        hotelHallOrder.setOrderStatus(OrderStatus.IN_PROCESS);
+        hotelHallOrderRepository.save(hotelHallOrder);
+        return toModel(hotelHallOrder);
+    }
+
+    @Override
+    public HotelHallOrderModel orderAdmin(HotelHallOrderModel hotelHallOrderModel) {
+        HotelHallOrder hotelHallOrder = initAndGetHotelHallOrder(hotelHallOrderModel);
+        hotelHallOrder.setOrderStatus(OrderStatus.PAID);
         hotelHallOrderRepository.save(hotelHallOrder);
         return toModel(hotelHallOrder);
     }
@@ -211,7 +221,6 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         hotelHallOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
 
         hotelHallOrder.setTotalPrice(getTotalPrice(price, priceForNextHours, hotelHallOrderModel));
-        hotelHallOrder.setOrderStatus(OrderStatus.IN_PROCESS);
         hotelHallOrder.setIsDeleted(false);
 
         emailSenderService.sendEmail(

@@ -4,6 +4,7 @@ import com.project.alarcha.entities.Room;
 import com.project.alarcha.entities.RoomOrder;
 import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.OrderStatus;
+import com.project.alarcha.enums.UserRole;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.OrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
@@ -45,6 +46,15 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     @Override
     public RoomOrderModel order(RoomOrderModel roomOrderModel) {
         RoomOrder roomOrder = initAndGetRoomOrder(roomOrderModel);
+        roomOrder.setOrderStatus(OrderStatus.IN_PROCESS);
+        roomOrderRepository.save(roomOrder);
+        return toModel(roomOrder);
+    }
+
+    @Override
+    public RoomOrderModel adminOrder(RoomOrderModel roomOrderModel) {
+        RoomOrder roomOrder = initAndGetRoomOrder(roomOrderModel);
+        roomOrder.setOrderStatus(OrderStatus.PAID);
         roomOrderRepository.save(roomOrder);
         return toModel(roomOrder);
     }
@@ -216,7 +226,6 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         roomOrder.setEndDate(endDate);
         roomOrder.setExpirationDate(setAndGetExpirationDate(startDate));
         roomOrder.setTotalPrice(getTotalPrice(price, difference));
-        roomOrder.setOrderStatus(OrderStatus.IN_PROCESS);
 
         emailSenderService.sendEmail(
                 room.getRoomType().getHotel().getArea().getUser().getEmail(),

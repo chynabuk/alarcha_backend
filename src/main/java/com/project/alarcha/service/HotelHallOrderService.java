@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface HotelHallOrderService {
     HotelHallOrderModel order(HotelHallOrderModel hotelHallOrderModel);
+    HotelHallOrderModel orderAdmin(HotelHallOrderModel hotelHallOrderModel);
     HotelHallOrderPayModel pay(HotelHallOrderPayModel hotelHallOrderPayModel);
     HotelHallOrderModel acceptOrder(OrderModel orderModel);
     HotelHallOrderModel declineOrder(OrderModel orderModel);

@@ -65,7 +65,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/room/delete/{roomTypeId}").hasAuthority("SUPER_ADMIN")
                 .antMatchers("/room/get-for-list").hasAuthority("SUPER_ADMIN")
                 //roomOrder
-                .antMatchers("/room/order").hasAuthority("CLIENT")
+                .antMatchers("/room/order").hasAnyAuthority("CLIENT")
+                .antMatchers("/room/order/admin").hasAnyAuthority("ADMIN")
                 .antMatchers("/room/order/pay").hasAuthority("CLIENT")
                 .antMatchers( "/room/order/accept").hasAuthority("ADMIN")
                 .antMatchers("/room/order/decline").hasAuthority("ADMIN")
@@ -82,6 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/hotelHall/get-for-list").hasAuthority("SUPER_ADMIN")
                 //hotelHallOrder
                 .antMatchers("/hotelHall/order").hasAuthority("CLIENT")
+                .antMatchers("/hotelHall/order/admin").hasAuthority("ADMIN")
                 .antMatchers("/hotelHall/order/pay").hasAuthority("CLIENT")
                 .antMatchers("/hotelHall/order/accept").hasAuthority("ADMIN")
                 .antMatchers("/hotelHall/order/decline").hasAuthority("ADMIN")
@@ -99,6 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/object/get-for-list").hasAuthority("SUPER_ADMIN")
                 //objectOrder
                 .antMatchers("/object/order").hasAuthority("CLIENT")
+                .antMatchers("/object/order/admin").hasAuthority("ADMIN")
                 .antMatchers("/object/order/pay").hasAuthority("CLIENT")
                 .antMatchers("/object/order/accept").hasAuthority("ADMIN")
                 .antMatchers("/object/order/decline").hasAuthority("ADMIN")

@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface RoomOrderService {
     RoomOrderModel order(RoomOrderModel roomOrderModel);
+    RoomOrderModel adminOrder(RoomOrderModel roomOrderModel);
     RoomOrderModel update(RoomOrderModel roomOrderModel);
     RoomOrderPayModel pay(RoomOrderPayModel roomOrderPayModel);
     RoomOrderModel acceptOrder(OrderModel orderModel);
@@ -22,4 +23,5 @@ public interface RoomOrderService {
     List<RoomOrderModel> convertToModels(List<RoomOrder> roomOrders);
     RoomOrderModel getById(Long id);
     RoomOrderModel deleteOrder(Long id);
+
 }
