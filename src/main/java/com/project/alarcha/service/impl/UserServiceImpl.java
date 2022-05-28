@@ -193,20 +193,38 @@ public class UserServiceImpl implements UserService {
         List<RoomOrder> roomOrders = user.getRoomOrders();
         List<ObjectOrder> objectOrders = user.getObjectOrders();
         List<HotelHallOrder> hotelHallOrders = user.getHotelHallOrders();
-        if (!roomOrders.isEmpty() || roomOrders != null){
-            userOrdersModel.setRoomOrderBasketModels(convertToRoomOrderBasket(
-                    roomOrderRepository.getByUserId(id, pageWithFiveElements)));
+
+        int totalPage = 0;
+
+        if (roomOrders != null){
+            if (!roomOrders.isEmpty()){
+                Page<RoomOrder> roomOrderPage = roomOrderRepository.getByUserId(id, pageWithFiveElements);
+                userOrdersModel.setRoomOrderBasketModels(convertToRoomOrderBasket(roomOrderPage));
+                totalPage = roomOrderPage.getTotalPages();
+            }
         }
-        if (!objectOrders.isEmpty() || objectOrders != null){
-            userOrdersModel.setOrderBasketModels(convertToObjectOrderBasket(
-                    objectOrderRepository.getByUserId(id, pageWithFiveElements)
-            ));
+        if (objectOrders != null){
+            if (!objectOrders.isEmpty()){
+                Page<ObjectOrder> objectOrderPage = objectOrderRepository.getByUserId(id, pageWithFiveElements);
+                userOrdersModel.setOrderBasketModels(convertToObjectOrderBasket(objectOrderPage));
+                int tempTotalPage = objectOrderPage.getTotalPages();
+                if (tempTotalPage > totalPage){
+                    totalPage = tempTotalPage;
+                }
+            }
         }
-        if (!hotelHallOrders.isEmpty() || hotelHallOrders != null){
-            userOrdersModel.setHotelHallOrderBasketModels(convertToHotelHallOrderBasket(
-                    hotelHallOrderRepository.getByUserId(id, pageWithFiveElements)
-            ));
+        if (hotelHallOrders != null){
+            if (!hotelHallOrders.isEmpty()){
+                Page<HotelHallOrder> hotelHallOrderPage = hotelHallOrderRepository.getByUserId(id, pageWithFiveElements);
+                userOrdersModel.setHotelHallOrderBasketModels(convertToHotelHallOrderBasket(hotelHallOrderPage));
+                int tempTotalPage = hotelHallOrderPage.getTotalPages();
+                if (tempTotalPage > totalPage){
+                    totalPage = tempTotalPage;
+                }
+            }
         }
+
+        userOrdersModel.setTotalPage(totalPage);
 
         return userOrdersModel;
     }
@@ -285,7 +303,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private List<RoomOrderBasketModel> convertToRoomOrderBasket(List<RoomOrder> roomOrders){
+    private List<RoomOrderBasketModel> convertToRoomOrderBasket(Page<RoomOrder> roomOrders){
         List<RoomOrderBasketModel> roomOrderBasketModels = new ArrayList<>();
 
         for (RoomOrder roomOrder : roomOrders){
@@ -310,7 +328,7 @@ public class UserServiceImpl implements UserService {
         return roomOrderBasketModels;
     }
 
-    private List<ObjectOrderBasketModel> convertToObjectOrderBasket(List<ObjectOrder> objectOrders){
+    private List<ObjectOrderBasketModel> convertToObjectOrderBasket(Page<ObjectOrder> objectOrders){
         List<ObjectOrderBasketModel> objectOrderBasketModels = new ArrayList<>();
 
         for (ObjectOrder objectOrder : objectOrders){
@@ -342,7 +360,7 @@ public class UserServiceImpl implements UserService {
         return objectOrderBasketModels;
     }
 
-    private List<HotelHallOrderBasketModel> convertToHotelHallOrderBasket(List<HotelHallOrder> hotelHallOrders){
+    private List<HotelHallOrderBasketModel> convertToHotelHallOrderBasket(Page<HotelHallOrder> hotelHallOrders){
         List<HotelHallOrderBasketModel> hotelHallOrderBasketModels = new ArrayList<>();
 
         for (HotelHallOrder hotelHallOrder : hotelHallOrders){

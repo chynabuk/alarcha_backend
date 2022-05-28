@@ -7,11 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@RequestMapping
+@Repository
 public interface RoomOrderRepository extends JpaRepository<RoomOrder, Long> {
     @Query(nativeQuery = true, value = "SELECT * FROM room_orders " +
             "WHERE NOT is_deleted " +
@@ -45,5 +45,5 @@ public interface RoomOrderRepository extends JpaRepository<RoomOrder, Long> {
 
     @Query(nativeQuery = true, value = "SELECT * FROM room_orders " +
             "WHERE NOT is_deleted AND user_id = :userId ORDER BY id DESC")
-    List<RoomOrder> getByUserId(@Param("userId") long userId, Pageable pageable);
+    Page<RoomOrder> getByUserId(@Param("userId") long userId, Pageable pageable);
 }

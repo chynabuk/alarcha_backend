@@ -17,5 +17,5 @@ public class UserOrdersModel extends BaseModel {
     private List<RoomOrderBasketModel> roomOrderBasketModels;
     private List<ObjectOrderBasketModel> orderBasketModels;
     private List<HotelHallOrderBasketModel> hotelHallOrderBasketModels;
-
+    private int totalPage;
 }

@@ -7,9 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface ObjectOrderRepository extends JpaRepository<ObjectOrder, Long> {
     @Query(nativeQuery = true, value = "SELECT * FROM object_orders " +
             "WHERE NOT is_deleted " +
@@ -43,5 +45,5 @@ public interface ObjectOrderRepository extends JpaRepository<ObjectOrder, Long> 
 
     @Query(nativeQuery = true, value = "SELECT * FROM object_orders " +
             "WHERE NOT is_deleted AND user_id = :userId ORDER BY id DESC")
-    List<ObjectOrder> getByUserId(@Param("userId") long userId, Pageable pageable);
+    Page<ObjectOrder> getByUserId(@Param("userId") long userId, Pageable pageable);
 }

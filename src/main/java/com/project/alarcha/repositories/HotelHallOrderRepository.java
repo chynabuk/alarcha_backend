@@ -45,5 +45,5 @@ public interface HotelHallOrderRepository extends JpaRepository<HotelHallOrder, 
 
     @Query(nativeQuery = true, value = "SELECT * FROM hotel_hall_orders " +
             "WHERE NOT is_deleted AND user_id = :userId ORDER BY id DESC")
-    List<HotelHallOrder> getByUserId(@Param("userId") long userId, Pageable pageable);
+    Page<HotelHallOrder> getByUserId(@Param("userId") long userId, Pageable pageable);
 }
