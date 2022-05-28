@@ -29,7 +29,7 @@ public interface RoomOrderRepository extends JpaRepository<RoomOrder, Long> {
     Page<RoomOrder> getInProcessOrders(PageRequest of);
 
     @Query(nativeQuery = true, value = "SELECT * FROM room_orders " +
-            "WHERE NOT is_deleted AND ( status = 'CONFIRMED' OR status = 'DECLINED' OR status = 'PAID' )" +
+            "WHERE status = 'CONFIRMED' OR status = 'DECLINED' OR status = 'PAID' OR order_status = 'CHECK_CHECK'" +
             " ORDER BY id DESC")
     Page<RoomOrder> getConfirmedOrDeclinedOrders(PageRequest of);
 

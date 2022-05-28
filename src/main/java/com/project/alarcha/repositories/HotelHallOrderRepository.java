@@ -29,7 +29,7 @@ public interface HotelHallOrderRepository extends JpaRepository<HotelHallOrder, 
     Page<HotelHallOrder> getInProcessOrders(PageRequest of);
 
     @Query(nativeQuery = true, value = "SELECT * FROM hotel_hall_orders " +
-            "WHERE NOT is_deleted AND ( order_status = 'CONFIRMED' OR order_status = 'DECLINED' OR order_status = 'PAID' )" +
+            "WHERE order_status = 'CONFIRMED' OR order_status = 'DECLINED' OR order_status = 'PAID' OR order_status = 'CHECK_CHECK'" +
             " ORDER BY id DESC")
     Page<HotelHallOrder> getConfirmedOrDeclinedOrders(PageRequest of);
 
