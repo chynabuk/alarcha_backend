@@ -7,6 +7,7 @@ import com.project.alarcha.enums.TimeType;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
 import com.project.alarcha.models.ObjectModel.ObjectOrderPayModel;
+import com.project.alarcha.models.OrderModel;
 import com.project.alarcha.repositories.ObjectOrderRepository;
 import com.project.alarcha.repositories.ObjectRepository;
 import com.project.alarcha.service.EmailSenderService;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,8 +62,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
-    public ObjectOrderModel acceptOrder(Long orderId) {
-        ObjectOrder objectOrder = getObjectOrder(orderId);
+    public ObjectOrderModel acceptOrder(OrderModel orderModel) {
+        ObjectOrder objectOrder = getObjectOrder(orderModel.getId());
 
         if(objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             objectOrder.setOrderStatus(OrderStatus.CONFIRMED);
@@ -71,8 +74,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
-    public ObjectOrderModel declineOrder(Long orderId) {
-        ObjectOrder objectOrder = getObjectOrder(orderId);
+    public ObjectOrderModel declineOrder(OrderModel orderModel) {
+        ObjectOrder objectOrder = getObjectOrder(orderModel.getId());
 
         if(
                 objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS
@@ -99,8 +102,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
     }
 
     @Override
-    public ObjectOrderModel acceptPayOrder(Long orderId) {
-        ObjectOrder objectOrder = objectOrderRepository.getById(orderId);
+    public ObjectOrderModel acceptPayOrder(OrderModel orderModel) {
+        ObjectOrder objectOrder = objectOrderRepository.getById(orderModel.getId());
 
         if (objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
             objectOrder.setOrderStatus(OrderStatus.PAID);
@@ -190,39 +193,33 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         objectOrder.setObject(object);
         objectOrder.setOrderStatus(OrderStatus.IN_PROCESS);
 
-        Date expirationDate = new Date();
-
         if(objectType.getTimeType() == TimeType.TIME){
             checkObjectOrderTime(objectOrderModel, objectType);
 
-            Date startDate = objectOrderModel.getStartDate();
+            LocalDate startDate = objectOrderModel.getStartDate();
             Time startTime = objectOrderModel.getStartTime();
             Time endTime = objectOrderModel.getEndTime();
             Float price = objectType.getPrice();
             Float pricePerHour = objectType.getPricePerHour();
 
-            expirationDate.setDate(startDate.getDate() + 3);
-
             objectOrder.setStartDate(startDate);
             objectOrder.setEndDate(startDate);
-            objectOrder.setExpirationDate(expirationDate);
+            objectOrder.setExpirationDate(startDate.plusDays(3));
             objectOrder.setStartTime(startTime);
             objectOrder.setEndTime(endTime);
             objectOrder.setTotalPrice(getTotalPriceByTime(price, pricePerHour, startTime, endTime));
         }
         else if(objectType.getTimeType() == TimeType.DATE){
-            checkObjectOrderDate(objectOrderModel);
 
             Float price = object.getObjectType().getPrice();
-            Date startDate = objectOrderModel.getStartDate();
-            Date endDate = objectOrderModel.getEndDate();
-
-            expirationDate.setDate(startDate.getDate() + 5);
-
+            LocalDate startDate = objectOrderModel.getStartDate();
+            LocalDate endDate = objectOrderModel.getEndDate();
+            long difference = ChronoUnit.DAYS.between(startDate, endDate);
+            checkObjectOrderDate(objectOrderModel, difference);
             objectOrder.setStartDate(startDate);
             objectOrder.setEndDate(endDate);
-            objectOrder.setExpirationDate(expirationDate);
-            objectOrder.setTotalPrice(getTotalPriceByDate(price, startDate, endDate));
+            objectOrder.setExpirationDate(startDate.plusDays(5));
+            objectOrder.setTotalPrice(getTotalPriceByDate(price, difference));
         }
 
         emailSenderService.sendEmail(
@@ -251,10 +248,9 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         return objectOrder;
     }
 
-    private boolean isExpired(Date expiredDate){
-        Date currentDate = new Date();
-
-        return currentDate.after(expiredDate);
+    private boolean isExpired(LocalDate expiredDate){
+        LocalDate currentDate = getCurrentDate();
+        return currentDate.isAfter(expiredDate);
     }
 
     private void checkObjectOrderTime(ObjectOrderModel objectOrderModel, ObjectType objectType){
@@ -262,17 +258,13 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         Time startTime = objectOrderModel.getStartTime();
         Time endTime = objectOrderModel.getEndTime();
-        Date registrationDate = objectOrderModel.getStartDate();
+        LocalDate registrationDate = objectOrderModel.getStartDate();
         Integer minHours = objectType.getMinHours();
         Time currentTime = Time.valueOf(LocalTime.now());
 
         checkTimeForNull(startTime, endTime, registrationDate);
 
-        registrationDate.setHours(12);
-        registrationDate.setMinutes(0);
-        registrationDate.setSeconds(0);
-
-        Date currentDate = getCurrentDate();
+        LocalDate currentDate = getCurrentDate();
 
         compareRegistrationDateWithCurrentDate(registrationDate, currentDate);
 
@@ -285,38 +277,25 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         doTimeValidation(objectOrders, objectOrderModel, registrationDate, startTime, endTime);
     }
 
-    private void checkObjectOrderDate(ObjectOrderModel objectOrderModel){
+    private void checkObjectOrderDate(ObjectOrderModel objectOrderModel, long difference){
         List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
 
-        Date currentDate = getCurrentDate();
+        LocalDate currentDate = getCurrentDate();
 
-        Date startDate = objectOrderModel.getStartDate();
-        Date endDate = objectOrderModel.getEndDate();
+        LocalDate startDate = objectOrderModel.getStartDate();
+        LocalDate endDate = objectOrderModel.getEndDate();
 
         checkDateForNull(startDate, endDate);
-
-        startDate.setHours(12);
-        endDate.setHours(12);
 
         compareStartWithCurrentDate(startDate, currentDate);
 
         compareEndWithStartDate(startDate, endDate);
 
-        doDatesValidation(objectOrders, objectOrderModel, startDate, endDate);
+        doDatesValidation(objectOrders, objectOrderModel, startDate, endDate, difference);
     }
 
-    private Date getCurrentDate(){
-        Date currentDate = new Date();
-        currentDate.setTime(0);
-        Date tempDate = new Date();
-
-        currentDate.setYear(tempDate.getYear());
-        currentDate.setMonth(tempDate.getMonth());
-        currentDate.setDate(tempDate.getDate());
-        currentDate.setHours(12);
-        currentDate.setMinutes(0);
-        currentDate.setSeconds(0);
-
+    private LocalDate getCurrentDate(){
+        LocalDate currentDate = LocalDate.now();
         return currentDate;
     }
 
@@ -325,8 +304,8 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         return (hours - 1) * pricePerHour + price;
     }
 
-    private Float getTotalPriceByDate(Float price, Date startDate, Date endDate){
-        return (endDate.getDate() - startDate.getDate()) * price;
+    private Float getTotalPriceByDate(Float price, long difference){
+        return difference * price;
     }
 
     private void checkMinHours(Time startTime, Time endTime, Integer minHours){
@@ -336,19 +315,19 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         }
     }
 
-    private void checkDateForNull(Date startDate, Date endDate){
+    private void checkDateForNull(LocalDate startDate, LocalDate endDate){
         if (startDate == null || endDate == null){
             throw new ApiFailException("Даты не должны быть пустыми.");
         }
     }
 
-    private void checkTimeForNull(Time startTime, Time endTime, Date registrationDate){
+    private void checkTimeForNull(Time startTime, Time endTime, LocalDate registrationDate){
         if(startTime == null || endTime == null || registrationDate == null){
             throw new ApiFailException("Время или дата регистрации не должны быть пустыми.");
         }
     }
 
-    private void compareStartTimeWithCurrentTime(Date registrationDate, Date currentDate, Time startTime, Time currentTime){
+    private void compareStartTimeWithCurrentTime(LocalDate registrationDate, LocalDate currentDate, Time startTime, Time currentTime){
         if(registrationDate.equals(currentDate) && startTime.before(currentTime)){
             throw new ApiFailException("Время начала не может быть раньше текущего времени.");
         }
@@ -360,29 +339,29 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         }
     }
 
-    private void compareRegistrationDateWithCurrentDate(Date registrationDate, Date currentDate){
-        if(registrationDate.before(currentDate)){
+    private void compareRegistrationDateWithCurrentDate(LocalDate registrationDate, LocalDate currentDate){
+        if(registrationDate.isBefore(currentDate)){
             throw new ApiFailException("Дата регистрации не может быть раньше текущей даты.");
         }
     }
 
-    private void compareStartWithCurrentDate(Date startDate, Date currentDate){
+    private void compareStartWithCurrentDate(LocalDate startDate, LocalDate currentDate){
         if (startDate.compareTo(currentDate) < 0){
             throw new ApiFailException("Дата начала не может быть раньше текущей даты.");
         }
     }
 
-    private void compareEndWithStartDate(Date startDate, Date endDate){
+    private void compareEndWithStartDate(LocalDate startDate, LocalDate endDate){
         if (endDate.compareTo(startDate) <= 0){
             throw new ApiFailException("Дата окончания не может быть раньше даты начала.");
         }
     }
 
-    private void doTimeValidation(List<ObjectOrder> objectOrders, ObjectOrderModel objectOrderModel, Date registrationDate, Time startTime, Time endTime){
+    private void doTimeValidation(List<ObjectOrder> objectOrders, ObjectOrderModel objectOrderModel, LocalDate registrationDate, Time startTime, Time endTime){
         for(ObjectOrder objectOrder : objectOrders){
             if(objectOrderModel.getObjectId().equals(objectOrder.getObject().getId())){
                 if( (registrationDate.getYear() == objectOrder.getStartDate().getYear() && registrationDate.getMonth() == objectOrder.getStartDate().getMonth()
-                        && registrationDate.getDay() == objectOrder.getStartDate().getDay())
+                        && registrationDate.getDayOfMonth() == objectOrder.getStartDate().getDayOfMonth())
                 ){
                     OrderStatus orderStatus = objectOrder.getOrderStatus();
                     if(orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
@@ -400,22 +379,24 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         }
     }
 
-    private void doDatesValidation(List<ObjectOrder> objectOrders, ObjectOrderModel objectOrderModel, Date startDate, Date endDate){
+    private void doDatesValidation(List<ObjectOrder> objectOrders, ObjectOrderModel objectOrderModel, LocalDate startDate, LocalDate endDate, long difference){
         for (ObjectOrder objectOrder : objectOrders){
             if (objectOrderModel.getObjectId() == objectOrder.getObject().getId()){
                 OrderStatus orderStatus = objectOrder.getOrderStatus();
                 if (orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
-                    Date rSDate = objectOrder.getStartDate();
-                    Date rEDate = objectOrder.getEndDate();
+                    LocalDate rSDate = objectOrder.getStartDate();
+                    LocalDate rEDate = objectOrder.getEndDate();
                     if (
                             (startDate.getYear() == rSDate.getYear() && startDate.getMonth() == rSDate.getMonth())
                                     && (endDate.getYear() == rEDate.getYear() && endDate.getMonth() == rEDate.getMonth())
                     )
                     {
-                        for (int i = startDate.getDate(); i < endDate.getDate(); i++){
-                            if (i >= rSDate.getDate() && i <= rEDate.getDate()){
+                        LocalDate startLocalDate = startDate;
+                        for (long i = 0; i < difference; i++){
+                            if(startLocalDate.getDayOfMonth() >= rSDate.getDayOfMonth() && startLocalDate.getDayOfMonth() <= rEDate.getDayOfMonth()){
                                 throw new ApiFailException("Вы не можете сделать заказ на эту дату.");
                             }
+                            startLocalDate.plusDays(++i);
                         }
                     }
                 }
@@ -441,7 +422,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
             if (objectType.getTimeType() == TimeType.TIME){
                 Time startTime = objectOrderModel.getStartTime();
                 Time endTime = objectOrderModel.getEndTime();
-                Date registrationDate = objectOrderModel.getStartDate();
+                LocalDate registrationDate = objectOrderModel.getStartDate();
 
                 if(startTime != null){
                     objectOrder.setStartTime(startTime);
@@ -467,11 +448,7 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
                 checkTimeForNull(startTime, endTime, registrationDate);
 
-                registrationDate.setHours(12);
-                registrationDate.setMinutes(0);
-                registrationDate.setSeconds(0);
-
-                Date currentDate = getCurrentDate();
+                LocalDate currentDate = getCurrentDate();
 
                 compareRegistrationDateWithCurrentDate(registrationDate, currentDate);
                 compareEndTimeWithStartTime(startTime, endTime);
@@ -479,14 +456,13 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 checkMinHours(startTime, endTime, minHours);
                 doTimeValidation(objectOrders, toModel(objectOrder), registrationDate, startTime, endTime);
 
-                expirationDate.setDate(registrationDate.getDate() + 3);
-                objectOrder.setExpirationDate(expirationDate);
+                objectOrder.setExpirationDate(registrationDate.plusDays(3));
                 objectOrder.setTotalPrice(getTotalPriceByTime(price, pricePerHour, startTime, endTime));
 
             }
             else if(objectType.getTimeType() == TimeType.DATE){
-                Date startDate = objectOrderModel.getStartDate();
-                Date endDate = objectOrderModel.getEndDate();
+                LocalDate startDate = objectOrderModel.getStartDate();
+                LocalDate endDate = objectOrderModel.getEndDate();
 
                 if(startDate!= null){
                     objectOrder.setStartDate(startDate);
@@ -497,23 +473,20 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 }
 
                 List<ObjectOrder> objectOrders = objectOrderRepository.findAll();
-                Date currentDate = getCurrentDate();
+                LocalDate currentDate = getCurrentDate();
 
                 startDate = objectOrder.getStartDate();
                 endDate = objectOrder.getEndDate();
+                long difference = ChronoUnit.DAYS.between(startDate, endDate);
 
                 checkDateForNull(startDate, endDate);
 
-                startDate.setHours(12);
-                endDate.setHours(12);
-                expirationDate.setDate(startDate.getDate() + 5);
-
                 compareStartWithCurrentDate(startDate, currentDate);
                 compareEndWithStartDate(startDate, endDate);
-                doDatesValidation(objectOrders, toModel(objectOrder), startDate, endDate);
+                doDatesValidation(objectOrders, toModel(objectOrder), startDate, endDate, difference);
 
-                objectOrder.setExpirationDate(expirationDate);
-                objectOrder.setTotalPrice(getTotalPriceByDate(price, startDate, endDate));
+                objectOrder.setExpirationDate(startDate.plusDays(5));
+                objectOrder.setTotalPrice(getTotalPriceByDate(price, difference));
             }
         }
 

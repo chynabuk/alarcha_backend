@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.Random;
@@ -40,19 +41,19 @@ public class PopulationImpl implements Population {
 
     @Override
     public Object create() {
-        User user = userRepository.getById(5L);
-        User user1 = userRepository.getById(7L);
+        User user = userRepository.getById(3L);
+        User user1 = userRepository.getById(5L);
 
-        Room room = roomRepository.getById(1L);
-        HotelHall hotelHall = hotelHallsRepository.getById(1L);
+        Room room = roomRepository.getById(4L);
+        HotelHall hotelHall = hotelHallsRepository.getById(6L);
         Object object = objectRepository.getById(1L);
 
-        OrderStatus orderStatus[] = {OrderStatus.CONFIRMED, OrderStatus.DECLINED, OrderStatus.PAID, OrderStatus.IN_PROCESS};
+        OrderStatus orderStatus[] = {OrderStatus.CONFIRMED, OrderStatus.DECLINED, OrderStatus.PAID, OrderStatus.IN_PROCESS, OrderStatus.CHECK_CHECK};
 
         Random random = new Random();
 
         for (int i = 0; i < 1000000; i++){
-            int orderStatusIndex = random.nextInt(4);
+            int orderStatusIndex = random.nextInt(5);
 
             User tempUser = null;
             if (i % 2 == 0){
@@ -64,11 +65,9 @@ public class PopulationImpl implements Population {
 
             RoomOrder roomOrder = new RoomOrder();
             roomOrder.setOrderStatus(orderStatus[orderStatusIndex]);
-            Date startDate = new Date();
-            roomOrder.setStartDate(startDate);
-            Date endDate = new Date();
-            endDate.setDate(endDate.getDate() + 3);
-            roomOrder.setEndDate(endDate);
+            LocalDate startDate = LocalDate.now();
+            LocalDate endDate = LocalDate.now();
+            roomOrder.setEndDate(endDate.plusDays(3));
             roomOrder.setIsDeleted(false);
             roomOrder.setTotalPrice(2000F);
             roomOrder.setUserFullName(tempUser.getFirstName() + " " + tempUser.getLastName());
@@ -81,6 +80,7 @@ public class PopulationImpl implements Population {
             hotelHallOrder.setOrderStatus(orderStatus[orderStatusIndex]);
             hotelHallOrder.setStartDate(startDate);
             hotelHallOrder.setExpirationDate(endDate);
+            hotelHallOrder.setUserFullName(tempUser.getFirstName() + " " + tempUser.getLastName());
             hotelHallOrder.setEndDate(startDate);
 
             LocalTime localTime = LocalTime.now();
@@ -104,6 +104,7 @@ public class PopulationImpl implements Population {
             objectOrder.setOrderStatus(orderStatus[orderStatusIndex]);
             objectOrder.setFullName(tempUser.getFirstName() + " " + tempUser.getLastName());
             objectOrder.setObject(object);
+            objectOrder.setExpirationDate(endDate);
             objectOrder.setUser(tempUser);
 
             roomOrderRepository.save(roomOrder);

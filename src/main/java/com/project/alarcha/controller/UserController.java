@@ -59,8 +59,8 @@ public class UserController {
     }
 
     @GetMapping("/get/my-orders/{id}")
-    public ResponseMessage<UserOrdersModel> getMyOrders(@PathVariable Long id){
-        return new ResponseMessage<UserOrdersModel>().prepareSuccessMessage(userService.getUserOrdersModel(id));
+    public ResponseMessage<UserOrdersModel> getMyOrders(@PathVariable Long id, @RequestParam(name = "page", defaultValue = "0", required = false) int page){
+        return new ResponseMessage<UserOrdersModel>().prepareSuccessMessage(userService.getUserOrdersModel(id, page));
     }
 
 }

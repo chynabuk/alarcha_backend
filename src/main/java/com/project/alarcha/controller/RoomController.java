@@ -1,5 +1,6 @@
 package com.project.alarcha.controller;
 
+import com.project.alarcha.models.OrderModel;
 import com.project.alarcha.models.RoomModel.RoomModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderPayModel;
@@ -8,6 +9,7 @@ import com.project.alarcha.service.RoomOrderService;
 import com.project.alarcha.service.RoomService;
 import com.project.alarcha.service.RoomTypeService;
 import com.project.alarcha.util.ResponseMessage;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -100,19 +102,19 @@ public class RoomController {
         return new ResponseMessage<RoomOrderPayModel>().prepareSuccessMessage(roomOrderService.pay(roomOrderPayModel));
     }
 
-    @PostMapping("/order/{roomOrderId}/accept")
-    public ResponseMessage<RoomOrderModel> acceptOrder(@PathVariable Long roomOrderId){
-        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.acceptOrder(roomOrderId));
+    @PostMapping("/order/accept")
+    public ResponseMessage<RoomOrderModel> acceptOrder(@RequestBody OrderModel orderModel){
+        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.acceptOrder(orderModel));
     }
 
-    @PostMapping("/order/{roomOrderId}/decline")
-    public ResponseMessage<RoomOrderModel> declineOrder(@PathVariable Long roomOrderId){
-        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.declineOrder(roomOrderId));
+    @PostMapping("/order/decline")
+    public ResponseMessage<RoomOrderModel> declineOrder(@RequestBody OrderModel orderModel){
+        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.declineOrder(orderModel));
     }
 
-    @PostMapping("/order/{roomOrderId}/accept-pay")
-    public ResponseMessage<RoomOrderModel> acceptPay(@PathVariable Long roomOrderId){
-        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.acceptPayOrder(roomOrderId));
+    @PostMapping("/order/accept-pay")
+    public ResponseMessage<RoomOrderModel> acceptPay(@RequestBody OrderModel orderModel){
+        return new ResponseMessage<RoomOrderModel>().prepareSuccessMessage(roomOrderService.acceptPayOrder(orderModel));
     }
 
     @DeleteMapping("/order/delete/{roomOrderId}")

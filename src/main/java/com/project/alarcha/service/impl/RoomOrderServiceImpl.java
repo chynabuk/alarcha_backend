@@ -5,6 +5,7 @@ import com.project.alarcha.entities.RoomOrder;
 import com.project.alarcha.entities.User;
 import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
+import com.project.alarcha.models.OrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderPayModel;
 import com.project.alarcha.repositories.RoomOrderRepository;
@@ -13,12 +14,15 @@ import com.project.alarcha.service.EmailSenderService;
 import com.project.alarcha.service.RoomOrderService;
 import com.project.alarcha.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,8 +72,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     }
 
     @Override
-    public RoomOrderModel acceptOrder(Long orderId) {
-        RoomOrder roomOrder = getRoomOrder(orderId);
+    public RoomOrderModel acceptOrder(OrderModel orderModel) {
+        RoomOrder roomOrder = getRoomOrder(orderModel.getId());
 
         if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             roomOrder.setOrderStatus(OrderStatus.CONFIRMED);
@@ -80,8 +84,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     }
 
     @Override
-    public RoomOrderModel declineOrder(Long orderId) {
-        RoomOrder roomOrder = getRoomOrder(orderId);
+    public RoomOrderModel declineOrder(OrderModel orderModel) {
+        RoomOrder roomOrder = getRoomOrder(orderModel.getId());
 
         if (
                 roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS
@@ -97,8 +101,8 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     }
 
     @Override
-    public RoomOrderModel acceptPayOrder(Long orderId) {
-        RoomOrder roomOrder = getRoomOrder(orderId);
+    public RoomOrderModel acceptPayOrder(OrderModel orderModel) {
+        RoomOrder roomOrder = getRoomOrder(orderModel.getId());
 
         if (roomOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
             roomOrder.setOrderStatus(OrderStatus.PAID);
@@ -166,10 +170,9 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         return roomOrderModels;
     }
 
-    private boolean isExpired(Date expiredDate){
-        Date currentDate = new Date();
-
-        return currentDate.after(expiredDate);
+    private boolean isExpired(LocalDate expiredDate){
+        LocalDate currentDate = LocalDate.now();
+        return currentDate.isAfter(expiredDate);
     }
 
 
@@ -194,26 +197,26 @@ public class RoomOrderServiceImpl implements RoomOrderService {
     private RoomOrder initAndGetRoomOrder(RoomOrderModel roomOrderModel){
         RoomOrder roomOrder = new RoomOrder();
 
-        checkRoomOrderDate(roomOrderModel);
-
         User user = userService.getById(roomOrderModel.getUserId());
-        roomOrder.setUser(user);
         Room room = roomRepository.findById(roomOrderModel.getRoomId())
                 .orElseThrow(() -> new ApiFailException("Комната не найдена."));
-        roomOrder.setIsDeleted(false);
-        roomOrder.setRoom(room);
-        roomOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
+
 
         Float price = room.getRoomType().getPrice();
-        Date startDate = roomOrderModel.getStartDate();
-        Date endDate = roomOrderModel.getEndDate();
+        LocalDate startDate = roomOrderModel.getStartDate();
+        LocalDate endDate = roomOrderModel.getEndDate();
 
+        long difference = ChronoUnit.DAYS.between(startDate, endDate);
+        checkRoomOrderDate(roomOrderModel, difference);
+        roomOrder.setIsDeleted(false);
+        roomOrder.setUser(user);
+        roomOrder.setRoom(room);
+        roomOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
         roomOrder.setStartDate(startDate);
         roomOrder.setEndDate(endDate);
         roomOrder.setExpirationDate(setAndGetExpirationDate(startDate));
-        roomOrder.setTotalPrice(getTotalPrice(price, startDate, endDate));
+        roomOrder.setTotalPrice(getTotalPrice(price, difference));
         roomOrder.setOrderStatus(OrderStatus.IN_PROCESS);
-
 
         emailSenderService.sendEmail(
                 room.getRoomType().getHotel().getArea().getUser().getEmail(),
@@ -224,33 +227,22 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         return roomOrder;
     }
 
-    private Date setAndGetExpirationDate(Date startDate){
-        Date expirationDate = new Date();
-        expirationDate.setDate(startDate.getDate() + 3);
-
-        return expirationDate;
+    private LocalDate setAndGetExpirationDate(LocalDate startDate){
+        return startDate.plusDays(3);
     }
 
-    private Float getTotalPrice(Float price, Date startDate, Date endDate){
-        return (endDate.getDate() - startDate.getDate()) * price;
+    private Float getTotalPrice(Float price, long differnce){
+        return differnce * price;
     }
 
-    private void checkRoomOrderDate(RoomOrderModel roomOrderModel){
+    private void checkRoomOrderDate(RoomOrderModel roomOrderModel, long difference){
         List<RoomOrder> roomOrders = roomOrderRepository.getAllRoomOrders();
 
-        Date currentDate = new Date();
-        Date tempDate = new Date();
-        currentDate.setTime(0);
-        currentDate.setYear(tempDate.getYear());
-        currentDate.setMonth(tempDate.getMonth());
-        currentDate.setDate(tempDate.getDate());
-        currentDate.setHours(12);
+        LocalDate currentDate = LocalDate.now();
 
-        Date startDate = roomOrderModel.getStartDate();
-        startDate.setHours(12);
+        LocalDate startDate = roomOrderModel.getStartDate();
 
-        Date endDate = roomOrderModel.getEndDate();
-        endDate.setHours(12);
+        LocalDate endDate = roomOrderModel.getEndDate();
 
         if (startDate == null || endDate == null){
             throw new ApiFailException("Даты не должны быть пустыми.");
@@ -269,17 +261,19 @@ public class RoomOrderServiceImpl implements RoomOrderService {
             if (roomOrderModel.getRoomId() == roomOrder.getRoom().getId()){
                 OrderStatus orderStatus = roomOrder.getOrderStatus();
                 if (orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){
-                    Date rSDate = roomOrder.getStartDate();
-                    Date rEDate = roomOrder.getEndDate();
+                    LocalDate rSDate = roomOrder.getStartDate();
+                    LocalDate rEDate = roomOrder.getEndDate();
                     if (
                             (startDate.getYear() == rSDate.getYear() && startDate.getMonth() == rSDate.getMonth())
                                     && (endDate.getYear() == rEDate.getYear() && endDate.getMonth() == rEDate.getMonth())
                     )
                     {
-                        for (int i = startDate.getDate(); i < endDate.getDate(); i++){
-                            if (i >= rSDate.getDate() && i <= rEDate.getDate()){
+                        LocalDate startLocalDate = startDate;
+                        for (long i = 0; i < difference; i++){
+                            if(startLocalDate.getDayOfMonth() >= rSDate.getDayOfMonth() && startLocalDate.getDayOfMonth() <= rEDate.getDayOfMonth()){
                                 throw new ApiFailException("Вы не можете сделать заказ на эту дату.");
                             }
+                            startLocalDate.plusDays(++i);
                         }
                     }
                 }

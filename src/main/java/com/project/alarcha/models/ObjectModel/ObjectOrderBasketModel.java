@@ -17,7 +17,7 @@ public class ObjectOrderBasketModel extends BaseModel {
     private float price;
     private float priceForNextHours;
     private float totalPrice;
-    private int days;
+    private long days;
     private int hours;
     private OrderStatus orderStatus;
     private Date createdDate;

@@ -16,7 +16,7 @@ public class RoomOrderBasketModel extends BaseModel {
     private String roomType;
     private float price;
     private float totalPrice;
-    private int days;
+    private long days;
     private int roomNumber;
     private OrderStatus orderStatus;
     private Date createdDate;

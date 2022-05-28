@@ -13,6 +13,9 @@ import com.project.alarcha.models.RoomModel.RoomOrderBasketModel;
 import com.project.alarcha.models.SecurityModel.UserSecurityModel;
 import com.project.alarcha.models.TokenModel.UserTokenModel;
 import com.project.alarcha.models.UserModel.*;
+import com.project.alarcha.repositories.HotelHallOrderRepository;
+import com.project.alarcha.repositories.ObjectOrderRepository;
+import com.project.alarcha.repositories.RoomOrderRepository;
 import com.project.alarcha.repositories.UserRepository;
 import com.project.alarcha.service.RefreshTokenService;
 import com.project.alarcha.service.UserService;
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +32,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,6 +52,15 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private RoomOrderRepository roomOrderRepository;
+
+    @Autowired
+    private ObjectOrderRepository objectOrderRepository;
+
+    @Autowired
+    private HotelHallOrderRepository hotelHallOrderRepository;
 
     private final JwtUtils jwtUtils;
 
@@ -168,23 +182,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserOrdersModel getUserOrdersModel(Long id) {
+    public UserOrdersModel getUserOrdersModel(Long id, int page) {
         User user = getById(id);
 
         UserOrdersModel userOrdersModel = new UserOrdersModel();
         userOrdersModel.setId(id);
 
+        Pageable pageWithFiveElements = PageRequest.of(page, 5);
+
         List<RoomOrder> roomOrders = user.getRoomOrders();
         List<ObjectOrder> objectOrders = user.getObjectOrders();
         List<HotelHallOrder> hotelHallOrders = user.getHotelHallOrders();
         if (!roomOrders.isEmpty() || roomOrders != null){
-            userOrdersModel.setRoomOrderBasketModels(convertToRoomOrderBasket(roomOrders));
+            userOrdersModel.setRoomOrderBasketModels(convertToRoomOrderBasket(
+                    roomOrderRepository.getByUserId(id, pageWithFiveElements)));
         }
         if (!objectOrders.isEmpty() || objectOrders != null){
-            userOrdersModel.setOrderBasketModels(convertToObjectOrderBasket(objectOrders));
+            userOrdersModel.setOrderBasketModels(convertToObjectOrderBasket(
+                    objectOrderRepository.getByUserId(id, pageWithFiveElements)
+            ));
         }
         if (!hotelHallOrders.isEmpty() || hotelHallOrders != null){
-            userOrdersModel.setHotelHallOrderBasketModels(convertToHotelHallOrderBasket(hotelHallOrders));
+            userOrdersModel.setHotelHallOrderBasketModels(convertToHotelHallOrderBasket(
+                    hotelHallOrderRepository.getByUserId(id, pageWithFiveElements)
+            ));
         }
 
         return userOrdersModel;
@@ -274,7 +295,7 @@ public class UserServiceImpl implements UserService {
             RoomType roomType = room.getRoomType();
             roomOrderBasketModel.setRoomType(roomType.getType());
             roomOrderBasketModel.setRoomNumber(room.getRoomNumber());
-            roomOrderBasketModel.setDays(roomOrder.getEndDate().getDate() - roomOrder.getStartDate().getDate());
+            roomOrderBasketModel.setDays(ChronoUnit.DAYS.between(roomOrder.getStartDate(), roomOrder.getEndDate()));
             roomOrderBasketModel.setHotelName(roomType.getHotel().getHotelName());
             roomOrderBasketModel.setTotalPrice(roomOrder.getTotalPrice());
             roomOrderBasketModel.setPrice(roomType.getPrice());
@@ -303,7 +324,7 @@ public class UserServiceImpl implements UserService {
             orderBasketModel.setTotalPrice(objectOrder.getTotalPrice());
             orderBasketModel.setName(object.getName());
             if (objectType.getTimeType() == TimeType.DATE){
-                orderBasketModel.setDays(objectOrder.getEndDate().getDate() - objectOrder.getStartDate().getDate());
+                orderBasketModel.setDays(ChronoUnit.DAYS.between(objectOrder.getStartDate(), objectOrder.getEndDate()));
             }
             else if (objectType.getTimeType() == TimeType.TIME){
                 orderBasketModel.setHours(objectOrder.getEndTime().getHours() - objectOrder.getStartTime().getHours());

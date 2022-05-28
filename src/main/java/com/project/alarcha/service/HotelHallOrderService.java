@@ -3,15 +3,16 @@ package com.project.alarcha.service;
 import com.project.alarcha.entities.HotelHallOrder;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.models.HotelModel.HotelHallOrderPayModel;
+import com.project.alarcha.models.OrderModel;
 
 import java.util.List;
 
 public interface HotelHallOrderService {
     HotelHallOrderModel order(HotelHallOrderModel hotelHallOrderModel);
     HotelHallOrderPayModel pay(HotelHallOrderPayModel hotelHallOrderPayModel);
-    HotelHallOrderModel acceptOrder(Long orderId);
-    HotelHallOrderModel declineOrder(Long orderId);
-    HotelHallOrderModel acceptPayOrder(Long orderId);
+    HotelHallOrderModel acceptOrder(OrderModel orderModel);
+    HotelHallOrderModel declineOrder(OrderModel orderModel);
+    HotelHallOrderModel acceptPayOrder(OrderModel orderModel);
     List<HotelHallOrderModel> getAll(int page);
     List<HotelHallOrderModel> getInProcessOrders(int page);
     List<HotelHallOrderModel> getConfirmedOrDeclinedOrders(int page);

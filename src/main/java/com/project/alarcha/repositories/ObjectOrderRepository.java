@@ -3,8 +3,10 @@ package com.project.alarcha.repositories;
 import com.project.alarcha.entities.ObjectOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -38,4 +40,8 @@ public interface ObjectOrderRepository extends JpaRepository<ObjectOrder, Long> 
             "WHERE NOT is_deleted AND status = 'PAID'" +
             " ORDER BY id DESC")
     Page<ObjectOrder> getCheckedPay(PageRequest of);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM object_orders " +
+            "WHERE NOT is_deleted AND user_id = :userId ORDER BY id DESC")
+    List<ObjectOrder> getByUserId(@Param("userId") long userId, Pageable pageable);
 }

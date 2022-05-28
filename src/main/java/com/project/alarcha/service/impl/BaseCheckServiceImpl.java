@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -78,10 +79,10 @@ public class BaseCheckServiceImpl implements BaseCheckService {
         if (roomOrders != null){
             if (!roomOrders.isEmpty()){
                 for (RoomOrder roomOrder : roomOrders){
-                    if (isExpired(roomOrder.getExpirationDate())){
-                        roomOrder.setIsDeleted(true);
-                        roomOrderRepository.save(roomOrder);
-                    }
+//                    if (isExpired(roomOrder.getExpirationDate())){
+//                        roomOrder.setIsDeleted(true);
+//                        roomOrderRepository.save(roomOrder);
+//                    }
                 }
             }
         }
@@ -117,9 +118,9 @@ public class BaseCheckServiceImpl implements BaseCheckService {
         }
     }
 
-    private boolean isExpired(Date expiredDate){
-        Date currentDate = new Date();
+    private boolean isExpired(LocalDate expiredDate){
+        LocalDate currentDate = LocalDate.now();
 
-        return currentDate.after(expiredDate);
+        return currentDate.isAfter(expiredDate);
     }
 }

@@ -4,6 +4,7 @@ import com.project.alarcha.models.ObjectModel.ObjectModel;
 import com.project.alarcha.models.ObjectModel.ObjectOrderModel;
 import com.project.alarcha.models.ObjectModel.ObjectOrderPayModel;
 import com.project.alarcha.models.ObjectModel.ObjectTypeModel;
+import com.project.alarcha.models.OrderModel;
 import com.project.alarcha.service.ObjectOrderService;
 import com.project.alarcha.service.ObjectService;
 import com.project.alarcha.service.ObjectTypeService;
@@ -66,19 +67,19 @@ public class ObjectController {
         return new ResponseMessage<ObjectOrderPayModel>().prepareSuccessMessage(objectOrderService.pay(objectOrderPayModel));
     }
 
-    @PostMapping("/order/{objectOrderId}/accept")
-    public ResponseMessage<ObjectOrderModel> acceptOrder(@PathVariable Long objectOrderId){
-        return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.acceptOrder(objectOrderId));
+    @PostMapping("/order/accept")
+    public ResponseMessage<ObjectOrderModel> acceptOrder(@RequestBody OrderModel orderModel){
+        return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.acceptOrder(orderModel));
     }
 
-    @PostMapping("/order/{objectOrderId}/decline")
-    public ResponseMessage<ObjectOrderModel> declineOrder(@PathVariable Long objectOrderId){
-        return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.declineOrder(objectOrderId));
+    @PostMapping("/order/decline")
+    public ResponseMessage<ObjectOrderModel> declineOrder(@RequestBody OrderModel orderModel){
+        return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.declineOrder(orderModel));
     }
 
-    @PostMapping("/order/{objectOrderId}/accept-pay")
-    public ResponseMessage<ObjectOrderModel> acceptPay(@PathVariable Long objectOrderId){
-        return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.acceptPayOrder(objectOrderId));
+    @PostMapping("/order/accept-pay")
+    public ResponseMessage<ObjectOrderModel> acceptPay(@RequestBody OrderModel orderModel){
+        return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.acceptPayOrder(orderModel));
     }
 
     @DeleteMapping("/order/delete/{objectOrderId}")

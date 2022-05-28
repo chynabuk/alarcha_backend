@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -19,23 +20,17 @@ import java.util.Date;
 public class HotelHallOrderModel extends BaseModel {
     private Long hotelHallId;
     private Long userId;
-    @NotEmpty(message = "Обязательное поле для заполнения")
-    @Length(max = 100, message = "Слишком длинное поле")
     private String userFullName;
     @NotEmpty(message = "Обязательное поле для заполнения")
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private Date startDate;
+    private LocalDate startDate;
     @NotEmpty(message = "Обязательное поле для заполнения")
     private Time startTime;
     @NotEmpty(message = "Обязательное поле для заполнения")
     private Time endTime;
     private OrderStatus orderStatus;
-    @NotEmpty(message = "Обязательное поле для заполнения")
     private String hotelName;
-    @NotEmpty(message = "Обязательное поле для заполнения")
     private String hotelHallName;
-    @NotEmpty(message = "Обязательное поле для заполнения")
-    @Pattern(regexp = "^\\+\\d+ \\d+$", message = "Неправильной формат номера телефона")
     private String userPhone;
     private Float totalPrice;
     private String img;

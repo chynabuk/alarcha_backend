@@ -3,6 +3,7 @@ package com.project.alarcha.controller;
 import com.project.alarcha.models.HotelModel.HotelHallModel;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.models.HotelModel.HotelHallOrderPayModel;
+import com.project.alarcha.models.OrderModel;
 import com.project.alarcha.service.HotelHallOrderService;
 import com.project.alarcha.service.HotelHallService;
 import com.project.alarcha.util.ResponseMessage;
@@ -60,19 +61,19 @@ public class HotelHallController {
         return new ResponseMessage<HotelHallOrderPayModel>().prepareSuccessMessage(hotelHallOrderService.pay(hotelHallOrderPayModel));
     }
 
-    @PostMapping("/order/{hotelHallOrderId}/accept")
-    public ResponseMessage<HotelHallOrderModel> acceptOrder(@PathVariable Long hotelHallOrderId){
-        return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.acceptOrder(hotelHallOrderId));
+    @PostMapping("/order/accept")
+    public ResponseMessage<HotelHallOrderModel> acceptOrder(@RequestBody OrderModel orderModel){
+        return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.acceptOrder(orderModel));
     }
 
-    @PostMapping("/order/{hotelHallOrderId}/decline")
-    public ResponseMessage<HotelHallOrderModel> declineOrder(@PathVariable Long hotelHallOrderId){
-        return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.declineOrder(hotelHallOrderId));
+    @PostMapping("/order/decline")
+    public ResponseMessage<HotelHallOrderModel> declineOrder(@RequestBody OrderModel orderModel){
+        return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.declineOrder(orderModel));
     }
 
-    @PostMapping("/order/{hotelHallOrderId}/accept-pay")
-    public ResponseMessage<HotelHallOrderModel> acceptPay(@PathVariable Long hotelHallOrderId){
-        return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.acceptPayOrder(hotelHallOrderId));
+    @PostMapping("/order/accept-pay")
+    public ResponseMessage<HotelHallOrderModel> acceptPay(@RequestBody OrderModel orderModel){
+        return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.acceptPayOrder(orderModel));
     }
 
     @DeleteMapping("/order/delete/{hotelHallOrderId}")

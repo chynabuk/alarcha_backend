@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;;
 
@@ -31,11 +32,11 @@ public class RoomOrder extends BaseEntity{
     private Float totalPrice;
 
     @Column(name = "start_date", nullable = false)
-    private Date startDate;
+    private LocalDate startDate;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     @Column(name = "end_date", nullable = false)
-    private Date endDate;
+    private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -43,7 +44,7 @@ public class RoomOrder extends BaseEntity{
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     @Column(name = "expiration_date", nullable = false)
-    private Date expirationDate;
+    private LocalDate expirationDate;
 
     @Column(name = "img_of_check")
     private byte[] imgOfCheck;

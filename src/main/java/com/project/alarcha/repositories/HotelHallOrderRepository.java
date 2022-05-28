@@ -3,8 +3,10 @@ package com.project.alarcha.repositories;
 import com.project.alarcha.entities.HotelHallOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -40,4 +42,8 @@ public interface HotelHallOrderRepository extends JpaRepository<HotelHallOrder, 
             "WHERE NOT is_deleted AND order_status = 'PAID'" +
             " ORDER BY id DESC")
     Page<HotelHallOrder> getCheckedPay(PageRequest of);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM hotel_hall_orders " +
+            "WHERE NOT is_deleted AND user_id = :userId ORDER BY id DESC")
+    List<HotelHallOrder> getByUserId(@Param("userId") long userId, Pageable pageable);
 }

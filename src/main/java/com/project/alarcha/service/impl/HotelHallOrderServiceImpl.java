@@ -5,6 +5,7 @@ import com.project.alarcha.enums.OrderStatus;
 import com.project.alarcha.exception.ApiFailException;
 import com.project.alarcha.models.HotelModel.HotelHallOrderModel;
 import com.project.alarcha.models.HotelModel.HotelHallOrderPayModel;
+import com.project.alarcha.models.OrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.repositories.HotelHallOrderRepository;
 import com.project.alarcha.repositories.HotelHallsRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,8 +63,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     }
 
     @Override
-    public HotelHallOrderModel acceptOrder(Long orderId) {
-        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
+    public HotelHallOrderModel acceptOrder(OrderModel orderModel) {
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderModel.getId());
 
         if(hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             hotelHallOrder.setOrderStatus(OrderStatus.CONFIRMED);
@@ -73,8 +75,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     }
 
     @Override
-    public HotelHallOrderModel declineOrder(Long orderId) {
-        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
+    public HotelHallOrderModel declineOrder(OrderModel orderModel) {
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderModel.getId());
 
         if(
                 hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS
@@ -90,8 +92,8 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
     }
 
     @Override
-    public HotelHallOrderModel acceptPayOrder(Long orderId) {
-        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderId);
+    public HotelHallOrderModel acceptPayOrder(OrderModel orderModel) {
+        HotelHallOrder hotelHallOrder = getHotelHallOrder(orderModel.getId());
 
         if (hotelHallOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
             hotelHallOrder.setOrderStatus(OrderStatus.PAID);
@@ -199,15 +201,13 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         Float priceForNextHours = hotelHall.getPriceForNextHours();
 
         hotelHallOrder.setHotelHall(hotelHall);
-        Date startDate = hotelHallOrderModel.getStartDate();
+        LocalDate startDate = hotelHallOrderModel.getStartDate();
         hotelHallOrder.setStartDate(startDate);
         hotelHallOrder.setStartTime(hotelHallOrderModel.getStartTime());
         hotelHallOrder.setEndTime(hotelHallOrderModel.getEndTime());
         hotelHallOrder.setEndDate(startDate);
 
-        Date expirationDate = new Date();
-        expirationDate.setDate(startDate.getDate() + 3);
-        hotelHallOrder.setExpirationDate(expirationDate);
+        hotelHallOrder.setExpirationDate(startDate.plusDays(3));
         hotelHallOrder.setUserFullName(user.getFirstName() + " " + user.getLastName());
 
         hotelHallOrder.setTotalPrice(getTotalPrice(price, priceForNextHours, hotelHallOrderModel));
@@ -223,10 +223,10 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         return hotelHallOrder;
     }
 
-    private boolean isExpired(Date expiredDate){
-        Date currentDate = new Date();
+    private boolean isExpired(LocalDate expiredDate){
+        LocalDate currentDate = LocalDate.now();
 
-        return currentDate.after(expiredDate);
+        return currentDate.isAfter(expiredDate);
     }
 
     private void checkHotelHallOrderTime(HotelHallOrderModel hotelHallOrderModel){
@@ -234,32 +234,17 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
         Time startTime = hotelHallOrderModel.getStartTime();
         Time endTime = hotelHallOrderModel.getEndTime();
-        Date startDate = hotelHallOrderModel.getStartDate();
+        LocalDate startDate = hotelHallOrderModel.getStartDate();
 
-        startDate.setHours(12);
-        startDate.setMinutes(0);
-        startDate.setSeconds(0);
-
-        Date currentDate = new Date();
-        currentDate.setTime(0);
-
-        Date tempDate = new Date();
+        LocalDate currentDate = LocalDate.now();
 
         Time currentTime = Time.valueOf(LocalTime.now());
-
-
-        currentDate.setYear(tempDate.getYear());
-        currentDate.setMonth(tempDate.getMonth());
-        currentDate.setDate(tempDate.getDate());
-        currentDate.setHours(12);
-        currentDate.setMinutes(0);
-        currentDate.setSeconds(0);
 
         if (startTime == null || endTime == null || startDate == null){
             throw new ApiFailException("Время начала, время оконцания или дата начала не могут быть пустыми.");
         }
 
-        if (startDate.before(currentDate)){
+        if (startDate.isBefore(currentDate)){
             throw new ApiFailException("Дата начала не может быть раньше текущей даты.");
         }
 
@@ -275,7 +260,7 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         for(HotelHallOrder hotelHallOrder : hotelHallOrderList){
             if(hotelHallOrderModel.getHotelHallId() == hotelHallOrder.getHotelHall().getId()){
                 if( (startDate.getYear() == hotelHallOrder.getStartDate().getYear() && startDate.getMonth() == hotelHallOrder.getStartDate().getMonth()
-                        && startDate.getDate() == hotelHallOrder.getStartDate().getDate())
+                        && startDate.getDayOfMonth() == hotelHallOrder.getStartDate().getDayOfMonth())
                 ){
                     OrderStatus orderStatus = hotelHallOrder.getOrderStatus();
                     if(orderStatus == OrderStatus.CONFIRMED || orderStatus == OrderStatus.CHECK_CHECK || orderStatus == OrderStatus.PAID){

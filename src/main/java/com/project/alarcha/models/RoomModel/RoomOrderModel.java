@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -22,13 +23,13 @@ public class RoomOrderModel extends BaseModel {
     private int roomNumber;
     private String roomType;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private Date startDate;
+    private LocalDate startDate;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private Date endDate;
+    private LocalDate endDate;
     private OrderStatus orderStatus;
     private String hotelName;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private Date expirationDate;
+    private LocalDate expirationDate;
 //    @Pattern(regexp = "^\\+\\d+ \\d+$", message = "Неправильный формат номера телефона")
     private String userPhone;
     private Float totalPrice;

@@ -17,5 +17,5 @@ public interface UserService {
     UserToSendModel deleteUser(Long userId);
     UserToSendModel updateUser(UserUpdateModel userUpdateModel);
     void createSuperAdmin();
-    UserOrdersModel getUserOrdersModel(Long id);
+    UserOrdersModel getUserOrdersModel(Long id, int page);
 }

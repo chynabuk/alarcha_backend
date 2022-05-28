@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -18,10 +19,10 @@ import java.util.Date;
 public class HotelHallOrder extends BaseEntity{
 
     @Column(name = "start_date", nullable = false)
-    private Date startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date")
-    private Date endDate;
+    private LocalDate endDate;
 
     @Column(name = "start_time", nullable = false)
     private Time startTime;
@@ -30,7 +31,7 @@ public class HotelHallOrder extends BaseEntity{
     private Time endTime;
 
     @Column(name = "expiration_date")
-    private Date expirationDate;
+    private LocalDate expirationDate;
 
     @Column(name = "total_price")
     private Float totalPrice;

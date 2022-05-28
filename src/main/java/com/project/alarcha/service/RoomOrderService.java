@@ -1,6 +1,7 @@
 package com.project.alarcha.service;
 
 import com.project.alarcha.entities.RoomOrder;
+import com.project.alarcha.models.OrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderModel;
 import com.project.alarcha.models.RoomModel.RoomOrderPayModel;
 
@@ -10,9 +11,9 @@ public interface RoomOrderService {
     RoomOrderModel order(RoomOrderModel roomOrderModel);
     RoomOrderModel update(RoomOrderModel roomOrderModel);
     RoomOrderPayModel pay(RoomOrderPayModel roomOrderPayModel);
-    RoomOrderModel acceptOrder(Long orderId);
-    RoomOrderModel declineOrder(Long orderId);
-    RoomOrderModel acceptPayOrder(Long orderId);
+    RoomOrderModel acceptOrder(OrderModel orderModel);
+    RoomOrderModel declineOrder(OrderModel orderModel);
+    RoomOrderModel acceptPayOrder(OrderModel orderModel);
     List<RoomOrderModel> getAll(int page);
     List<RoomOrderModel> getInProcessOrders(int page);
     List<RoomOrderModel> getConfirmedOrDeclinedOrders(int page);
