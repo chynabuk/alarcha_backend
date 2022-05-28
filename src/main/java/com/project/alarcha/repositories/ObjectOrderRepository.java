@@ -29,7 +29,7 @@ public interface ObjectOrderRepository extends JpaRepository<ObjectOrder, Long> 
     Page<ObjectOrder> getInProcessOrders(PageRequest of);
 
     @Query(nativeQuery = true, value = "SELECT * FROM object_orders " +
-            "WHERE status = 'CONFIRMED' OR status = 'DECLINED' OR status = 'PAID' OR order_status = 'CHECK_CHECK'" +
+            "WHERE status = 'CONFIRMED' OR status = 'DECLINED' OR status = 'PAID' OR status = 'CHECK_CHECK'" +
             " ORDER BY id DESC")
     Page<ObjectOrder> getConfirmedOrDeclinedOrders(PageRequest of);
 
