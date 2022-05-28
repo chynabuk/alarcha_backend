@@ -317,11 +317,13 @@ public class RoomOrderServiceImpl implements RoomOrderService {
 
         int countExpiredOrder = 0;
         for (RoomOrder roomOrder : roomOrders){
-            if (isExpired(roomOrder.getExpirationDate())){
-                roomOrder.setIsDeleted(true);
-                roomOrder.setDeletedDate(new Date());
-                roomOrderRepository.save(roomOrder);
-                countExpiredOrder++;
+            if (!roomOrder.getIsDeleted()){
+                if (isExpired(roomOrder.getExpirationDate())){
+                    roomOrder.setIsDeleted(true);
+                    roomOrder.setDeletedDate(new Date());
+                    roomOrderRepository.save(roomOrder);
+                    countExpiredOrder++;
+                }
             }
             roomOrderModels.add(toModel(roomOrder));
         }

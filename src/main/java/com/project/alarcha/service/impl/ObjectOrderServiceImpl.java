@@ -535,11 +535,13 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         int countExpiredOrder = 0;
         for (ObjectOrder objectOrder : objectOrders){
-            if (isExpired(objectOrder.getExpirationDate())){
-                objectOrder.setIsDeleted(true);
-                objectOrder.setDeletedDate(new Date());
-                objectOrderRepository.save(objectOrder);
-                countExpiredOrder++;
+            if (!objectOrder.getIsDeleted()){
+                if (isExpired(objectOrder.getExpirationDate())){
+                    objectOrder.setIsDeleted(true);
+                    objectOrder.setDeletedDate(new Date());
+                    objectOrderRepository.save(objectOrder);
+                    countExpiredOrder++;
+                }
             }
             objectOrderModels.add(toModel(objectOrder));
         }

@@ -326,11 +326,13 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
         int countExpiredOrder = 0;
         for (HotelHallOrder hotelHallOrder : hotelHallOrders){
-            if (isExpired(hotelHallOrder.getExpirationDate())){
-                hotelHallOrder.setIsDeleted(true);
-                hotelHallOrder.setDeletedDate(new Date());
-                hotelHallOrderRepository.save(hotelHallOrder);
-                countExpiredOrder++;
+            if (!hotelHallOrder.getIsDeleted()){
+                if (isExpired(hotelHallOrder.getExpirationDate())){
+                    hotelHallOrder.setIsDeleted(true);
+                    hotelHallOrder.setDeletedDate(new Date());
+                    hotelHallOrderRepository.save(hotelHallOrder);
+                    countExpiredOrder++;
+                }
             }
             hotelHallOrderModels.add(toModel(hotelHallOrder));
         }
