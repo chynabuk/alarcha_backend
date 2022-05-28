@@ -56,6 +56,11 @@ public class HotelHallController {
         return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.order(hotelHallOrderModel));
     }
 
+    @PostMapping("/order/admin")
+    public ResponseMessage<HotelHallOrderModel> orderHotelHallAdmin(@RequestBody HotelHallOrderModel hotelHallOrderModel){
+        return new ResponseMessage<HotelHallOrderModel>().prepareSuccessMessage(hotelHallOrderService.orderAdmin(hotelHallOrderModel));
+    }
+
     @PostMapping("/order/pay")
     public ResponseMessage<HotelHallOrderPayModel> orderHotelHall(@RequestBody HotelHallOrderPayModel hotelHallOrderPayModel){
         return new ResponseMessage<HotelHallOrderPayModel>().prepareSuccessMessage(hotelHallOrderService.pay(hotelHallOrderPayModel));

@@ -62,6 +62,11 @@ public class ObjectController {
         return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.order(objectOrderModel));
     }
 
+    @PostMapping("/order/admin")
+    public ResponseMessage<ObjectOrderModel> orderObjectAdmin(@RequestBody ObjectOrderModel objectOrderModel){
+        return new ResponseMessage<ObjectOrderModel>().prepareSuccessMessage(objectOrderService.orderAdmin(objectOrderModel));
+    }
+
     @PostMapping("/order/pay")
     public ResponseMessage<ObjectOrderPayModel> orderObject(@RequestBody ObjectOrderPayModel objectOrderPayModel){
         return new ResponseMessage<ObjectOrderPayModel>().prepareSuccessMessage(objectOrderService.pay(objectOrderPayModel));
