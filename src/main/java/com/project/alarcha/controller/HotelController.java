@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("http://alaarcha2.inai.kg")
 @RequestMapping("/hotel")
 public class HotelController {
     @Autowired
@@ -25,6 +24,7 @@ public class HotelController {
         return new ResponseMessage<HotelModel>().prepareSuccessMessage(hotelService.updateHotel(hotelModel));
     }
 
+    @CrossOrigin("http://alaarcha2.inai.kg/services")
     @GetMapping("/get-all")
     public ResponseMessage<List<HotelModel>> getAll(){
         return new ResponseMessage<List<HotelModel>>().prepareSuccessMessage(hotelService.getAll());
