@@ -24,17 +24,17 @@ public class MainController {
     @Autowired
     private Population population;
 
-    @GetMapping("/")
-    public void countUser(){
-        Counter counter = counterService.getById(1L);
-
-        Integer views = counter.getCount();
-        views++;
-        counter.setCount(views);
-
-        counterRepository.save(counter);
-
-    }
+//    @GetMapping("/")
+//    public void countUser(){
+//        Counter counter = counterService.getById(1L);
+//
+//        Integer views = counter.getCount();
+//        views++;
+//        counter.setCount(views);
+//
+//        counterRepository.save(counter);
+//
+//    }
 
 
     @PostMapping("/")
