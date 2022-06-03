@@ -67,6 +67,11 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 objectOrder.setImgOfCheck(objectOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
                 objectOrder.setOrderStatus(OrderStatus.CHECK_CHECK);
                 objectOrderRepository.save(objectOrder);
+
+                emailSenderService.sendEmail(
+                        objectOrder.getObject().getObjectType().getArea().getUser().getEmail(),
+                        "Запрос на оплату объекта",
+                        "от " + objectOrder.getFullName() + " поступил запрос на оплату \n");
             }
         }
         return objectOrderPayModel;
@@ -78,9 +83,14 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
 
         if(objectOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             objectOrder.setOrderStatus(OrderStatus.CONFIRMED);
+
+            objectOrderRepository.save(objectOrder);
+            emailSenderService.sendEmail(
+                    objectOrder.getUser().getEmail(),
+                    "Принятие брони",
+                    objectOrder.getFullName() + " ваша бронь подтверждена \n");
         }
 
-        objectOrderRepository.save(objectOrder);
         return toModel(objectOrder);
     }
 
@@ -95,9 +105,15 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
                 || objectOrder.getOrderStatus() == OrderStatus.PAID
         ){
             objectOrder.setOrderStatus(OrderStatus.DECLINED);
+
+            objectOrderRepository.save(objectOrder);
+
+            emailSenderService.sendEmail(
+                    objectOrder.getUser().getEmail(),
+                    "Отклонение",
+                    objectOrder.getFullName() + " ваша бронь отклонена \n");
         }
 
-        objectOrderRepository.save(objectOrder);
         return toModel(objectOrder);
     }
 
@@ -119,6 +135,11 @@ public class ObjectOrderServiceImpl implements ObjectOrderService {
         if (objectOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
             objectOrder.setOrderStatus(OrderStatus.PAID);
             objectOrderRepository.save(objectOrder);
+
+            emailSenderService.sendEmail(
+                    objectOrder.getUser().getEmail(),
+                    "Принятие оплаты",
+                    objectOrder.getFullName() + " ваша бронь оплачена \n");
         }
 
         return toModel(objectOrder);

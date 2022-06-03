@@ -75,6 +75,11 @@ public class RoomOrderServiceImpl implements RoomOrderService {
                 roomOrder.setImgOfCheck(roomOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
                 roomOrder.setOrderStatus(OrderStatus.CHECK_CHECK);
                 roomOrderRepository.save(roomOrder);
+
+                emailSenderService.sendEmail(
+                        roomOrder.getRoom().getRoomType().getHotel().getArea().getUser().getEmail(),
+                        "Запрос на оплату комнаты",
+                        "от " + roomOrder.getUserFullName() + " поступил запрос на оплату \n");
             }
         }
 
@@ -88,6 +93,11 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         if (roomOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             roomOrder.setOrderStatus(OrderStatus.CONFIRMED);
             roomOrderRepository.save(roomOrder);
+
+            emailSenderService.sendEmail(
+                    roomOrder.getUser().getEmail(),
+                    "Принятие брони",
+                    roomOrder.getUserFullName() + " ваша бронь подтверждена \n");
         }
 
         return toModel(roomOrder);
@@ -105,6 +115,10 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         ){
             roomOrder.setOrderStatus(OrderStatus.DECLINED);
             roomOrderRepository.save(roomOrder);
+            emailSenderService.sendEmail(
+                    roomOrder.getUser().getEmail(),
+                    "Отклонение",
+                    roomOrder.getUserFullName() + " ваша бронь отклонена \n");
         }
 
         return toModel(roomOrder);
@@ -117,6 +131,11 @@ public class RoomOrderServiceImpl implements RoomOrderService {
         if (roomOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
             roomOrder.setOrderStatus(OrderStatus.PAID);
             roomOrderRepository.save(roomOrder);
+
+            emailSenderService.sendEmail(
+                    roomOrder.getUser().getEmail(),
+                    "Принятие оплаты",
+                    roomOrder.getUserFullName() + " ваша бронь оплачена \n");
         }
 
         return toModel(roomOrder);

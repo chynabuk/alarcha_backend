@@ -67,6 +67,11 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 hotelHallOrder.setImgOfCheck(hotelHallOrderPayModel.getImg().getBytes(StandardCharsets.UTF_8));
                 hotelHallOrder.setOrderStatus(OrderStatus.CHECK_CHECK);
                 hotelHallOrderRepository.save(hotelHallOrder);
+
+                emailSenderService.sendEmail(
+                        hotelHallOrder.getHotelHall().getHotel().getArea().getUser().getEmail(),
+                        "Запрос на оплату доп комнаты",
+                        "от " + hotelHallOrder.getUserFullName() + " поступил запрос на оплату \n");
             }
         }
         return hotelHallOrderPayModel;
@@ -78,9 +83,15 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
 
         if(hotelHallOrder.getOrderStatus() == OrderStatus.IN_PROCESS){
             hotelHallOrder.setOrderStatus(OrderStatus.CONFIRMED);
+
+            emailSenderService.sendEmail(
+                    hotelHallOrder.getUser().getEmail(),
+                    "Принятие брони",
+                    hotelHallOrder.getUserFullName() + " ваша бронь подтверждена \n");
+            hotelHallOrderRepository.save(hotelHallOrder);
+
         }
 
-        hotelHallOrderRepository.save(hotelHallOrder);
         return toModel(hotelHallOrder);
     }
 
@@ -95,9 +106,13 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
                 || hotelHallOrder.getOrderStatus() == OrderStatus.PAID
         ){
             hotelHallOrder.setOrderStatus(OrderStatus.DECLINED);
+            hotelHallOrderRepository.save(hotelHallOrder);
+            emailSenderService.sendEmail(
+                    hotelHallOrder.getUser().getEmail(),
+                    "Отклонение",
+                    hotelHallOrder.getUserFullName() + " ваша бронь отклонена \n");
         }
 
-        hotelHallOrderRepository.save(hotelHallOrder);
         return toModel(hotelHallOrder);
     }
 
@@ -108,6 +123,11 @@ public class HotelHallOrderServiceImpl implements HotelHallOrderService {
         if (hotelHallOrder.getOrderStatus() == OrderStatus.CHECK_CHECK){
             hotelHallOrder.setOrderStatus(OrderStatus.PAID);
             hotelHallOrderRepository.save(hotelHallOrder);
+
+            emailSenderService.sendEmail(
+                    hotelHallOrder.getUser().getEmail(),
+                    "Принятие оплаты",
+                    hotelHallOrder.getUserFullName() + " ваша бронь оплачена \n");
         }
 
         return toModel(hotelHallOrder);
