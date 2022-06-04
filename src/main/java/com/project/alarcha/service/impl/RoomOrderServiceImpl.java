@@ -297,11 +297,11 @@ public class RoomOrderServiceImpl implements RoomOrderService {
                     )
                     {
                         LocalDate startLocalDate = startDate;
-                        for (long i = 0; i < difference; i++){
+                        for (long i = 0; i < difference + 1; i++){
                             if(startLocalDate.getDayOfMonth() >= rSDate.getDayOfMonth() && startLocalDate.getDayOfMonth() <= rEDate.getDayOfMonth()){
                                 throw new ApiFailException("Вы не можете сделать заказ на эту дату.");
                             }
-                            startLocalDate.plusDays(++i);
+                            startLocalDate = startLocalDate.plusDays(i);
                         }
                     }
                 }
